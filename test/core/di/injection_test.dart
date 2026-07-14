@@ -14,7 +14,7 @@ void main() {
       await getIt.reset();
       tempDir = await Directory.systemTemp.createTemp();
       Hive.init(tempDir.path);
-      configureDependencies();
+      await configureDependencies();
     });
 
     tearDown(() async {

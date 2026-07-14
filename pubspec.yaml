@@ -20,7 +20,7 @@ dependencies:
 
   # Models & Serialization
   freezed_annotation: ^3.0.0
-  json_annotation: ^4.9.0
+  json_annotation: ^4.12.0
 
   # Local Storage (thay Isar)
   hive_ce: ^2.10.0
@@ -52,3 +52,6 @@ dev_dependencies:
 
 flutter:
   generate: true
+  assets:
+    - assets/config/scenarios/
+    - assets/config/i18n/

@@ -26,7 +26,7 @@ class ProcessNextMonthUseCase {
   );
 
   /// Executes the core logic for advancing the game to the next month using a Pipeline pattern.
-  Either<Failure, TurnResult> call(GameState currentState) {
+  Future<Either<Failure, TurnResult>> call(GameState currentState) async {
     // a. Increase currentMonth and ageInMonths by 1.
     // b. Reset currentEventId (activeEventId equivalent) to null.
     GameState state = currentState.copyWith(
@@ -39,7 +39,7 @@ class ProcessNextMonthUseCase {
     state = _calculateCashflow(state);
     state = _processLoans(state);
     state = _updateMetrics(state);
-    state = _generateEvent(state);
+    state = await _generateEvent(state);
 
     // d. Check game status
     final turnResult = _checkGameStatus(state);

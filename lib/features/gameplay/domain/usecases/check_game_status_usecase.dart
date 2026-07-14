@@ -4,11 +4,9 @@ import '../entities/turn_result.dart';
 
 @lazySingleton
 class CheckGameStatusUseCase {
-  static const int bankruptcyMonthsThreshold = 3;
-
   TurnResult call(GameState currentState) {
-    // THẮNG: passive income >= monthly expenses
-    if (currentState.passiveIncome > 0 && currentState.passiveIncome >= currentState.monthlyExpenses) {
+    // THẮNG: passive income >= total monthly outflow
+    if (currentState.passiveIncome > 0 && currentState.passiveIncome >= currentState.totalMonthlyOutflow) {
       return TurnResult.won(currentState);
     }
 
@@ -22,8 +20,8 @@ class CheckGameStatusUseCase {
       return TurnResult.lost(currentState, GameOverReason.debtSpiral);
     }
 
-    // THUA: Bankruptcy (Cash < -(3 * Expenses))
-    if (currentState.cash < -(bankruptcyMonthsThreshold * currentState.monthlyExpenses)) {
+    // THUA: Bankruptcy (Cash < -(Threshold * totalMonthlyOutflow))
+    if (currentState.cash < -(currentState.bankruptcyMonthsThreshold * currentState.totalMonthlyOutflow)) {
       return TurnResult.lost(currentState, GameOverReason.bankruptcy);
     }
 

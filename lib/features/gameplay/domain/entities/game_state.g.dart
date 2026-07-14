@@ -9,11 +9,13 @@ part of 'game_state.dart';
 _GameState _$GameStateFromJson(Map<String, dynamic> json) => _GameState(
   country: $enumDecode(_$CountryEnumMap, json['country']),
   currency: $enumDecode(_$CurrencyEnumMap, json['currency']),
+  scenarioId: json['scenarioId'] as String,
   currentMonth: (json['currentMonth'] as num?)?.toInt() ?? 1,
   ageInMonths: (json['ageInMonths'] as num?)?.toInt() ?? 264,
   startCalendarMonth: (json['startCalendarMonth'] as num?)?.toInt() ?? 1,
   cash: (json['cash'] as num).toDouble(),
   monthlyExpenses: (json['monthlyExpenses'] as num).toDouble(),
+  monthlyRent: (json['monthlyRent'] as num).toDouble(),
   baseSalary: (json['baseSalary'] as num).toDouble(),
   stress: (json['stress'] as num?)?.toInt() ?? 0,
   networkScore: (json['networkScore'] as num?)?.toInt() ?? 0,
@@ -30,6 +32,11 @@ _GameState _$GameStateFromJson(Map<String, dynamic> json) => _GameState(
   flags:
       (json['flags'] as List<dynamic>?)?.map((e) => e as String).toSet() ??
       const {},
+  familySupportExpense:
+      (json['familySupportExpense'] as num?)?.toDouble() ?? 0.0,
+  baseEventChance: (json['baseEventChance'] as num?)?.toDouble() ?? 0.2,
+  bankruptcyMonthsThreshold:
+      (json['bankruptcyMonthsThreshold'] as num?)?.toInt() ?? 3,
   assets:
       (json['assets'] as List<dynamic>?)
           ?.map((e) => Asset.fromJson(e as Map<String, dynamic>))
@@ -46,11 +53,13 @@ Map<String, dynamic> _$GameStateToJson(_GameState instance) =>
     <String, dynamic>{
       'country': _$CountryEnumMap[instance.country]!,
       'currency': _$CurrencyEnumMap[instance.currency]!,
+      'scenarioId': instance.scenarioId,
       'currentMonth': instance.currentMonth,
       'ageInMonths': instance.ageInMonths,
       'startCalendarMonth': instance.startCalendarMonth,
       'cash': instance.cash,
       'monthlyExpenses': instance.monthlyExpenses,
+      'monthlyRent': instance.monthlyRent,
       'baseSalary': instance.baseSalary,
       'stress': instance.stress,
       'networkScore': instance.networkScore,
@@ -59,6 +68,9 @@ Map<String, dynamic> _$GameStateToJson(_GameState instance) =>
       'ownedItems': instance.ownedItems,
       'currentEventId': instance.currentEventId,
       'flags': instance.flags.toList(),
+      'familySupportExpense': instance.familySupportExpense,
+      'baseEventChance': instance.baseEventChance,
+      'bankruptcyMonthsThreshold': instance.bankruptcyMonthsThreshold,
       'assets': instance.assets.map((e) => e.toJson()).toList(),
       'loans': instance.loans.map((e) => e.toJson()).toList(),
     };

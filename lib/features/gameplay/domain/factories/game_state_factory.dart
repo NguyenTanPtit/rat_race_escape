@@ -1,54 +1,35 @@
 import '../entities/game_state.dart';
-import '../entities/loan.dart';
+import '../entities/scenario_config.dart';
 
 class GameStateFactory {
-  /// Kịch bản: Sinh viên VN mới ra trường
-  static GameState createVietnamStarter() {
-    return const GameState(
-      country: Country.vietnam,
-      currency: Currency.vnd,
-      cash: 10000000.0, // 10 triệu VNĐ
-      baseSalary: 8000000.0, // Lương 8 triệu
-      monthlyExpenses: 6000000.0, // Chi phí sinh hoạt 6 triệu
-      housingLevel: HousingLevel.shabbyRoom, // Trọ bình dân
-      loans: [], // Không có nợ
+  /// Builds a GameState entirely from a ScenarioConfig.
+  static GameState fromConfig(ScenarioConfig config) {
+    return GameState(
+      scenarioId: config.id,
+      country: config.country,
+      currency: parseCurrency(config.currency),
+      cash: config.initialCash,
+      baseSalary: config.baseSalary,
+      monthlyExpenses: config.monthlyExpenses,
+      monthlyRent: config.monthlyRent,
+      familySupportExpense: config.familySupportExpense,
+      ageInMonths: config.startAgeInMonths,
+      startCalendarMonth: config.startCalendarMonth,
+      creditScore: config.initialCreditScore,
+      housingLevel: config.housingLevel,
+      bankruptcyMonthsThreshold: config.bankruptcyMonthsThreshold,
+      baseEventChance: config.baseEventChance,
+      assets: List.from(config.initialAssets),
+      loans: List.from(config.initialLoans),
     );
   }
 
-  /// Kịch bản: Sinh viên Mỹ mới ra trường
-  static GameState createUSAStarter() {
-    return const GameState(
-      country: Country.usa,
-      currency: Currency.usd,
-      cash: 2000.0, // 2 ngàn đô
-      baseSalary: 4500.0, // Lương 4.5 ngàn đô
-      monthlyExpenses: 3000.0,
-      creditScore: 500, // Điểm tín dụng bắt đầu thấp hơn
-      loans: [
-        // Gánh khoản nợ sinh viên ngay khi bắt đầu
-        Loan(
-          id: 'usa_student_loan',
-          name: 'Student Loan',
-          principalAmount: 50000.0, // Nợ 50 ngàn đô
-          interestRatePerYear: 5.5,
-          minimumMonthlyPayment: 300.0,
-          type: LoanType.personalLoan,
-        ),
-      ],
-    );
-  }
-
-  /// Kịch bản: Rich Kid Việt Nam (Có thể dùng làm IAP bán gói mở rộng)
-  static GameState createVietnamRichKid() {
-    return const GameState(
-      country: Country.vietnam,
-      currency: Currency.vnd,
-      cash: 500000000.0, // 500 triệu bố mẹ cho
-      baseSalary: 20000000.0, // Làm giám đốc chi nhánh
-      monthlyExpenses: 15000000.0, // Tiêu xài hoang phí
-      housingLevel: HousingLevel.luxuryCondo, // Ở chung cư cao cấp luôn
-      creditScore: 750,
-      loans: [],
-    );
+  static Currency parseCurrency(String currencyStr) {
+    switch (currencyStr.toLowerCase()) {
+      case 'usd': return Currency.usd;
+      case 'jpy': return Currency.jpy;
+      case 'vnd':
+      default: return Currency.vnd;
+    }
   }
 }

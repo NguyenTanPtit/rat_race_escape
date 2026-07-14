@@ -16,14 +16,14 @@ T _$identity<T>(T value) => value;
 mixin _$GameState {
 
 // 0. Bối cảnh Quốc gia & Tiền tệ
- Country get country; Currency get currency;// 1. Time
+ Country get country; Currency get currency; String get scenarioId;// 1. Time
  int get currentMonth; int get ageInMonths;// Mặc định chung là 22 tuổi
  int get startCalendarMonth;// Tháng bắt đầu trong năm (1-12)
 // 2. Financials (Bắt buộc phải khởi tạo tùy bối cảnh)
- double get cash; double get monthlyExpenses; double get baseSalary;// 3. Metrics
+ double get cash; double get monthlyExpenses; double get monthlyRent; double get baseSalary;// 3. Metrics
  int get stress; int get networkScore; int get creditScore;// 4. Visual States
  HousingLevel get housingLevel; List<String> get ownedItems;// 5. Active Event & Flags
- String? get currentEventId; Set<String> get flags;// 6. Inventories
+ String? get currentEventId; Set<String> get flags; double get familySupportExpense; double get baseEventChance; int get bankruptcyMonthsThreshold;// 6. Inventories
  List<Asset> get assets; List<Loan> get loans;
 /// Create a copy of GameState
 /// with the given fields replaced by the non-null parameter values.
@@ -37,16 +37,16 @@ $GameStateCopyWith<GameState> get copyWith => _$GameStateCopyWithImpl<GameState>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GameState&&(identical(other.country, country) || other.country == country)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.currentMonth, currentMonth) || other.currentMonth == currentMonth)&&(identical(other.ageInMonths, ageInMonths) || other.ageInMonths == ageInMonths)&&(identical(other.startCalendarMonth, startCalendarMonth) || other.startCalendarMonth == startCalendarMonth)&&(identical(other.cash, cash) || other.cash == cash)&&(identical(other.monthlyExpenses, monthlyExpenses) || other.monthlyExpenses == monthlyExpenses)&&(identical(other.baseSalary, baseSalary) || other.baseSalary == baseSalary)&&(identical(other.stress, stress) || other.stress == stress)&&(identical(other.networkScore, networkScore) || other.networkScore == networkScore)&&(identical(other.creditScore, creditScore) || other.creditScore == creditScore)&&(identical(other.housingLevel, housingLevel) || other.housingLevel == housingLevel)&&const DeepCollectionEquality().equals(other.ownedItems, ownedItems)&&(identical(other.currentEventId, currentEventId) || other.currentEventId == currentEventId)&&const DeepCollectionEquality().equals(other.flags, flags)&&const DeepCollectionEquality().equals(other.assets, assets)&&const DeepCollectionEquality().equals(other.loans, loans));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GameState&&(identical(other.country, country) || other.country == country)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.scenarioId, scenarioId) || other.scenarioId == scenarioId)&&(identical(other.currentMonth, currentMonth) || other.currentMonth == currentMonth)&&(identical(other.ageInMonths, ageInMonths) || other.ageInMonths == ageInMonths)&&(identical(other.startCalendarMonth, startCalendarMonth) || other.startCalendarMonth == startCalendarMonth)&&(identical(other.cash, cash) || other.cash == cash)&&(identical(other.monthlyExpenses, monthlyExpenses) || other.monthlyExpenses == monthlyExpenses)&&(identical(other.monthlyRent, monthlyRent) || other.monthlyRent == monthlyRent)&&(identical(other.baseSalary, baseSalary) || other.baseSalary == baseSalary)&&(identical(other.stress, stress) || other.stress == stress)&&(identical(other.networkScore, networkScore) || other.networkScore == networkScore)&&(identical(other.creditScore, creditScore) || other.creditScore == creditScore)&&(identical(other.housingLevel, housingLevel) || other.housingLevel == housingLevel)&&const DeepCollectionEquality().equals(other.ownedItems, ownedItems)&&(identical(other.currentEventId, currentEventId) || other.currentEventId == currentEventId)&&const DeepCollectionEquality().equals(other.flags, flags)&&(identical(other.familySupportExpense, familySupportExpense) || other.familySupportExpense == familySupportExpense)&&(identical(other.baseEventChance, baseEventChance) || other.baseEventChance == baseEventChance)&&(identical(other.bankruptcyMonthsThreshold, bankruptcyMonthsThreshold) || other.bankruptcyMonthsThreshold == bankruptcyMonthsThreshold)&&const DeepCollectionEquality().equals(other.assets, assets)&&const DeepCollectionEquality().equals(other.loans, loans));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,country,currency,currentMonth,ageInMonths,startCalendarMonth,cash,monthlyExpenses,baseSalary,stress,networkScore,creditScore,housingLevel,const DeepCollectionEquality().hash(ownedItems),currentEventId,const DeepCollectionEquality().hash(flags),const DeepCollectionEquality().hash(assets),const DeepCollectionEquality().hash(loans));
+int get hashCode => Object.hashAll([runtimeType,country,currency,scenarioId,currentMonth,ageInMonths,startCalendarMonth,cash,monthlyExpenses,monthlyRent,baseSalary,stress,networkScore,creditScore,housingLevel,const DeepCollectionEquality().hash(ownedItems),currentEventId,const DeepCollectionEquality().hash(flags),familySupportExpense,baseEventChance,bankruptcyMonthsThreshold,const DeepCollectionEquality().hash(assets),const DeepCollectionEquality().hash(loans)]);
 
 @override
 String toString() {
-  return 'GameState(country: $country, currency: $currency, currentMonth: $currentMonth, ageInMonths: $ageInMonths, startCalendarMonth: $startCalendarMonth, cash: $cash, monthlyExpenses: $monthlyExpenses, baseSalary: $baseSalary, stress: $stress, networkScore: $networkScore, creditScore: $creditScore, housingLevel: $housingLevel, ownedItems: $ownedItems, currentEventId: $currentEventId, flags: $flags, assets: $assets, loans: $loans)';
+  return 'GameState(country: $country, currency: $currency, scenarioId: $scenarioId, currentMonth: $currentMonth, ageInMonths: $ageInMonths, startCalendarMonth: $startCalendarMonth, cash: $cash, monthlyExpenses: $monthlyExpenses, monthlyRent: $monthlyRent, baseSalary: $baseSalary, stress: $stress, networkScore: $networkScore, creditScore: $creditScore, housingLevel: $housingLevel, ownedItems: $ownedItems, currentEventId: $currentEventId, flags: $flags, familySupportExpense: $familySupportExpense, baseEventChance: $baseEventChance, bankruptcyMonthsThreshold: $bankruptcyMonthsThreshold, assets: $assets, loans: $loans)';
 }
 
 
@@ -57,7 +57,7 @@ abstract mixin class $GameStateCopyWith<$Res>  {
   factory $GameStateCopyWith(GameState value, $Res Function(GameState) _then) = _$GameStateCopyWithImpl;
 @useResult
 $Res call({
- Country country, Currency currency, int currentMonth, int ageInMonths, int startCalendarMonth, double cash, double monthlyExpenses, double baseSalary, int stress, int networkScore, int creditScore, HousingLevel housingLevel, List<String> ownedItems, String? currentEventId, Set<String> flags, List<Asset> assets, List<Loan> loans
+ Country country, Currency currency, String scenarioId, int currentMonth, int ageInMonths, int startCalendarMonth, double cash, double monthlyExpenses, double monthlyRent, double baseSalary, int stress, int networkScore, int creditScore, HousingLevel housingLevel, List<String> ownedItems, String? currentEventId, Set<String> flags, double familySupportExpense, double baseEventChance, int bankruptcyMonthsThreshold, List<Asset> assets, List<Loan> loans
 });
 
 
@@ -74,15 +74,17 @@ class _$GameStateCopyWithImpl<$Res>
 
 /// Create a copy of GameState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? country = null,Object? currency = null,Object? currentMonth = null,Object? ageInMonths = null,Object? startCalendarMonth = null,Object? cash = null,Object? monthlyExpenses = null,Object? baseSalary = null,Object? stress = null,Object? networkScore = null,Object? creditScore = null,Object? housingLevel = null,Object? ownedItems = null,Object? currentEventId = freezed,Object? flags = null,Object? assets = null,Object? loans = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? country = null,Object? currency = null,Object? scenarioId = null,Object? currentMonth = null,Object? ageInMonths = null,Object? startCalendarMonth = null,Object? cash = null,Object? monthlyExpenses = null,Object? monthlyRent = null,Object? baseSalary = null,Object? stress = null,Object? networkScore = null,Object? creditScore = null,Object? housingLevel = null,Object? ownedItems = null,Object? currentEventId = freezed,Object? flags = null,Object? familySupportExpense = null,Object? baseEventChance = null,Object? bankruptcyMonthsThreshold = null,Object? assets = null,Object? loans = null,}) {
   return _then(_self.copyWith(
 country: null == country ? _self.country : country // ignore: cast_nullable_to_non_nullable
 as Country,currency: null == currency ? _self.currency : currency // ignore: cast_nullable_to_non_nullable
-as Currency,currentMonth: null == currentMonth ? _self.currentMonth : currentMonth // ignore: cast_nullable_to_non_nullable
+as Currency,scenarioId: null == scenarioId ? _self.scenarioId : scenarioId // ignore: cast_nullable_to_non_nullable
+as String,currentMonth: null == currentMonth ? _self.currentMonth : currentMonth // ignore: cast_nullable_to_non_nullable
 as int,ageInMonths: null == ageInMonths ? _self.ageInMonths : ageInMonths // ignore: cast_nullable_to_non_nullable
 as int,startCalendarMonth: null == startCalendarMonth ? _self.startCalendarMonth : startCalendarMonth // ignore: cast_nullable_to_non_nullable
 as int,cash: null == cash ? _self.cash : cash // ignore: cast_nullable_to_non_nullable
 as double,monthlyExpenses: null == monthlyExpenses ? _self.monthlyExpenses : monthlyExpenses // ignore: cast_nullable_to_non_nullable
+as double,monthlyRent: null == monthlyRent ? _self.monthlyRent : monthlyRent // ignore: cast_nullable_to_non_nullable
 as double,baseSalary: null == baseSalary ? _self.baseSalary : baseSalary // ignore: cast_nullable_to_non_nullable
 as double,stress: null == stress ? _self.stress : stress // ignore: cast_nullable_to_non_nullable
 as int,networkScore: null == networkScore ? _self.networkScore : networkScore // ignore: cast_nullable_to_non_nullable
@@ -91,7 +93,10 @@ as int,housingLevel: null == housingLevel ? _self.housingLevel : housingLevel //
 as HousingLevel,ownedItems: null == ownedItems ? _self.ownedItems : ownedItems // ignore: cast_nullable_to_non_nullable
 as List<String>,currentEventId: freezed == currentEventId ? _self.currentEventId : currentEventId // ignore: cast_nullable_to_non_nullable
 as String?,flags: null == flags ? _self.flags : flags // ignore: cast_nullable_to_non_nullable
-as Set<String>,assets: null == assets ? _self.assets : assets // ignore: cast_nullable_to_non_nullable
+as Set<String>,familySupportExpense: null == familySupportExpense ? _self.familySupportExpense : familySupportExpense // ignore: cast_nullable_to_non_nullable
+as double,baseEventChance: null == baseEventChance ? _self.baseEventChance : baseEventChance // ignore: cast_nullable_to_non_nullable
+as double,bankruptcyMonthsThreshold: null == bankruptcyMonthsThreshold ? _self.bankruptcyMonthsThreshold : bankruptcyMonthsThreshold // ignore: cast_nullable_to_non_nullable
+as int,assets: null == assets ? _self.assets : assets // ignore: cast_nullable_to_non_nullable
 as List<Asset>,loans: null == loans ? _self.loans : loans // ignore: cast_nullable_to_non_nullable
 as List<Loan>,
   ));
@@ -178,10 +183,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Country country,  Currency currency,  int currentMonth,  int ageInMonths,  int startCalendarMonth,  double cash,  double monthlyExpenses,  double baseSalary,  int stress,  int networkScore,  int creditScore,  HousingLevel housingLevel,  List<String> ownedItems,  String? currentEventId,  Set<String> flags,  List<Asset> assets,  List<Loan> loans)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Country country,  Currency currency,  String scenarioId,  int currentMonth,  int ageInMonths,  int startCalendarMonth,  double cash,  double monthlyExpenses,  double monthlyRent,  double baseSalary,  int stress,  int networkScore,  int creditScore,  HousingLevel housingLevel,  List<String> ownedItems,  String? currentEventId,  Set<String> flags,  double familySupportExpense,  double baseEventChance,  int bankruptcyMonthsThreshold,  List<Asset> assets,  List<Loan> loans)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _GameState() when $default != null:
-return $default(_that.country,_that.currency,_that.currentMonth,_that.ageInMonths,_that.startCalendarMonth,_that.cash,_that.monthlyExpenses,_that.baseSalary,_that.stress,_that.networkScore,_that.creditScore,_that.housingLevel,_that.ownedItems,_that.currentEventId,_that.flags,_that.assets,_that.loans);case _:
+return $default(_that.country,_that.currency,_that.scenarioId,_that.currentMonth,_that.ageInMonths,_that.startCalendarMonth,_that.cash,_that.monthlyExpenses,_that.monthlyRent,_that.baseSalary,_that.stress,_that.networkScore,_that.creditScore,_that.housingLevel,_that.ownedItems,_that.currentEventId,_that.flags,_that.familySupportExpense,_that.baseEventChance,_that.bankruptcyMonthsThreshold,_that.assets,_that.loans);case _:
   return orElse();
 
 }
@@ -199,10 +204,10 @@ return $default(_that.country,_that.currency,_that.currentMonth,_that.ageInMonth
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Country country,  Currency currency,  int currentMonth,  int ageInMonths,  int startCalendarMonth,  double cash,  double monthlyExpenses,  double baseSalary,  int stress,  int networkScore,  int creditScore,  HousingLevel housingLevel,  List<String> ownedItems,  String? currentEventId,  Set<String> flags,  List<Asset> assets,  List<Loan> loans)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Country country,  Currency currency,  String scenarioId,  int currentMonth,  int ageInMonths,  int startCalendarMonth,  double cash,  double monthlyExpenses,  double monthlyRent,  double baseSalary,  int stress,  int networkScore,  int creditScore,  HousingLevel housingLevel,  List<String> ownedItems,  String? currentEventId,  Set<String> flags,  double familySupportExpense,  double baseEventChance,  int bankruptcyMonthsThreshold,  List<Asset> assets,  List<Loan> loans)  $default,) {final _that = this;
 switch (_that) {
 case _GameState():
-return $default(_that.country,_that.currency,_that.currentMonth,_that.ageInMonths,_that.startCalendarMonth,_that.cash,_that.monthlyExpenses,_that.baseSalary,_that.stress,_that.networkScore,_that.creditScore,_that.housingLevel,_that.ownedItems,_that.currentEventId,_that.flags,_that.assets,_that.loans);case _:
+return $default(_that.country,_that.currency,_that.scenarioId,_that.currentMonth,_that.ageInMonths,_that.startCalendarMonth,_that.cash,_that.monthlyExpenses,_that.monthlyRent,_that.baseSalary,_that.stress,_that.networkScore,_that.creditScore,_that.housingLevel,_that.ownedItems,_that.currentEventId,_that.flags,_that.familySupportExpense,_that.baseEventChance,_that.bankruptcyMonthsThreshold,_that.assets,_that.loans);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -219,10 +224,10 @@ return $default(_that.country,_that.currency,_that.currentMonth,_that.ageInMonth
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Country country,  Currency currency,  int currentMonth,  int ageInMonths,  int startCalendarMonth,  double cash,  double monthlyExpenses,  double baseSalary,  int stress,  int networkScore,  int creditScore,  HousingLevel housingLevel,  List<String> ownedItems,  String? currentEventId,  Set<String> flags,  List<Asset> assets,  List<Loan> loans)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Country country,  Currency currency,  String scenarioId,  int currentMonth,  int ageInMonths,  int startCalendarMonth,  double cash,  double monthlyExpenses,  double monthlyRent,  double baseSalary,  int stress,  int networkScore,  int creditScore,  HousingLevel housingLevel,  List<String> ownedItems,  String? currentEventId,  Set<String> flags,  double familySupportExpense,  double baseEventChance,  int bankruptcyMonthsThreshold,  List<Asset> assets,  List<Loan> loans)?  $default,) {final _that = this;
 switch (_that) {
 case _GameState() when $default != null:
-return $default(_that.country,_that.currency,_that.currentMonth,_that.ageInMonths,_that.startCalendarMonth,_that.cash,_that.monthlyExpenses,_that.baseSalary,_that.stress,_that.networkScore,_that.creditScore,_that.housingLevel,_that.ownedItems,_that.currentEventId,_that.flags,_that.assets,_that.loans);case _:
+return $default(_that.country,_that.currency,_that.scenarioId,_that.currentMonth,_that.ageInMonths,_that.startCalendarMonth,_that.cash,_that.monthlyExpenses,_that.monthlyRent,_that.baseSalary,_that.stress,_that.networkScore,_that.creditScore,_that.housingLevel,_that.ownedItems,_that.currentEventId,_that.flags,_that.familySupportExpense,_that.baseEventChance,_that.bankruptcyMonthsThreshold,_that.assets,_that.loans);case _:
   return null;
 
 }
@@ -234,12 +239,13 @@ return $default(_that.country,_that.currency,_that.currentMonth,_that.ageInMonth
 @JsonSerializable()
 
 class _GameState extends GameState {
-  const _GameState({required this.country, required this.currency, this.currentMonth = 1, this.ageInMonths = 264, this.startCalendarMonth = 1, required this.cash, required this.monthlyExpenses, required this.baseSalary, this.stress = 0, this.networkScore = 0, this.creditScore = 600, this.housingLevel = HousingLevel.shabbyRoom, final  List<String> ownedItems = const [], this.currentEventId, final  Set<String> flags = const {}, final  List<Asset> assets = const [], final  List<Loan> loans = const []}): _ownedItems = ownedItems,_flags = flags,_assets = assets,_loans = loans,super._();
+  const _GameState({required this.country, required this.currency, required this.scenarioId, this.currentMonth = 1, this.ageInMonths = 264, this.startCalendarMonth = 1, required this.cash, required this.monthlyExpenses, required this.monthlyRent, required this.baseSalary, this.stress = 0, this.networkScore = 0, this.creditScore = 600, this.housingLevel = HousingLevel.shabbyRoom, final  List<String> ownedItems = const [], this.currentEventId, final  Set<String> flags = const {}, this.familySupportExpense = 0.0, this.baseEventChance = 0.2, this.bankruptcyMonthsThreshold = 3, final  List<Asset> assets = const [], final  List<Loan> loans = const []}): _ownedItems = ownedItems,_flags = flags,_assets = assets,_loans = loans,super._();
   factory _GameState.fromJson(Map<String, dynamic> json) => _$GameStateFromJson(json);
 
 // 0. Bối cảnh Quốc gia & Tiền tệ
 @override final  Country country;
 @override final  Currency currency;
+@override final  String scenarioId;
 // 1. Time
 @override@JsonKey() final  int currentMonth;
 @override@JsonKey() final  int ageInMonths;
@@ -249,6 +255,7 @@ class _GameState extends GameState {
 // 2. Financials (Bắt buộc phải khởi tạo tùy bối cảnh)
 @override final  double cash;
 @override final  double monthlyExpenses;
+@override final  double monthlyRent;
 @override final  double baseSalary;
 // 3. Metrics
 @override@JsonKey() final  int stress;
@@ -272,6 +279,9 @@ class _GameState extends GameState {
   return EqualUnmodifiableSetView(_flags);
 }
 
+@override@JsonKey() final  double familySupportExpense;
+@override@JsonKey() final  double baseEventChance;
+@override@JsonKey() final  int bankruptcyMonthsThreshold;
 // 6. Inventories
  final  List<Asset> _assets;
 // 6. Inventories
@@ -302,16 +312,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GameState&&(identical(other.country, country) || other.country == country)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.currentMonth, currentMonth) || other.currentMonth == currentMonth)&&(identical(other.ageInMonths, ageInMonths) || other.ageInMonths == ageInMonths)&&(identical(other.startCalendarMonth, startCalendarMonth) || other.startCalendarMonth == startCalendarMonth)&&(identical(other.cash, cash) || other.cash == cash)&&(identical(other.monthlyExpenses, monthlyExpenses) || other.monthlyExpenses == monthlyExpenses)&&(identical(other.baseSalary, baseSalary) || other.baseSalary == baseSalary)&&(identical(other.stress, stress) || other.stress == stress)&&(identical(other.networkScore, networkScore) || other.networkScore == networkScore)&&(identical(other.creditScore, creditScore) || other.creditScore == creditScore)&&(identical(other.housingLevel, housingLevel) || other.housingLevel == housingLevel)&&const DeepCollectionEquality().equals(other._ownedItems, _ownedItems)&&(identical(other.currentEventId, currentEventId) || other.currentEventId == currentEventId)&&const DeepCollectionEquality().equals(other._flags, _flags)&&const DeepCollectionEquality().equals(other._assets, _assets)&&const DeepCollectionEquality().equals(other._loans, _loans));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GameState&&(identical(other.country, country) || other.country == country)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.scenarioId, scenarioId) || other.scenarioId == scenarioId)&&(identical(other.currentMonth, currentMonth) || other.currentMonth == currentMonth)&&(identical(other.ageInMonths, ageInMonths) || other.ageInMonths == ageInMonths)&&(identical(other.startCalendarMonth, startCalendarMonth) || other.startCalendarMonth == startCalendarMonth)&&(identical(other.cash, cash) || other.cash == cash)&&(identical(other.monthlyExpenses, monthlyExpenses) || other.monthlyExpenses == monthlyExpenses)&&(identical(other.monthlyRent, monthlyRent) || other.monthlyRent == monthlyRent)&&(identical(other.baseSalary, baseSalary) || other.baseSalary == baseSalary)&&(identical(other.stress, stress) || other.stress == stress)&&(identical(other.networkScore, networkScore) || other.networkScore == networkScore)&&(identical(other.creditScore, creditScore) || other.creditScore == creditScore)&&(identical(other.housingLevel, housingLevel) || other.housingLevel == housingLevel)&&const DeepCollectionEquality().equals(other._ownedItems, _ownedItems)&&(identical(other.currentEventId, currentEventId) || other.currentEventId == currentEventId)&&const DeepCollectionEquality().equals(other._flags, _flags)&&(identical(other.familySupportExpense, familySupportExpense) || other.familySupportExpense == familySupportExpense)&&(identical(other.baseEventChance, baseEventChance) || other.baseEventChance == baseEventChance)&&(identical(other.bankruptcyMonthsThreshold, bankruptcyMonthsThreshold) || other.bankruptcyMonthsThreshold == bankruptcyMonthsThreshold)&&const DeepCollectionEquality().equals(other._assets, _assets)&&const DeepCollectionEquality().equals(other._loans, _loans));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,country,currency,currentMonth,ageInMonths,startCalendarMonth,cash,monthlyExpenses,baseSalary,stress,networkScore,creditScore,housingLevel,const DeepCollectionEquality().hash(_ownedItems),currentEventId,const DeepCollectionEquality().hash(_flags),const DeepCollectionEquality().hash(_assets),const DeepCollectionEquality().hash(_loans));
+int get hashCode => Object.hashAll([runtimeType,country,currency,scenarioId,currentMonth,ageInMonths,startCalendarMonth,cash,monthlyExpenses,monthlyRent,baseSalary,stress,networkScore,creditScore,housingLevel,const DeepCollectionEquality().hash(_ownedItems),currentEventId,const DeepCollectionEquality().hash(_flags),familySupportExpense,baseEventChance,bankruptcyMonthsThreshold,const DeepCollectionEquality().hash(_assets),const DeepCollectionEquality().hash(_loans)]);
 
 @override
 String toString() {
-  return 'GameState(country: $country, currency: $currency, currentMonth: $currentMonth, ageInMonths: $ageInMonths, startCalendarMonth: $startCalendarMonth, cash: $cash, monthlyExpenses: $monthlyExpenses, baseSalary: $baseSalary, stress: $stress, networkScore: $networkScore, creditScore: $creditScore, housingLevel: $housingLevel, ownedItems: $ownedItems, currentEventId: $currentEventId, flags: $flags, assets: $assets, loans: $loans)';
+  return 'GameState(country: $country, currency: $currency, scenarioId: $scenarioId, currentMonth: $currentMonth, ageInMonths: $ageInMonths, startCalendarMonth: $startCalendarMonth, cash: $cash, monthlyExpenses: $monthlyExpenses, monthlyRent: $monthlyRent, baseSalary: $baseSalary, stress: $stress, networkScore: $networkScore, creditScore: $creditScore, housingLevel: $housingLevel, ownedItems: $ownedItems, currentEventId: $currentEventId, flags: $flags, familySupportExpense: $familySupportExpense, baseEventChance: $baseEventChance, bankruptcyMonthsThreshold: $bankruptcyMonthsThreshold, assets: $assets, loans: $loans)';
 }
 
 
@@ -322,7 +332,7 @@ abstract mixin class _$GameStateCopyWith<$Res> implements $GameStateCopyWith<$Re
   factory _$GameStateCopyWith(_GameState value, $Res Function(_GameState) _then) = __$GameStateCopyWithImpl;
 @override @useResult
 $Res call({
- Country country, Currency currency, int currentMonth, int ageInMonths, int startCalendarMonth, double cash, double monthlyExpenses, double baseSalary, int stress, int networkScore, int creditScore, HousingLevel housingLevel, List<String> ownedItems, String? currentEventId, Set<String> flags, List<Asset> assets, List<Loan> loans
+ Country country, Currency currency, String scenarioId, int currentMonth, int ageInMonths, int startCalendarMonth, double cash, double monthlyExpenses, double monthlyRent, double baseSalary, int stress, int networkScore, int creditScore, HousingLevel housingLevel, List<String> ownedItems, String? currentEventId, Set<String> flags, double familySupportExpense, double baseEventChance, int bankruptcyMonthsThreshold, List<Asset> assets, List<Loan> loans
 });
 
 
@@ -339,15 +349,17 @@ class __$GameStateCopyWithImpl<$Res>
 
 /// Create a copy of GameState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? country = null,Object? currency = null,Object? currentMonth = null,Object? ageInMonths = null,Object? startCalendarMonth = null,Object? cash = null,Object? monthlyExpenses = null,Object? baseSalary = null,Object? stress = null,Object? networkScore = null,Object? creditScore = null,Object? housingLevel = null,Object? ownedItems = null,Object? currentEventId = freezed,Object? flags = null,Object? assets = null,Object? loans = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? country = null,Object? currency = null,Object? scenarioId = null,Object? currentMonth = null,Object? ageInMonths = null,Object? startCalendarMonth = null,Object? cash = null,Object? monthlyExpenses = null,Object? monthlyRent = null,Object? baseSalary = null,Object? stress = null,Object? networkScore = null,Object? creditScore = null,Object? housingLevel = null,Object? ownedItems = null,Object? currentEventId = freezed,Object? flags = null,Object? familySupportExpense = null,Object? baseEventChance = null,Object? bankruptcyMonthsThreshold = null,Object? assets = null,Object? loans = null,}) {
   return _then(_GameState(
 country: null == country ? _self.country : country // ignore: cast_nullable_to_non_nullable
 as Country,currency: null == currency ? _self.currency : currency // ignore: cast_nullable_to_non_nullable
-as Currency,currentMonth: null == currentMonth ? _self.currentMonth : currentMonth // ignore: cast_nullable_to_non_nullable
+as Currency,scenarioId: null == scenarioId ? _self.scenarioId : scenarioId // ignore: cast_nullable_to_non_nullable
+as String,currentMonth: null == currentMonth ? _self.currentMonth : currentMonth // ignore: cast_nullable_to_non_nullable
 as int,ageInMonths: null == ageInMonths ? _self.ageInMonths : ageInMonths // ignore: cast_nullable_to_non_nullable
 as int,startCalendarMonth: null == startCalendarMonth ? _self.startCalendarMonth : startCalendarMonth // ignore: cast_nullable_to_non_nullable
 as int,cash: null == cash ? _self.cash : cash // ignore: cast_nullable_to_non_nullable
 as double,monthlyExpenses: null == monthlyExpenses ? _self.monthlyExpenses : monthlyExpenses // ignore: cast_nullable_to_non_nullable
+as double,monthlyRent: null == monthlyRent ? _self.monthlyRent : monthlyRent // ignore: cast_nullable_to_non_nullable
 as double,baseSalary: null == baseSalary ? _self.baseSalary : baseSalary // ignore: cast_nullable_to_non_nullable
 as double,stress: null == stress ? _self.stress : stress // ignore: cast_nullable_to_non_nullable
 as int,networkScore: null == networkScore ? _self.networkScore : networkScore // ignore: cast_nullable_to_non_nullable
@@ -356,7 +368,10 @@ as int,housingLevel: null == housingLevel ? _self.housingLevel : housingLevel //
 as HousingLevel,ownedItems: null == ownedItems ? _self._ownedItems : ownedItems // ignore: cast_nullable_to_non_nullable
 as List<String>,currentEventId: freezed == currentEventId ? _self.currentEventId : currentEventId // ignore: cast_nullable_to_non_nullable
 as String?,flags: null == flags ? _self._flags : flags // ignore: cast_nullable_to_non_nullable
-as Set<String>,assets: null == assets ? _self._assets : assets // ignore: cast_nullable_to_non_nullable
+as Set<String>,familySupportExpense: null == familySupportExpense ? _self.familySupportExpense : familySupportExpense // ignore: cast_nullable_to_non_nullable
+as double,baseEventChance: null == baseEventChance ? _self.baseEventChance : baseEventChance // ignore: cast_nullable_to_non_nullable
+as double,bankruptcyMonthsThreshold: null == bankruptcyMonthsThreshold ? _self.bankruptcyMonthsThreshold : bankruptcyMonthsThreshold // ignore: cast_nullable_to_non_nullable
+as int,assets: null == assets ? _self._assets : assets // ignore: cast_nullable_to_non_nullable
 as List<Asset>,loans: null == loans ? _self._loans : loans // ignore: cast_nullable_to_non_nullable
 as List<Loan>,
   ));

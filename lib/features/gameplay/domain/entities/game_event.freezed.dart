@@ -293,9 +293,7 @@ as List<EventOption>,
 /// @nodoc
 mixin _$EventOption {
 
- String get id; String get label;// Nút bấm hiển thị (VD: "Đi nhậu xả láng")
-// Các tác động (Trade-offs) khi chọn option này
- double get cashEffect; int get stressEffect; int get networkEffect; int get creditEffect;
+ String get id; String get label; EventEffect get effect;
 /// Create a copy of EventOption
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -308,16 +306,16 @@ $EventOptionCopyWith<EventOption> get copyWith => _$EventOptionCopyWithImpl<Even
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventOption&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.cashEffect, cashEffect) || other.cashEffect == cashEffect)&&(identical(other.stressEffect, stressEffect) || other.stressEffect == stressEffect)&&(identical(other.networkEffect, networkEffect) || other.networkEffect == networkEffect)&&(identical(other.creditEffect, creditEffect) || other.creditEffect == creditEffect));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventOption&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.effect, effect) || other.effect == effect));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,label,cashEffect,stressEffect,networkEffect,creditEffect);
+int get hashCode => Object.hash(runtimeType,id,label,effect);
 
 @override
 String toString() {
-  return 'EventOption(id: $id, label: $label, cashEffect: $cashEffect, stressEffect: $stressEffect, networkEffect: $networkEffect, creditEffect: $creditEffect)';
+  return 'EventOption(id: $id, label: $label, effect: $effect)';
 }
 
 
@@ -328,11 +326,11 @@ abstract mixin class $EventOptionCopyWith<$Res>  {
   factory $EventOptionCopyWith(EventOption value, $Res Function(EventOption) _then) = _$EventOptionCopyWithImpl;
 @useResult
 $Res call({
- String id, String label, double cashEffect, int stressEffect, int networkEffect, int creditEffect
+ String id, String label, EventEffect effect
 });
 
 
-
+$EventEffectCopyWith<$Res> get effect;
 
 }
 /// @nodoc
@@ -345,18 +343,24 @@ class _$EventOptionCopyWithImpl<$Res>
 
 /// Create a copy of EventOption
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? label = null,Object? cashEffect = null,Object? stressEffect = null,Object? networkEffect = null,Object? creditEffect = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? label = null,Object? effect = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
-as String,cashEffect: null == cashEffect ? _self.cashEffect : cashEffect // ignore: cast_nullable_to_non_nullable
-as double,stressEffect: null == stressEffect ? _self.stressEffect : stressEffect // ignore: cast_nullable_to_non_nullable
-as int,networkEffect: null == networkEffect ? _self.networkEffect : networkEffect // ignore: cast_nullable_to_non_nullable
-as int,creditEffect: null == creditEffect ? _self.creditEffect : creditEffect // ignore: cast_nullable_to_non_nullable
-as int,
+as String,effect: null == effect ? _self.effect : effect // ignore: cast_nullable_to_non_nullable
+as EventEffect,
   ));
 }
-
+/// Create a copy of EventOption
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$EventEffectCopyWith<$Res> get effect {
+  
+  return $EventEffectCopyWith<$Res>(_self.effect, (value) {
+    return _then(_self.copyWith(effect: value));
+  });
+}
 }
 
 
@@ -438,10 +442,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String label,  double cashEffect,  int stressEffect,  int networkEffect,  int creditEffect)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String label,  EventEffect effect)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _EventOption() when $default != null:
-return $default(_that.id,_that.label,_that.cashEffect,_that.stressEffect,_that.networkEffect,_that.creditEffect);case _:
+return $default(_that.id,_that.label,_that.effect);case _:
   return orElse();
 
 }
@@ -459,10 +463,10 @@ return $default(_that.id,_that.label,_that.cashEffect,_that.stressEffect,_that.n
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String label,  double cashEffect,  int stressEffect,  int networkEffect,  int creditEffect)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String label,  EventEffect effect)  $default,) {final _that = this;
 switch (_that) {
 case _EventOption():
-return $default(_that.id,_that.label,_that.cashEffect,_that.stressEffect,_that.networkEffect,_that.creditEffect);case _:
+return $default(_that.id,_that.label,_that.effect);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -479,10 +483,10 @@ return $default(_that.id,_that.label,_that.cashEffect,_that.stressEffect,_that.n
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String label,  double cashEffect,  int stressEffect,  int networkEffect,  int creditEffect)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String label,  EventEffect effect)?  $default,) {final _that = this;
 switch (_that) {
 case _EventOption() when $default != null:
-return $default(_that.id,_that.label,_that.cashEffect,_that.stressEffect,_that.networkEffect,_that.creditEffect);case _:
+return $default(_that.id,_that.label,_that.effect);case _:
   return null;
 
 }
@@ -494,17 +498,12 @@ return $default(_that.id,_that.label,_that.cashEffect,_that.stressEffect,_that.n
 @JsonSerializable()
 
 class _EventOption implements EventOption {
-  const _EventOption({required this.id, required this.label, this.cashEffect = 0.0, this.stressEffect = 0, this.networkEffect = 0, this.creditEffect = 0});
+  const _EventOption({required this.id, required this.label, this.effect = const EventEffect()});
   factory _EventOption.fromJson(Map<String, dynamic> json) => _$EventOptionFromJson(json);
 
 @override final  String id;
 @override final  String label;
-// Nút bấm hiển thị (VD: "Đi nhậu xả láng")
-// Các tác động (Trade-offs) khi chọn option này
-@override@JsonKey() final  double cashEffect;
-@override@JsonKey() final  int stressEffect;
-@override@JsonKey() final  int networkEffect;
-@override@JsonKey() final  int creditEffect;
+@override@JsonKey() final  EventEffect effect;
 
 /// Create a copy of EventOption
 /// with the given fields replaced by the non-null parameter values.
@@ -519,16 +518,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventOption&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.cashEffect, cashEffect) || other.cashEffect == cashEffect)&&(identical(other.stressEffect, stressEffect) || other.stressEffect == stressEffect)&&(identical(other.networkEffect, networkEffect) || other.networkEffect == networkEffect)&&(identical(other.creditEffect, creditEffect) || other.creditEffect == creditEffect));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventOption&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.effect, effect) || other.effect == effect));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,label,cashEffect,stressEffect,networkEffect,creditEffect);
+int get hashCode => Object.hash(runtimeType,id,label,effect);
 
 @override
 String toString() {
-  return 'EventOption(id: $id, label: $label, cashEffect: $cashEffect, stressEffect: $stressEffect, networkEffect: $networkEffect, creditEffect: $creditEffect)';
+  return 'EventOption(id: $id, label: $label, effect: $effect)';
 }
 
 
@@ -539,11 +538,11 @@ abstract mixin class _$EventOptionCopyWith<$Res> implements $EventOptionCopyWith
   factory _$EventOptionCopyWith(_EventOption value, $Res Function(_EventOption) _then) = __$EventOptionCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String label, double cashEffect, int stressEffect, int networkEffect, int creditEffect
+ String id, String label, EventEffect effect
 });
 
 
-
+@override $EventEffectCopyWith<$Res> get effect;
 
 }
 /// @nodoc
@@ -556,19 +555,25 @@ class __$EventOptionCopyWithImpl<$Res>
 
 /// Create a copy of EventOption
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? label = null,Object? cashEffect = null,Object? stressEffect = null,Object? networkEffect = null,Object? creditEffect = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? label = null,Object? effect = null,}) {
   return _then(_EventOption(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
-as String,cashEffect: null == cashEffect ? _self.cashEffect : cashEffect // ignore: cast_nullable_to_non_nullable
-as double,stressEffect: null == stressEffect ? _self.stressEffect : stressEffect // ignore: cast_nullable_to_non_nullable
-as int,networkEffect: null == networkEffect ? _self.networkEffect : networkEffect // ignore: cast_nullable_to_non_nullable
-as int,creditEffect: null == creditEffect ? _self.creditEffect : creditEffect // ignore: cast_nullable_to_non_nullable
-as int,
+as String,effect: null == effect ? _self.effect : effect // ignore: cast_nullable_to_non_nullable
+as EventEffect,
   ));
 }
 
-
+/// Create a copy of EventOption
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$EventEffectCopyWith<$Res> get effect {
+  
+  return $EventEffectCopyWith<$Res>(_self.effect, (value) {
+    return _then(_self.copyWith(effect: value));
+  });
+}
 }
 
 // dart format on

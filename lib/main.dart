@@ -10,7 +10,7 @@ void main() async {
   await Hive.initFlutter();
 
   // Initialize GetIt (DI)
-  configureDependencies();
+  await configureDependencies();
   
   runApp(const RatRaceEscapeApp());
 }
@@ -25,7 +25,7 @@ class RatRaceEscapeApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
-        // Sau này ta sẽ nhúng Google Fonts vào đây
+        // Later we will embed Google Fonts here
       ),
       home: const Scaffold(
         backgroundColor: Colors.white,

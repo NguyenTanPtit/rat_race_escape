@@ -8,7 +8,7 @@ class CalculateCashflowUseCase {
     final double newCash = currentState.cash + 
         currentState.baseSalary + 
         currentState.passiveIncome - 
-        currentState.monthlyExpenses;
+        currentState.totalMonthlyOutflow;
 
     return currentState.copyWith(cash: newCash);
   }

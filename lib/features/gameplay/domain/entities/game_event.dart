@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'event_effect.dart';
 
 part 'game_event.freezed.dart';
 part 'game_event.g.dart';
@@ -19,13 +20,8 @@ abstract class GameEvent with _$GameEvent {
 abstract class EventOption with _$EventOption {
   const factory EventOption({
     required String id,
-    required String label, // Nút bấm hiển thị (VD: "Đi nhậu xả láng")
-
-    // Các tác động (Trade-offs) khi chọn option này
-    @Default(0.0) double cashEffect,
-    @Default(0) int stressEffect,
-    @Default(0) int networkEffect,
-    @Default(0) int creditEffect,
+    required String label,
+    @Default(EventEffect()) EventEffect effect,
   }) = _EventOption;
 
   factory EventOption.fromJson(Map<String, dynamic> json) => _$EventOptionFromJson(json);

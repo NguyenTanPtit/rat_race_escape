@@ -18,13 +18,13 @@ class GameEngineCubit extends Cubit<GameEngineState> {
   }
 
   /// Advances the game engine to the next month using the usecase pipeline.
-  void nextMonth() {
+  Future<void> nextMonth() async {
     if (state is! GameEnginePlaying) return;
     
     final playingState = state as GameEnginePlaying;
 
     // Process the next month
-    final result = _processNextMonthUseCase.call(playingState.gameState);
+    final result = await _processNextMonthUseCase.call(playingState.gameState);
 
     // Handle the Either result
     result.fold(

@@ -1,0 +1,122 @@
+{
+  "tet_holiday": {
+    "title": "Tết Nguyên Đán",
+    "description": "Đến hẹn lại lên, một năm cố gắng cũng chỉ để có một cái Tết ấm no. Bạn cần chuẩn bị tiền mừng tuổi, mua quà biếu nội ngoại, vé tàu xe về quê, và sắm sửa đồ đạc mới cho gia đình.",
+    "options": {
+      "tet_opt1": "Biếu bố mẹ & Lì xì"
+    }
+  },
+  "friend_wedding": {
+    "title": "Đám cưới bạn thân",
+    "description": "Bạn thân từ thời đại học gửi thiệp hồng báo hỷ. Dù túi đang rỗng, bạn cũng không thể nào bỏ lỡ ngày vui của bạn mình.",
+    "options": {
+      "wed_opt1": "Đi ăn cưới (500k)",
+      "wed_opt2": "Gửi tiền mừng (300k)"
+    }
+  },
+  "broken_bike": {
+    "title": "Xe máy hỏng",
+    "description": "Chiếc xe máy cũ lại dở chứng giữa đường đi làm. May mà vẫn lết được vào tiệm sửa xe, nhưng tháng này lại tốn một khoản tiền không nhỏ.",
+    "options": {
+      "bb_opt1": "Sửa xe dạo (200k)"
+    }
+  },
+  "over_saving": {
+    "title": "Căng thẳng vì tiết kiệm",
+    "description": "Việc liên tục chắt bóp chi tiêu khiến bạn kiệt sức. Nhìn bạn bè đi ăn uống sang chảnh, bạn cũng muốn tự thưởng cho mình một bữa ăn ngon để giải tỏa.",
+    "options": {
+      "os_opt1": "Cắt giảm giao lưu để tiết kiệm",
+      "os_opt2": "Đi ăn một bữa ngon (500k)"
+    }
+  },
+  "stomachache": {
+    "title": "Đau dạ dày",
+    "description": "Do ăn uống kham khổ cộng thêm áp lực và không có ai trò chuyện, bạn bị đau dạ dày dữ dội phải nhập viện.",
+    "options": {
+      "stm_opt1": "Nằm viện điều trị (3tr)"
+    }
+  },
+  "buy_used_car": {
+    "title": "Mua ô tô",
+    "description": "Dành dụm mãi, bạn đang phân vân có nên nâng cấp phương tiện đi lại không?",
+    "options": {
+      "buc_opt1": "Mua xe cũ (100tr)",
+      "buc_opt2": "Vay mua xe mới trả góp",
+      "buc_opt3": "Thôi, đi xe máy cho lành"
+    }
+  },
+  "used_car_broken": {
+    "title": "Tiền nuôi xe",
+    "description": "Đúng là 'mua xe đã khó, nuôi xe càng khó hơn'. Xe lại hỏng một món phụ tùng, và chi phí thay thế thì đắt đỏ vô cùng.",
+    "options": {
+      "ucb_opt1": "Sửa xe (5tr)"
+    }
+  },
+  "quarterly_bonus": {
+    "title": "Thưởng quý",
+    "description": "Do thành tích công việc tốt, tháng này công ty quyết định thưởng nóng cho bạn. Tuyệt vời!",
+    "options": {
+      "qb_opt1": "Tuyệt vời"
+    }
+  },
+  "sudden_illness": {
+    "title": "Bệnh vặt",
+    "description": "Cơ thể rã rời do làm việc quá sức. Bạn phải đi khám bệnh và uống thuốc, mất vài ngày nghỉ ngơi.",
+    "options": {
+      "si_opt1": "Đi viện & uống thuốc (1tr)"
+    }
+  },
+  "promotion_opportunity": {
+    "title": "Cơ hội thăng tiến",
+    "description": "Sếp muốn đề bạt bạn lên vị trí tổ trưởng với mức lương cao hơn. Tuy nhiên, đi kèm với đó là trách nhiệm và áp lực công việc gấp bội.",
+    "options": {
+      "po_opt1": "Cố gắng nắm lấy (+2tr/tháng)",
+      "po_opt2": "Bỏ qua vì quá mệt"
+    }
+  },
+  "freelance_job": {
+    "title": "Nhận job ngoài",
+    "description": "Một người bạn giới thiệu cho bạn dự án freelance kiếm thêm thu nhập vào buổi tối. Có làm không?",
+    "options": {
+      "fj_opt1": "Nhận làm (+3tr)",
+      "fj_opt2": "Từ chối"
+    }
+  },
+  "late_for_work": {
+    "title": "Đi làm muộn",
+    "description": "Đường tắc, kẹt xe triền miên khiến bạn đi trễ và bị công ty trừ lương tháng này.",
+    "options": {
+      "lw_opt1": "Bị trừ lương (200k)"
+    }
+  },
+  "invest_course": {
+    "title": "Khóa học đầu tư",
+    "description": "Trên mạng đang rầm rộ một khóa học quản lý tài chính và đầu tư ngắn hạn. Bạn có muốn bỏ tiền ra học hỏi không?",
+    "options": {
+      "ic_opt1": "Đăng ký học (2tr)",
+      "ic_opt2": "Không học"
+    }
+  },
+  "online_scam": {
+    "title": "Lừa đảo qua mạng",
+    "description": "Vô tình click vào một đường link lạ nhận quà tặng, bạn bị trừ tiền oan trong tài khoản ngân hàng.",
+    "options": {
+      "osc_opt1": "Mất tiền oan (1tr)"
+    }
+  },
+  "friend_borrows": {
+    "title": "Bạn bè mượn tiền",
+    "description": "Một người quen nhắn tin hỏi mượn một ít tiền để xoay xở công việc. Bạn có nên cho mượn không?",
+    "options": {
+      "fb_opt1": "Cho vay (2tr)",
+      "fb_opt2": "Từ chối khéo"
+    }
+  },
+  "find_money": {
+    "title": "Nhặt được tiền",
+    "description": "Đang đi bộ trên đường, bạn vô tình nhặt được tờ 500k bị đánh rơi. May mắn bất ngờ!",
+    "options": {
+      "fm_opt1": "Nhặt được 500k"
+    }
+  }
+}

@@ -1,6 +1,6 @@
-import '../entities/game_event.dart';
 import '../entities/game_state.dart';
+import '../entities/event_definition.dart';
 
 abstract class EventPoolRepository {
-  Future<List<GameEvent>> loadEventPool(Country country, String scenarioId);
+  Future<List<EventDefinition>> loadEventPool(Country country, String scenarioId, {String locale = 'vi'});
 }

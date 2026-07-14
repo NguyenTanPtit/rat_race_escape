@@ -1,0 +1,354 @@
+{
+  "id": "vn_provincial",
+  "initialCash": 5000000,
+  "baseSalary": 15000000,
+  "monthlyRent": 3500000,
+  "monthlyExpenses": 5000000,
+  "familySupportExpense": 2000000,
+  "startAgeInMonths": 264,
+  "startCalendarMonth": 1,
+  "initialCreditScore": 500,
+  "housingLevel": "shabbyRoom",
+  "country": "vietnam",
+  "currency": "vnd",
+  "bankruptcyMonthsThreshold": 3,
+  "baseEventChance": 0.2,
+  "events": [
+    {
+      "id": "e_tet",
+      "textKey": "tet_holiday",
+      "trigger": {
+        "targetCalendarMonths": [1, 2]
+      },
+      "absoluteChance": 1.0,
+      "options": [
+        {
+          "id": "tet_opt1",
+          "labelKey": "tet_opt1",
+          "effect": {
+            "cash": 5000000,
+            "stress": -10,
+            "network": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "e_wedding",
+      "textKey": "friend_wedding",
+      "trigger": {},
+      "weight": 2.0,
+      "options": [
+        {
+          "id": "wed_opt1",
+          "labelKey": "wed_opt1",
+          "effect": {
+            "cash": -500000,
+            "network": 2
+          }
+        },
+        {
+          "id": "wed_opt2",
+          "labelKey": "wed_opt2",
+          "effect": {
+            "cash": -300000,
+            "network": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "e_broken_bike",
+      "textKey": "broken_bike",
+      "trigger": {},
+      "weight": 1.0,
+      "options": [
+        {
+          "id": "bb_opt1",
+          "labelKey": "bb_opt1",
+          "effect": {
+            "cash": -200000,
+            "stress": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "e_over_saving",
+      "textKey": "over_saving",
+      "trigger": {
+        "minStress": 60
+      },
+      "weight": 1.5,
+      "options": [
+        {
+          "id": "os_opt1",
+          "labelKey": "os_opt1",
+          "effect": {
+            "stress": 10,
+            "network": -20,
+            "addedFlags": ["anti_social"]
+          }
+        },
+        {
+          "id": "os_opt2",
+          "labelKey": "os_opt2",
+          "effect": {
+            "cash": -500000,
+            "stress": -15
+          }
+        }
+      ]
+    },
+    {
+      "id": "e_stomachache",
+      "textKey": "stomachache",
+      "trigger": {
+        "requiredFlags": ["anti_social"]
+      },
+      "absoluteChance": 0.2,
+      "options": [
+        {
+          "id": "stm_opt1",
+          "labelKey": "stm_opt1",
+          "effect": {
+            "cash": -3000000,
+            "stress": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": "e_buy_used_car",
+      "textKey": "buy_used_car",
+      "trigger": {
+        "minAgeInMonths": 300
+      },
+      "weight": 0.5,
+      "options": [
+        {
+          "id": "buc_opt1",
+          "labelKey": "buc_opt1",
+          "effect": {
+            "cash": -100000000,
+            "addedFlags": ["owns_used_car"],
+            "monthlyExpensesDelta": 2000000,
+            "stress": -5
+          }
+        },
+        {
+          "id": "buc_opt2",
+          "labelKey": "buc_opt2",
+          "effect": {
+            "addedLoans": [
+              {
+                "id": "car_loan_1",
+                "name": "Vay mua ô tô mới",
+                "principalAmount": 500000000,
+                "interestRatePerYear": 10.5,
+                "minimumMonthlyPayment": 10000000,
+                "type": "mortgage"
+              }
+            ],
+            "monthlyExpensesDelta": 3000000,
+            "stress": -15
+          }
+        },
+        {
+          "id": "buc_opt3",
+          "labelKey": "buc_opt3",
+          "effect": {}
+        }
+      ]
+    },
+    {
+      "id": "e_car_broken",
+      "textKey": "used_car_broken",
+      "trigger": {
+        "requiredFlags": ["owns_used_car"]
+      },
+      "absoluteChance": 0.3,
+      "options": [
+        {
+          "id": "ucb_opt1",
+          "labelKey": "ucb_opt1",
+          "effect": {
+            "cash": -5000000,
+            "stress": 10
+          }
+        }
+      ]
+    },
+    {
+      "id": "e_bonus",
+      "textKey": "quarterly_bonus",
+      "trigger": {},
+      "weight": 1.5,
+      "options": [
+        {
+          "id": "qb_opt1",
+          "labelKey": "qb_opt1",
+          "effect": {
+            "cash": 5000000,
+            "stress": -5
+          }
+        }
+      ]
+    },
+    {
+      "id": "e_illness",
+      "textKey": "sudden_illness",
+      "trigger": {},
+      "weight": 1.0,
+      "options": [
+        {
+          "id": "si_opt1",
+          "labelKey": "si_opt1",
+          "effect": {
+            "cash": -1000000,
+            "stress": 15
+          }
+        }
+      ]
+    },
+    {
+      "id": "e_promotion",
+      "textKey": "promotion_opportunity",
+      "trigger": {
+        "minAgeInMonths": 276
+      },
+      "weight": 0.5,
+      "options": [
+        {
+          "id": "po_opt1",
+          "labelKey": "po_opt1",
+          "effect": {
+            "salaryDelta": 2000000,
+            "stress": 20
+          }
+        },
+        {
+          "id": "po_opt2",
+          "labelKey": "po_opt2",
+          "effect": {
+            "stress": -5
+          }
+        }
+      ]
+    },
+    {
+      "id": "e_freelance",
+      "textKey": "freelance_job",
+      "trigger": {},
+      "weight": 1.2,
+      "options": [
+        {
+          "id": "fj_opt1",
+          "labelKey": "fj_opt1",
+          "effect": {
+            "cash": 3000000,
+            "stress": 15
+          }
+        },
+        {
+          "id": "fj_opt2",
+          "labelKey": "fj_opt2",
+          "effect": {}
+        }
+      ]
+    },
+    {
+      "id": "e_late_work",
+      "textKey": "late_for_work",
+      "trigger": {},
+      "weight": 1.0,
+      "options": [
+        {
+          "id": "lw_opt1",
+          "labelKey": "lw_opt1",
+          "effect": {
+            "cash": -200000,
+            "stress": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "e_invest_course",
+      "textKey": "invest_course",
+      "trigger": {},
+      "weight": 0.8,
+      "options": [
+        {
+          "id": "ic_opt1",
+          "labelKey": "ic_opt1",
+          "effect": {
+            "cash": -2000000,
+            "network": 5,
+            "stress": 5
+          }
+        },
+        {
+          "id": "ic_opt2",
+          "labelKey": "ic_opt2",
+          "effect": {}
+        }
+      ]
+    },
+    {
+      "id": "e_scam",
+      "textKey": "online_scam",
+      "trigger": {},
+      "weight": 0.3,
+      "options": [
+        {
+          "id": "osc_opt1",
+          "labelKey": "osc_opt1",
+          "effect": {
+            "cash": -1000000,
+            "stress": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": "e_friend_borrow",
+      "textKey": "friend_borrows",
+      "trigger": {},
+      "weight": 0.5,
+      "options": [
+        {
+          "id": "fb_opt1",
+          "labelKey": "fb_opt1",
+          "effect": {
+            "cash": -2000000,
+            "network": 5
+          }
+        },
+        {
+          "id": "fb_opt2",
+          "labelKey": "fb_opt2",
+          "effect": {
+            "network": -2
+          }
+        }
+      ]
+    },
+    {
+      "id": "e_find_money",
+      "textKey": "find_money",
+      "trigger": {},
+      "weight": 0.2,
+      "options": [
+        {
+          "id": "fm_opt1",
+          "labelKey": "fm_opt1",
+          "effect": {
+            "cash": 500000,
+            "stress": -5
+          }
+        }
+      ]
+    }
+  ]
+}

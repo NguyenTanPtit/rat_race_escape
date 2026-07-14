@@ -28,18 +28,14 @@ Map<String, dynamic> _$GameEventToJson(_GameEvent instance) =>
 _EventOption _$EventOptionFromJson(Map<String, dynamic> json) => _EventOption(
   id: json['id'] as String,
   label: json['label'] as String,
-  cashEffect: (json['cashEffect'] as num?)?.toDouble() ?? 0.0,
-  stressEffect: (json['stressEffect'] as num?)?.toInt() ?? 0,
-  networkEffect: (json['networkEffect'] as num?)?.toInt() ?? 0,
-  creditEffect: (json['creditEffect'] as num?)?.toInt() ?? 0,
+  effect: json['effect'] == null
+      ? const EventEffect()
+      : EventEffect.fromJson(json['effect'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$EventOptionToJson(_EventOption instance) =>
     <String, dynamic>{
       'id': instance.id,
       'label': instance.label,
-      'cashEffect': instance.cashEffect,
-      'stressEffect': instance.stressEffect,
-      'networkEffect': instance.networkEffect,
-      'creditEffect': instance.creditEffect,
+      'effect': instance.effect.toJson(),
     };

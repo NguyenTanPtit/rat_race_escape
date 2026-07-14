@@ -24,7 +24,7 @@ class HiveGameStateRepository implements GameStateRepository {
         final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
         return GameState.fromJson(jsonMap);
       } catch (e) {
-        // Có thể log lỗi ở đây
+        // Can log error here
         return null;
       }
     }

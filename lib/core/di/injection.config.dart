@@ -16,10 +16,10 @@ import 'package:injectable/injectable.dart' as _i526;
 
 import '../../features/gameplay/data/repositories/hive_game_state_repository.dart'
     as _i1051;
-import '../../features/gameplay/data/repositories/in_memory_event_pool_repository.dart'
-    as _i561;
-import '../../features/gameplay/data/repositories/in_memory_scenario_config_repository.dart'
-    as _i542;
+import '../../features/gameplay/data/repositories/json_event_pool_repository.dart'
+    as _i831;
+import '../../features/gameplay/data/repositories/json_scenario_config_repository.dart'
+    as _i248;
 import '../../features/gameplay/domain/repositories/event_pool_repository.dart'
     as _i690;
 import '../../features/gameplay/domain/repositories/game_state_repository.dart'
@@ -57,23 +57,26 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i669.CheckGameStatusUseCase>(
       () => _i669.CheckGameStatusUseCase(),
     );
-    gh.lazySingleton<_i588.GenerateEventUseCase>(
-      () => _i588.GenerateEventUseCase(),
-    );
     gh.lazySingleton<_i709.ProcessLoansUseCase>(
       () => _i709.ProcessLoansUseCase(),
     );
     gh.lazySingleton<_i454.UpdateMetricsUseCase>(
       () => _i454.UpdateMetricsUseCase(),
     );
-    gh.lazySingleton<_i96.ScenarioConfigRepository>(
-      () => _i542.InMemoryScenarioConfigRepository(),
-    );
-    gh.lazySingleton<_i690.EventPoolRepository>(
-      () => _i561.InMemoryEventPoolRepository(),
-    );
     gh.lazySingleton<_i688.GameStateRepository>(
       () => _i1051.HiveGameStateRepository(),
+    );
+    gh.lazySingleton<_i690.EventPoolRepository>(
+      () => _i831.JsonEventPoolRepository(),
+    );
+    gh.lazySingleton<_i96.ScenarioConfigRepository>(
+      () => _i248.JsonScenarioConfigRepository(),
+    );
+    gh.lazySingleton<_i588.GenerateEventUseCase>(
+      () => _i588.GenerateEventUseCase(
+        gh<_i690.EventPoolRepository>(),
+        gh<_i407.Random>(),
+      ),
     );
     gh.lazySingleton<_i541.ProcessNextMonthUseCase>(
       () => _i541.ProcessNextMonthUseCase(

@@ -13,10 +13,13 @@ void main() {
 
   group('CheckGameStatusUseCase', () {
     final baseState = GameState(
+      scenarioId: 'test_scenario',
       country: Country.vietnam,
       currency: Currency.vnd,
       cash: 1000,
       monthlyExpenses: 500,
+      monthlyRent: 200,
+      familySupportExpense: 100,
       baseSalary: 1000,
     );
 
@@ -25,17 +28,13 @@ void main() {
       final state = baseState.copyWith(
         stress: 100, // Conflict condition
       );
-      // We need to mock passiveIncome getter. Since we haven't updated GameState to use assets for passiveIncome yet in the test setup, we will just use the baseState and assume GameState update will happen next.
-      // Wait, passiveIncome is a getter based on assets. Let's add an asset.
-      // Actually, right now GameState still has passiveIncome field because we haven't updated it yet.
-      // Let's assume GameState has passiveIncome field for now, or update it later.
       final stateWithPassiveIncome = state.copyWith(
         assets: [
           const Asset(
             id: 'a1',
             name: 'Stock',
             baseValue: 1000,
-            monthlyPassiveIncome: 600, // > 500
+            monthlyPassiveIncome: 900, // > 800 (outflow)
           )
         ],
       );
@@ -68,9 +67,9 @@ void main() {
       }
     });
 
-    test('should return TurnLost with bankruptcy if cash < -(3 * expenses)', () {
+    test('should return TurnLost with bankruptcy if cash < -(3 * outflow)', () {
       final state = baseState.copyWith(
-        cash: -1501, // 3 * 500 = 1500
+        cash: -2401, // 3 * 800 = 2400
       );
       final result = usecase(state);
 

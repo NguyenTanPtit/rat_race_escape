@@ -153,8 +153,31 @@ assets/config/
 - **Convention nhắc lại:** toàn bộ comment trong code viết bằng TIẾNG ANH (đã có comment tiếng Việt lọt vào ở các task trước — không lặp lại).
 - Unit test: parse JSON đúng schema; ghép textKey → text đúng locale; filter điều kiện trigger đúng (event Tết không xuất hiện khi `calendarMonth` = 6); trọng số xác suất hoạt động (test thống kê với seed cố định qua `Random` đã đăng ký trong DI module).
 
+### Task 2.5 — Apply Event Option (Phase 3: Player Action của Core Loop)
+Đây là mảnh còn thiếu của vòng lặp gameplay: khi người chơi chọn một option của event, hiệu ứng phải được áp vào GameState trong domain layer — KHÔNG áp trong Cubit hay UI.
+
+- **[NEW]** `domain/usecases/apply_event_option_usecase.dart`:
+  - Input: `GameState` hiện tại + `EventOption` được chọn (hoặc eventId + optionId, tự resolve qua EventPoolRepository — nêu lựa chọn trong plan).
+  - Áp toàn bộ `EventEffect` vào state: cash, stress (clamp 0-100), network, credit (clamp 300-850), thêm `addedLoans`/`addedAssets` vào inventory, cập nhật flags (added/removed), áp `salaryDelta`/`monthlyExpensesDelta` vào baseSalary/monthlyExpenses, và các hiệu ứng tỷ lệ bên dưới.
+  - Clear `currentEventId` sau khi áp (event đã được xử lý).
+  - Nếu effect có `insightCardId`: ghi nhận card mở khóa (tạm thời thêm vào một field/set trong GameState, ví dụ `unlockedInsightCardIds` — Task 4 sẽ xây hệ thống đầy đủ trên nền này).
+  - Validate: option phải thuộc event đang active (`currentEventId`), nếu không → trả `Left(Failure)` — chặn UI bug hoặc gọi sai áp effect của event khác.
+- **[MODIFY]** `EventEffect` — thêm hiệu ứng TỶ LỆ (proportional effects):
+  - Lý do: game chạy 40+ năm đời người, mọi con số tuyệt đối trong event đều trượt giá khi lương người chơi tăng gấp 3-4 lần ("thưởng Tết 15tr" hay "đám cưới 500k" vô nghĩa ở tuổi 45). Hiệu ứng tỷ lệ tự cân bằng theo tiến trình.
+  - Thêm 2 field (default 0.0): `cashBySalaryMultiplier` (cash thay đổi = hệ số × baseSalary hiện tại; dương là thưởng, âm là chi) và `cashByOutflowMultiplier` (cash thay đổi = hệ số × totalMonthlyOutflow hiện tại — dùng cho chi phí sinh hoạt đột biến).
+  - Thứ tự áp trong usecase: tính phần tỷ lệ TRƯỚC dựa trên baseSalary/totalMonthlyOutflow tại thời điểm áp, cộng dồn với `cash` tuyệt đối, rồi mới áp `salaryDelta` (để "thưởng theo lương" không ăn theo mức lương vừa tăng trong cùng option).
+  - Cập nhật event "Tết Nguyên Đán" trong `vn_provincial.json` theo đúng GDD (nhận Thưởng Tết + trừ mạnh chi tiêu): `cashBySalaryMultiplier: 1.0` (lương tháng 13) kết hợp chi tiêu Tết âm — ví dụ option "Ăn Tết lớn" (`cashBySalaryMultiplier: 1.0, cash: -12000000, network: +5, stress: -10`) vs "Ăn Tết tiết kiệm" (`cashBySalaryMultiplier: 1.0, cash: -5000000, network: -3, stress: +5`). Con số cụ thể được tune ở Task 3.
+- **[MODIFY]** `GameEngineCubit`: thêm method `chooseEventOption(...)` gọi usecase trên, emit state mới. Sau khi áp option, KHÔNG tự động chạy next month — người chơi vẫn ở Phase 3, có thể tiếp tục mua bán tài sản trước khi bấm End Turn.
+- Sau khi áp effect, chạy `CheckGameStatusUseCase` ngay (không đợi End Turn): một lựa chọn tồi có thể đẩy stress lên 100 hoặc cash xuyên ngưỡng phá sản giữa tháng — game over phải kích hoạt tức thì, nếu không người chơi ở trạng thái "đã chết nhưng vẫn đi lại được".
+- Unit test:
+  - Áp đủ từng loại effect (cash, stress có clamp, loan mới xuất hiện trong list, flag added/removed, salaryDelta).
+  - Hiệu ứng tỷ lệ — test tính tay: baseSalary 15tr, option có `cashBySalaryMultiplier: 1.0, cash: -12tr` → cash tăng đúng +3tr. Test thứ tự áp: option có cả `cashBySalaryMultiplier: 1.0` và `salaryDelta: +2tr` với lương 15tr → phần thưởng tính trên 15tr (không phải 17tr), lương sau đó mới thành 17tr.
+  - Option không thuộc event đang active → Left(Failure).
+  - Effect đẩy stress lên 100 → kết quả trả về phải là lost(burnout) ngay trong lượt áp.
+  - `currentEventId` bị clear sau khi áp thành công.
+
 ### Task 3 — Simulation test cho Game Engine
-- Viết integration test giả lập chạy `process_next_month_usecase` liên tục 200 tháng với các chiến lược bot khác nhau:
+- Viết integration test giả lập chạy `process_next_month_usecase` liên tục 200 tháng với các chiến lược bot khác nhau. Khi event xuất hiện (`currentEventId != null`), bot dùng `ApplyEventOptionUseCase` (Task 2.5) để chọn option theo chiến lược của nó — vòng lặp mô phỏng phải đi qua đủ 4 phase như người chơi thật:
   - Bot "không làm gì": phải phá sản hoặc Bad Ending trong khoảng hợp lý, không được sống khỏe mãi.
   - Bot "trả nợ đúng hạn + đầu tư DCA đều": credit score phải tăng dần, net worth tăng theo lãi kép.
 - Assert các bất biến (invariants): Stress luôn trong [0,100]; credit score trong [300,850]; tuổi tăng đúng 1/12 mỗi tháng; Net Worth = tổng tài sản − tổng nợ tại mọi thời điểm.
