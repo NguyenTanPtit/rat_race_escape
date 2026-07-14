@@ -4,7 +4,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.2.0 <4.0.0' # Sử dụng Dart 3.x mới nhất
+  sdk: '>=3.8.0 <4.0.0' # Sử dụng Dart 3.x mới nhất
 
 dependencies:
   flutter:

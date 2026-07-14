@@ -4,10 +4,9 @@ import '../../domain/entities/game_state.dart';
 part 'game_engine_state.freezed.dart';
 
 @freezed
-class GameEngineState with _$GameEngineState {
-  const factory GameEngineState.initial() = _Initial;
-  const factory GameEngineState.loading() = _Loading;
-  const factory GameEngineState.playing(GameState gameState) = _Playing;
-  const factory GameEngineState.gameOver(String reason, GameState finalState) = _GameOver;
-  const factory GameEngineState.error(String message) = _Error;
+sealed class GameEngineState with _$GameEngineState {
+  const factory GameEngineState.initial() = GameEngineInitial;
+  const factory GameEngineState.playing(GameState gameState) = GameEnginePlaying;
+  const factory GameEngineState.gameOver(String reason, GameState finalState) = GameEngineGameOver;
+  const factory GameEngineState.error(String message) = GameEngineError;
 }

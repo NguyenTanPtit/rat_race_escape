@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,214 +9,285 @@ part of 'asset.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$Asset {
-  String get id => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
-  double get baseValue =>
-      throw _privateConstructorUsedError; // Giá trị hiện tại của tài sản
-  double get monthlyPassiveIncome =>
-      throw _privateConstructorUsedError; // Dòng tiền thụ động sinh ra mỗi tháng
-  AssetType get type => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
-  $AssetCopyWith<Asset> get copyWith => throw _privateConstructorUsedError;
+ String get id; String get name; double get baseValue;// Giá trị hiện tại của tài sản
+ double get monthlyPassiveIncome;// Dòng tiền thụ động sinh ra mỗi tháng
+ AssetType get type;
+/// Create a copy of Asset
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$AssetCopyWith<Asset> get copyWith => _$AssetCopyWithImpl<Asset>(this as Asset, _$identity);
+
+  /// Serializes this Asset to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Asset&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.baseValue, baseValue) || other.baseValue == baseValue)&&(identical(other.monthlyPassiveIncome, monthlyPassiveIncome) || other.monthlyPassiveIncome == monthlyPassiveIncome)&&(identical(other.type, type) || other.type == type));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,name,baseValue,monthlyPassiveIncome,type);
+
+@override
+String toString() {
+  return 'Asset(id: $id, name: $name, baseValue: $baseValue, monthlyPassiveIncome: $monthlyPassiveIncome, type: $type)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $AssetCopyWith<$Res> {
-  factory $AssetCopyWith(Asset value, $Res Function(Asset) then) =
-      _$AssetCopyWithImpl<$Res, Asset>;
-  @useResult
-  $Res call(
-      {String id,
-      String name,
-      double baseValue,
-      double monthlyPassiveIncome,
-      AssetType type});
-}
+abstract mixin class $AssetCopyWith<$Res>  {
+  factory $AssetCopyWith(Asset value, $Res Function(Asset) _then) = _$AssetCopyWithImpl;
+@useResult
+$Res call({
+ String id, String name, double baseValue, double monthlyPassiveIncome, AssetType type
+});
 
+
+
+
+}
 /// @nodoc
-class _$AssetCopyWithImpl<$Res, $Val extends Asset>
+class _$AssetCopyWithImpl<$Res>
     implements $AssetCopyWith<$Res> {
-  _$AssetCopyWithImpl(this._value, this._then);
+  _$AssetCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final Asset _self;
+  final $Res Function(Asset) _then;
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? name = null,
-    Object? baseValue = null,
-    Object? monthlyPassiveIncome = null,
-    Object? type = null,
-  }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      baseValue: null == baseValue
-          ? _value.baseValue
-          : baseValue // ignore: cast_nullable_to_non_nullable
-              as double,
-      monthlyPassiveIncome: null == monthlyPassiveIncome
-          ? _value.monthlyPassiveIncome
-          : monthlyPassiveIncome // ignore: cast_nullable_to_non_nullable
-              as double,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as AssetType,
-    ) as $Val);
-  }
+/// Create a copy of Asset
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? baseValue = null,Object? monthlyPassiveIncome = null,Object? type = null,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,baseValue: null == baseValue ? _self.baseValue : baseValue // ignore: cast_nullable_to_non_nullable
+as double,monthlyPassiveIncome: null == monthlyPassiveIncome ? _self.monthlyPassiveIncome : monthlyPassiveIncome // ignore: cast_nullable_to_non_nullable
+as double,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as AssetType,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [Asset].
+extension AssetPatterns on Asset {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _Asset value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _Asset() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _Asset value)  $default,){
+final _that = this;
+switch (_that) {
+case _Asset():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _Asset value)?  $default,){
+final _that = this;
+switch (_that) {
+case _Asset() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  double baseValue,  double monthlyPassiveIncome,  AssetType type)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _Asset() when $default != null:
+return $default(_that.id,_that.name,_that.baseValue,_that.monthlyPassiveIncome,_that.type);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  double baseValue,  double monthlyPassiveIncome,  AssetType type)  $default,) {final _that = this;
+switch (_that) {
+case _Asset():
+return $default(_that.id,_that.name,_that.baseValue,_that.monthlyPassiveIncome,_that.type);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  double baseValue,  double monthlyPassiveIncome,  AssetType type)?  $default,) {final _that = this;
+switch (_that) {
+case _Asset() when $default != null:
+return $default(_that.id,_that.name,_that.baseValue,_that.monthlyPassiveIncome,_that.type);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
-abstract class _$$AssetImplCopyWith<$Res> implements $AssetCopyWith<$Res> {
-  factory _$$AssetImplCopyWith(
-          _$AssetImpl value, $Res Function(_$AssetImpl) then) =
-      __$$AssetImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {String id,
-      String name,
-      double baseValue,
-      double monthlyPassiveIncome,
-      AssetType type});
-}
+@JsonSerializable()
 
-/// @nodoc
-class __$$AssetImplCopyWithImpl<$Res>
-    extends _$AssetCopyWithImpl<$Res, _$AssetImpl>
-    implements _$$AssetImplCopyWith<$Res> {
-  __$$AssetImplCopyWithImpl(
-      _$AssetImpl _value, $Res Function(_$AssetImpl) _then)
-      : super(_value, _then);
+class _Asset implements Asset {
+  const _Asset({required this.id, required this.name, required this.baseValue, this.monthlyPassiveIncome = 0.0, this.type = AssetType.stock});
+  factory _Asset.fromJson(Map<String, dynamic> json) => _$AssetFromJson(json);
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? name = null,
-    Object? baseValue = null,
-    Object? monthlyPassiveIncome = null,
-    Object? type = null,
-  }) {
-    return _then(_$AssetImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      baseValue: null == baseValue
-          ? _value.baseValue
-          : baseValue // ignore: cast_nullable_to_non_nullable
-              as double,
-      monthlyPassiveIncome: null == monthlyPassiveIncome
-          ? _value.monthlyPassiveIncome
-          : monthlyPassiveIncome // ignore: cast_nullable_to_non_nullable
-              as double,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as AssetType,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$AssetImpl implements _Asset {
-  const _$AssetImpl(
-      {required this.id,
-      required this.name,
-      required this.baseValue,
-      this.monthlyPassiveIncome = 0.0,
-      this.type = AssetType.stock});
-
-  @override
-  final String id;
-  @override
-  final String name;
-  @override
-  final double baseValue;
+@override final  String id;
+@override final  String name;
+@override final  double baseValue;
 // Giá trị hiện tại của tài sản
-  @override
-  @JsonKey()
-  final double monthlyPassiveIncome;
+@override@JsonKey() final  double monthlyPassiveIncome;
 // Dòng tiền thụ động sinh ra mỗi tháng
-  @override
-  @JsonKey()
-  final AssetType type;
+@override@JsonKey() final  AssetType type;
 
-  @override
-  String toString() {
-    return 'Asset(id: $id, name: $name, baseValue: $baseValue, monthlyPassiveIncome: $monthlyPassiveIncome, type: $type)';
-  }
+/// Create a copy of Asset
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$AssetCopyWith<_Asset> get copyWith => __$AssetCopyWithImpl<_Asset>(this, _$identity);
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$AssetImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.baseValue, baseValue) ||
-                other.baseValue == baseValue) &&
-            (identical(other.monthlyPassiveIncome, monthlyPassiveIncome) ||
-                other.monthlyPassiveIncome == monthlyPassiveIncome) &&
-            (identical(other.type, type) || other.type == type));
-  }
-
-  @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, name, baseValue, monthlyPassiveIncome, type);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$AssetImplCopyWith<_$AssetImpl> get copyWith =>
-      __$$AssetImplCopyWithImpl<_$AssetImpl>(this, _$identity);
+@override
+Map<String, dynamic> toJson() {
+  return _$AssetToJson(this, );
 }
 
-abstract class _Asset implements Asset {
-  const factory _Asset(
-      {required final String id,
-      required final String name,
-      required final double baseValue,
-      final double monthlyPassiveIncome,
-      final AssetType type}) = _$AssetImpl;
-
-  @override
-  String get id;
-  @override
-  String get name;
-  @override
-  double get baseValue;
-  @override // Giá trị hiện tại của tài sản
-  double get monthlyPassiveIncome;
-  @override // Dòng tiền thụ động sinh ra mỗi tháng
-  AssetType get type;
-  @override
-  @JsonKey(ignore: true)
-  _$$AssetImplCopyWith<_$AssetImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Asset&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.baseValue, baseValue) || other.baseValue == baseValue)&&(identical(other.monthlyPassiveIncome, monthlyPassiveIncome) || other.monthlyPassiveIncome == monthlyPassiveIncome)&&(identical(other.type, type) || other.type == type));
 }
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,name,baseValue,monthlyPassiveIncome,type);
+
+@override
+String toString() {
+  return 'Asset(id: $id, name: $name, baseValue: $baseValue, monthlyPassiveIncome: $monthlyPassiveIncome, type: $type)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$AssetCopyWith<$Res> implements $AssetCopyWith<$Res> {
+  factory _$AssetCopyWith(_Asset value, $Res Function(_Asset) _then) = __$AssetCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String name, double baseValue, double monthlyPassiveIncome, AssetType type
+});
+
+
+
+
+}
+/// @nodoc
+class __$AssetCopyWithImpl<$Res>
+    implements _$AssetCopyWith<$Res> {
+  __$AssetCopyWithImpl(this._self, this._then);
+
+  final _Asset _self;
+  final $Res Function(_Asset) _then;
+
+/// Create a copy of Asset
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? baseValue = null,Object? monthlyPassiveIncome = null,Object? type = null,}) {
+  return _then(_Asset(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,baseValue: null == baseValue ? _self.baseValue : baseValue // ignore: cast_nullable_to_non_nullable
+as double,monthlyPassiveIncome: null == monthlyPassiveIncome ? _self.monthlyPassiveIncome : monthlyPassiveIncome // ignore: cast_nullable_to_non_nullable
+as double,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as AssetType,
+  ));
+}
+
+
+}
+
+// dart format on

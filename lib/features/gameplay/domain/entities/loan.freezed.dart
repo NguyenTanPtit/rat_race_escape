@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,235 +9,290 @@ part of 'loan.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$Loan {
-  String get id => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
-  double get principalAmount =>
-      throw _privateConstructorUsedError; // Dư nợ gốc còn lại
-  double get interestRatePerYear =>
-      throw _privateConstructorUsedError; // Lãi suất % / năm
-  double get minimumMonthlyPayment =>
-      throw _privateConstructorUsedError; // Số tiền phải trả tối thiểu mỗi tháng
-  LoanType get type => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
-  $LoanCopyWith<Loan> get copyWith => throw _privateConstructorUsedError;
+ String get id; String get name; double get principalAmount;// Dư nợ gốc còn lại
+ double get interestRatePerYear;// Lãi suất % / năm
+ double get minimumMonthlyPayment;// Số tiền phải trả tối thiểu mỗi tháng
+ LoanType get type;
+/// Create a copy of Loan
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$LoanCopyWith<Loan> get copyWith => _$LoanCopyWithImpl<Loan>(this as Loan, _$identity);
+
+  /// Serializes this Loan to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Loan&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.principalAmount, principalAmount) || other.principalAmount == principalAmount)&&(identical(other.interestRatePerYear, interestRatePerYear) || other.interestRatePerYear == interestRatePerYear)&&(identical(other.minimumMonthlyPayment, minimumMonthlyPayment) || other.minimumMonthlyPayment == minimumMonthlyPayment)&&(identical(other.type, type) || other.type == type));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,name,principalAmount,interestRatePerYear,minimumMonthlyPayment,type);
+
+@override
+String toString() {
+  return 'Loan(id: $id, name: $name, principalAmount: $principalAmount, interestRatePerYear: $interestRatePerYear, minimumMonthlyPayment: $minimumMonthlyPayment, type: $type)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $LoanCopyWith<$Res> {
-  factory $LoanCopyWith(Loan value, $Res Function(Loan) then) =
-      _$LoanCopyWithImpl<$Res, Loan>;
-  @useResult
-  $Res call(
-      {String id,
-      String name,
-      double principalAmount,
-      double interestRatePerYear,
-      double minimumMonthlyPayment,
-      LoanType type});
-}
+abstract mixin class $LoanCopyWith<$Res>  {
+  factory $LoanCopyWith(Loan value, $Res Function(Loan) _then) = _$LoanCopyWithImpl;
+@useResult
+$Res call({
+ String id, String name, double principalAmount, double interestRatePerYear, double minimumMonthlyPayment, LoanType type
+});
 
+
+
+
+}
 /// @nodoc
-class _$LoanCopyWithImpl<$Res, $Val extends Loan>
+class _$LoanCopyWithImpl<$Res>
     implements $LoanCopyWith<$Res> {
-  _$LoanCopyWithImpl(this._value, this._then);
+  _$LoanCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final Loan _self;
+  final $Res Function(Loan) _then;
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? name = null,
-    Object? principalAmount = null,
-    Object? interestRatePerYear = null,
-    Object? minimumMonthlyPayment = null,
-    Object? type = null,
-  }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      principalAmount: null == principalAmount
-          ? _value.principalAmount
-          : principalAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      interestRatePerYear: null == interestRatePerYear
-          ? _value.interestRatePerYear
-          : interestRatePerYear // ignore: cast_nullable_to_non_nullable
-              as double,
-      minimumMonthlyPayment: null == minimumMonthlyPayment
-          ? _value.minimumMonthlyPayment
-          : minimumMonthlyPayment // ignore: cast_nullable_to_non_nullable
-              as double,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as LoanType,
-    ) as $Val);
-  }
+/// Create a copy of Loan
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? principalAmount = null,Object? interestRatePerYear = null,Object? minimumMonthlyPayment = null,Object? type = null,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,principalAmount: null == principalAmount ? _self.principalAmount : principalAmount // ignore: cast_nullable_to_non_nullable
+as double,interestRatePerYear: null == interestRatePerYear ? _self.interestRatePerYear : interestRatePerYear // ignore: cast_nullable_to_non_nullable
+as double,minimumMonthlyPayment: null == minimumMonthlyPayment ? _self.minimumMonthlyPayment : minimumMonthlyPayment // ignore: cast_nullable_to_non_nullable
+as double,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as LoanType,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [Loan].
+extension LoanPatterns on Loan {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _Loan value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _Loan() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _Loan value)  $default,){
+final _that = this;
+switch (_that) {
+case _Loan():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _Loan value)?  $default,){
+final _that = this;
+switch (_that) {
+case _Loan() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  double principalAmount,  double interestRatePerYear,  double minimumMonthlyPayment,  LoanType type)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _Loan() when $default != null:
+return $default(_that.id,_that.name,_that.principalAmount,_that.interestRatePerYear,_that.minimumMonthlyPayment,_that.type);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  double principalAmount,  double interestRatePerYear,  double minimumMonthlyPayment,  LoanType type)  $default,) {final _that = this;
+switch (_that) {
+case _Loan():
+return $default(_that.id,_that.name,_that.principalAmount,_that.interestRatePerYear,_that.minimumMonthlyPayment,_that.type);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  double principalAmount,  double interestRatePerYear,  double minimumMonthlyPayment,  LoanType type)?  $default,) {final _that = this;
+switch (_that) {
+case _Loan() when $default != null:
+return $default(_that.id,_that.name,_that.principalAmount,_that.interestRatePerYear,_that.minimumMonthlyPayment,_that.type);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
-abstract class _$$LoanImplCopyWith<$Res> implements $LoanCopyWith<$Res> {
-  factory _$$LoanImplCopyWith(
-          _$LoanImpl value, $Res Function(_$LoanImpl) then) =
-      __$$LoanImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {String id,
-      String name,
-      double principalAmount,
-      double interestRatePerYear,
-      double minimumMonthlyPayment,
-      LoanType type});
-}
+@JsonSerializable()
 
-/// @nodoc
-class __$$LoanImplCopyWithImpl<$Res>
-    extends _$LoanCopyWithImpl<$Res, _$LoanImpl>
-    implements _$$LoanImplCopyWith<$Res> {
-  __$$LoanImplCopyWithImpl(_$LoanImpl _value, $Res Function(_$LoanImpl) _then)
-      : super(_value, _then);
+class _Loan implements Loan {
+  const _Loan({required this.id, required this.name, required this.principalAmount, required this.interestRatePerYear, required this.minimumMonthlyPayment, this.type = LoanType.creditCard}): assert(interestRatePerYear >= 0 && interestRatePerYear < 100, 'Interest rate must be a percentage between 0 and 100');
+  factory _Loan.fromJson(Map<String, dynamic> json) => _$LoanFromJson(json);
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? name = null,
-    Object? principalAmount = null,
-    Object? interestRatePerYear = null,
-    Object? minimumMonthlyPayment = null,
-    Object? type = null,
-  }) {
-    return _then(_$LoanImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      principalAmount: null == principalAmount
-          ? _value.principalAmount
-          : principalAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      interestRatePerYear: null == interestRatePerYear
-          ? _value.interestRatePerYear
-          : interestRatePerYear // ignore: cast_nullable_to_non_nullable
-              as double,
-      minimumMonthlyPayment: null == minimumMonthlyPayment
-          ? _value.minimumMonthlyPayment
-          : minimumMonthlyPayment // ignore: cast_nullable_to_non_nullable
-              as double,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as LoanType,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$LoanImpl implements _Loan {
-  const _$LoanImpl(
-      {required this.id,
-      required this.name,
-      required this.principalAmount,
-      required this.interestRatePerYear,
-      required this.minimumMonthlyPayment,
-      this.type = LoanType.creditCard});
-
-  @override
-  final String id;
-  @override
-  final String name;
-  @override
-  final double principalAmount;
+@override final  String id;
+@override final  String name;
+@override final  double principalAmount;
 // Dư nợ gốc còn lại
-  @override
-  final double interestRatePerYear;
+@override final  double interestRatePerYear;
 // Lãi suất % / năm
-  @override
-  final double minimumMonthlyPayment;
+@override final  double minimumMonthlyPayment;
 // Số tiền phải trả tối thiểu mỗi tháng
-  @override
-  @JsonKey()
-  final LoanType type;
+@override@JsonKey() final  LoanType type;
 
-  @override
-  String toString() {
-    return 'Loan(id: $id, name: $name, principalAmount: $principalAmount, interestRatePerYear: $interestRatePerYear, minimumMonthlyPayment: $minimumMonthlyPayment, type: $type)';
-  }
+/// Create a copy of Loan
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$LoanCopyWith<_Loan> get copyWith => __$LoanCopyWithImpl<_Loan>(this, _$identity);
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$LoanImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.principalAmount, principalAmount) ||
-                other.principalAmount == principalAmount) &&
-            (identical(other.interestRatePerYear, interestRatePerYear) ||
-                other.interestRatePerYear == interestRatePerYear) &&
-            (identical(other.minimumMonthlyPayment, minimumMonthlyPayment) ||
-                other.minimumMonthlyPayment == minimumMonthlyPayment) &&
-            (identical(other.type, type) || other.type == type));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, id, name, principalAmount,
-      interestRatePerYear, minimumMonthlyPayment, type);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$LoanImplCopyWith<_$LoanImpl> get copyWith =>
-      __$$LoanImplCopyWithImpl<_$LoanImpl>(this, _$identity);
+@override
+Map<String, dynamic> toJson() {
+  return _$LoanToJson(this, );
 }
 
-abstract class _Loan implements Loan {
-  const factory _Loan(
-      {required final String id,
-      required final String name,
-      required final double principalAmount,
-      required final double interestRatePerYear,
-      required final double minimumMonthlyPayment,
-      final LoanType type}) = _$LoanImpl;
-
-  @override
-  String get id;
-  @override
-  String get name;
-  @override
-  double get principalAmount;
-  @override // Dư nợ gốc còn lại
-  double get interestRatePerYear;
-  @override // Lãi suất % / năm
-  double get minimumMonthlyPayment;
-  @override // Số tiền phải trả tối thiểu mỗi tháng
-  LoanType get type;
-  @override
-  @JsonKey(ignore: true)
-  _$$LoanImplCopyWith<_$LoanImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loan&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.principalAmount, principalAmount) || other.principalAmount == principalAmount)&&(identical(other.interestRatePerYear, interestRatePerYear) || other.interestRatePerYear == interestRatePerYear)&&(identical(other.minimumMonthlyPayment, minimumMonthlyPayment) || other.minimumMonthlyPayment == minimumMonthlyPayment)&&(identical(other.type, type) || other.type == type));
 }
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,name,principalAmount,interestRatePerYear,minimumMonthlyPayment,type);
+
+@override
+String toString() {
+  return 'Loan(id: $id, name: $name, principalAmount: $principalAmount, interestRatePerYear: $interestRatePerYear, minimumMonthlyPayment: $minimumMonthlyPayment, type: $type)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$LoanCopyWith<$Res> implements $LoanCopyWith<$Res> {
+  factory _$LoanCopyWith(_Loan value, $Res Function(_Loan) _then) = __$LoanCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String name, double principalAmount, double interestRatePerYear, double minimumMonthlyPayment, LoanType type
+});
+
+
+
+
+}
+/// @nodoc
+class __$LoanCopyWithImpl<$Res>
+    implements _$LoanCopyWith<$Res> {
+  __$LoanCopyWithImpl(this._self, this._then);
+
+  final _Loan _self;
+  final $Res Function(_Loan) _then;
+
+/// Create a copy of Loan
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? principalAmount = null,Object? interestRatePerYear = null,Object? minimumMonthlyPayment = null,Object? type = null,}) {
+  return _then(_Loan(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,principalAmount: null == principalAmount ? _self.principalAmount : principalAmount // ignore: cast_nullable_to_non_nullable
+as double,interestRatePerYear: null == interestRatePerYear ? _self.interestRatePerYear : interestRatePerYear // ignore: cast_nullable_to_non_nullable
+as double,minimumMonthlyPayment: null == minimumMonthlyPayment ? _self.minimumMonthlyPayment : minimumMonthlyPayment // ignore: cast_nullable_to_non_nullable
+as double,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as LoanType,
+  ));
+}
+
+
+}
+
+// dart format on

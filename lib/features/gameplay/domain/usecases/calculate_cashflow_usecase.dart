@@ -1,5 +1,7 @@
+import 'package:injectable/injectable.dart';
 import '../entities/game_state.dart';
 
+@injectable
 class CalculateCashflowUseCase {
   /// Adds baseSalary and passiveIncome to cash, subtracts monthlyExpenses.
   GameState call(GameState currentState) {

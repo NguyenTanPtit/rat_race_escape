@@ -1,8 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
+
 import '../../domain/entities/game_state.dart';
+import '../../domain/entities/turn_result.dart';
 import '../../domain/usecases/process_next_month_usecase.dart';
 import 'game_engine_state.dart';
 
+@injectable
 class GameEngineCubit extends Cubit<GameEngineState> {
   final ProcessNextMonthUseCase _processNextMonthUseCase;
 
@@ -15,35 +19,33 @@ class GameEngineCubit extends Cubit<GameEngineState> {
 
   /// Advances the game engine to the next month using the usecase pipeline.
   void nextMonth() {
-    state.mapOrNull(
-      playing: (playingState) {
-        // Emit loading state (optional, just for brief animation)
-        emit(const GameEngineState.loading());
+    if (state is! GameEnginePlaying) return;
+    
+    final playingState = state as GameEnginePlaying;
 
-        // Process the next month
-        final result = _processNextMonthUseCase.call(playingState.gameState);
+    // Process the next month
+    final result = _processNextMonthUseCase.call(playingState.gameState);
 
-        // Handle the Either result
-        result.fold(
-          (failure) {
-            emit(GameEngineState.error(failure.message));
-          },
-          (newState) {
-            // Check game over conditions
-            if (newState.stress >= 100) {
-              emit(GameEngineState.gameOver('Burnout: Stress level reached maximum capacity.', newState));
-              return;
-            }
-
-            if (newState.cash < -10000 && newState.creditScore <= 350) {
-              emit(GameEngineState.gameOver('Bankrupt: Unrecoverable debt and poor credit.', newState));
-              return;
-            }
-
-            // If no game over condition is met, continue playing
-            emit(GameEngineState.playing(newState));
-          },
-        );
+    // Handle the Either result
+    result.fold(
+      (failure) {
+        emit(GameEngineState.error(failure.message));
+      },
+      (turnResult) {
+        switch (turnResult) {
+          case TurnContinued():
+            emit(GameEngineState.playing(turnResult.state));
+          case TurnWon():
+            emit(GameEngineState.gameOver('Victory: You have achieved financial freedom!', turnResult.state));
+          case TurnLost():
+            final reasonStr = switch (turnResult.reason) {
+              GameOverReason.burnout => 'Burnout: Stress level reached maximum capacity.',
+              GameOverReason.bankruptcy => 'Bankrupt: You ran out of cash to survive.',
+              GameOverReason.debtSpiral => 'Debt Spiral: Unrecoverable debt and poor credit.',
+              GameOverReason.poorAtRetirement => 'Retirement: Reached age 65 without financial freedom.',
+            };
+            emit(GameEngineState.gameOver(reasonStr, turnResult.state));
+        }
       },
     );
   }
