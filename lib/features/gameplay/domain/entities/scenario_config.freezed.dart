@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ScenarioConfig {
 
- double get initialCash; double get baseSalary; double get monthlyRent; double get initialPassiveIncome; double get familySupportExpense;
+ double get initialCash; double get baseSalary; double get monthlyRent; List<Asset> get initialAssets; double get familySupportExpense;
 /// Create a copy of ScenarioConfig
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ScenarioConfigCopyWith<ScenarioConfig> get copyWith => _$ScenarioConfigCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ScenarioConfig&&(identical(other.initialCash, initialCash) || other.initialCash == initialCash)&&(identical(other.baseSalary, baseSalary) || other.baseSalary == baseSalary)&&(identical(other.monthlyRent, monthlyRent) || other.monthlyRent == monthlyRent)&&(identical(other.initialPassiveIncome, initialPassiveIncome) || other.initialPassiveIncome == initialPassiveIncome)&&(identical(other.familySupportExpense, familySupportExpense) || other.familySupportExpense == familySupportExpense));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ScenarioConfig&&(identical(other.initialCash, initialCash) || other.initialCash == initialCash)&&(identical(other.baseSalary, baseSalary) || other.baseSalary == baseSalary)&&(identical(other.monthlyRent, monthlyRent) || other.monthlyRent == monthlyRent)&&const DeepCollectionEquality().equals(other.initialAssets, initialAssets)&&(identical(other.familySupportExpense, familySupportExpense) || other.familySupportExpense == familySupportExpense));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,initialCash,baseSalary,monthlyRent,initialPassiveIncome,familySupportExpense);
+int get hashCode => Object.hash(runtimeType,initialCash,baseSalary,monthlyRent,const DeepCollectionEquality().hash(initialAssets),familySupportExpense);
 
 @override
 String toString() {
-  return 'ScenarioConfig(initialCash: $initialCash, baseSalary: $baseSalary, monthlyRent: $monthlyRent, initialPassiveIncome: $initialPassiveIncome, familySupportExpense: $familySupportExpense)';
+  return 'ScenarioConfig(initialCash: $initialCash, baseSalary: $baseSalary, monthlyRent: $monthlyRent, initialAssets: $initialAssets, familySupportExpense: $familySupportExpense)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ScenarioConfigCopyWith<$Res>  {
   factory $ScenarioConfigCopyWith(ScenarioConfig value, $Res Function(ScenarioConfig) _then) = _$ScenarioConfigCopyWithImpl;
 @useResult
 $Res call({
- double initialCash, double baseSalary, double monthlyRent, double initialPassiveIncome, double familySupportExpense
+ double initialCash, double baseSalary, double monthlyRent, List<Asset> initialAssets, double familySupportExpense
 });
 
 
@@ -65,13 +65,13 @@ class _$ScenarioConfigCopyWithImpl<$Res>
 
 /// Create a copy of ScenarioConfig
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? initialCash = null,Object? baseSalary = null,Object? monthlyRent = null,Object? initialPassiveIncome = null,Object? familySupportExpense = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? initialCash = null,Object? baseSalary = null,Object? monthlyRent = null,Object? initialAssets = null,Object? familySupportExpense = null,}) {
   return _then(_self.copyWith(
 initialCash: null == initialCash ? _self.initialCash : initialCash // ignore: cast_nullable_to_non_nullable
 as double,baseSalary: null == baseSalary ? _self.baseSalary : baseSalary // ignore: cast_nullable_to_non_nullable
 as double,monthlyRent: null == monthlyRent ? _self.monthlyRent : monthlyRent // ignore: cast_nullable_to_non_nullable
-as double,initialPassiveIncome: null == initialPassiveIncome ? _self.initialPassiveIncome : initialPassiveIncome // ignore: cast_nullable_to_non_nullable
-as double,familySupportExpense: null == familySupportExpense ? _self.familySupportExpense : familySupportExpense // ignore: cast_nullable_to_non_nullable
+as double,initialAssets: null == initialAssets ? _self.initialAssets : initialAssets // ignore: cast_nullable_to_non_nullable
+as List<Asset>,familySupportExpense: null == familySupportExpense ? _self.familySupportExpense : familySupportExpense // ignore: cast_nullable_to_non_nullable
 as double,
   ));
 }
@@ -157,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( double initialCash,  double baseSalary,  double monthlyRent,  double initialPassiveIncome,  double familySupportExpense)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( double initialCash,  double baseSalary,  double monthlyRent,  List<Asset> initialAssets,  double familySupportExpense)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ScenarioConfig() when $default != null:
-return $default(_that.initialCash,_that.baseSalary,_that.monthlyRent,_that.initialPassiveIncome,_that.familySupportExpense);case _:
+return $default(_that.initialCash,_that.baseSalary,_that.monthlyRent,_that.initialAssets,_that.familySupportExpense);case _:
   return orElse();
 
 }
@@ -178,10 +178,10 @@ return $default(_that.initialCash,_that.baseSalary,_that.monthlyRent,_that.initi
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double initialCash,  double baseSalary,  double monthlyRent,  double initialPassiveIncome,  double familySupportExpense)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double initialCash,  double baseSalary,  double monthlyRent,  List<Asset> initialAssets,  double familySupportExpense)  $default,) {final _that = this;
 switch (_that) {
 case _ScenarioConfig():
-return $default(_that.initialCash,_that.baseSalary,_that.monthlyRent,_that.initialPassiveIncome,_that.familySupportExpense);case _:
+return $default(_that.initialCash,_that.baseSalary,_that.monthlyRent,_that.initialAssets,_that.familySupportExpense);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -198,10 +198,10 @@ return $default(_that.initialCash,_that.baseSalary,_that.monthlyRent,_that.initi
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( double initialCash,  double baseSalary,  double monthlyRent,  double initialPassiveIncome,  double familySupportExpense)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( double initialCash,  double baseSalary,  double monthlyRent,  List<Asset> initialAssets,  double familySupportExpense)?  $default,) {final _that = this;
 switch (_that) {
 case _ScenarioConfig() when $default != null:
-return $default(_that.initialCash,_that.baseSalary,_that.monthlyRent,_that.initialPassiveIncome,_that.familySupportExpense);case _:
+return $default(_that.initialCash,_that.baseSalary,_that.monthlyRent,_that.initialAssets,_that.familySupportExpense);case _:
   return null;
 
 }
@@ -213,13 +213,19 @@ return $default(_that.initialCash,_that.baseSalary,_that.monthlyRent,_that.initi
 @JsonSerializable()
 
 class _ScenarioConfig implements ScenarioConfig {
-  const _ScenarioConfig({required this.initialCash, required this.baseSalary, required this.monthlyRent, this.initialPassiveIncome = 0.0, this.familySupportExpense = 0.0});
+  const _ScenarioConfig({required this.initialCash, required this.baseSalary, required this.monthlyRent, final  List<Asset> initialAssets = const [], this.familySupportExpense = 0.0}): _initialAssets = initialAssets;
   factory _ScenarioConfig.fromJson(Map<String, dynamic> json) => _$ScenarioConfigFromJson(json);
 
 @override final  double initialCash;
 @override final  double baseSalary;
 @override final  double monthlyRent;
-@override@JsonKey() final  double initialPassiveIncome;
+ final  List<Asset> _initialAssets;
+@override@JsonKey() List<Asset> get initialAssets {
+  if (_initialAssets is EqualUnmodifiableListView) return _initialAssets;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_initialAssets);
+}
+
 @override@JsonKey() final  double familySupportExpense;
 
 /// Create a copy of ScenarioConfig
@@ -235,16 +241,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ScenarioConfig&&(identical(other.initialCash, initialCash) || other.initialCash == initialCash)&&(identical(other.baseSalary, baseSalary) || other.baseSalary == baseSalary)&&(identical(other.monthlyRent, monthlyRent) || other.monthlyRent == monthlyRent)&&(identical(other.initialPassiveIncome, initialPassiveIncome) || other.initialPassiveIncome == initialPassiveIncome)&&(identical(other.familySupportExpense, familySupportExpense) || other.familySupportExpense == familySupportExpense));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ScenarioConfig&&(identical(other.initialCash, initialCash) || other.initialCash == initialCash)&&(identical(other.baseSalary, baseSalary) || other.baseSalary == baseSalary)&&(identical(other.monthlyRent, monthlyRent) || other.monthlyRent == monthlyRent)&&const DeepCollectionEquality().equals(other._initialAssets, _initialAssets)&&(identical(other.familySupportExpense, familySupportExpense) || other.familySupportExpense == familySupportExpense));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,initialCash,baseSalary,monthlyRent,initialPassiveIncome,familySupportExpense);
+int get hashCode => Object.hash(runtimeType,initialCash,baseSalary,monthlyRent,const DeepCollectionEquality().hash(_initialAssets),familySupportExpense);
 
 @override
 String toString() {
-  return 'ScenarioConfig(initialCash: $initialCash, baseSalary: $baseSalary, monthlyRent: $monthlyRent, initialPassiveIncome: $initialPassiveIncome, familySupportExpense: $familySupportExpense)';
+  return 'ScenarioConfig(initialCash: $initialCash, baseSalary: $baseSalary, monthlyRent: $monthlyRent, initialAssets: $initialAssets, familySupportExpense: $familySupportExpense)';
 }
 
 
@@ -255,7 +261,7 @@ abstract mixin class _$ScenarioConfigCopyWith<$Res> implements $ScenarioConfigCo
   factory _$ScenarioConfigCopyWith(_ScenarioConfig value, $Res Function(_ScenarioConfig) _then) = __$ScenarioConfigCopyWithImpl;
 @override @useResult
 $Res call({
- double initialCash, double baseSalary, double monthlyRent, double initialPassiveIncome, double familySupportExpense
+ double initialCash, double baseSalary, double monthlyRent, List<Asset> initialAssets, double familySupportExpense
 });
 
 
@@ -272,13 +278,13 @@ class __$ScenarioConfigCopyWithImpl<$Res>
 
 /// Create a copy of ScenarioConfig
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? initialCash = null,Object? baseSalary = null,Object? monthlyRent = null,Object? initialPassiveIncome = null,Object? familySupportExpense = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? initialCash = null,Object? baseSalary = null,Object? monthlyRent = null,Object? initialAssets = null,Object? familySupportExpense = null,}) {
   return _then(_ScenarioConfig(
 initialCash: null == initialCash ? _self.initialCash : initialCash // ignore: cast_nullable_to_non_nullable
 as double,baseSalary: null == baseSalary ? _self.baseSalary : baseSalary // ignore: cast_nullable_to_non_nullable
 as double,monthlyRent: null == monthlyRent ? _self.monthlyRent : monthlyRent // ignore: cast_nullable_to_non_nullable
-as double,initialPassiveIncome: null == initialPassiveIncome ? _self.initialPassiveIncome : initialPassiveIncome // ignore: cast_nullable_to_non_nullable
-as double,familySupportExpense: null == familySupportExpense ? _self.familySupportExpense : familySupportExpense // ignore: cast_nullable_to_non_nullable
+as double,initialAssets: null == initialAssets ? _self._initialAssets : initialAssets // ignore: cast_nullable_to_non_nullable
+as List<Asset>,familySupportExpense: null == familySupportExpense ? _self.familySupportExpense : familySupportExpense // ignore: cast_nullable_to_non_nullable
 as double,
   ));
 }

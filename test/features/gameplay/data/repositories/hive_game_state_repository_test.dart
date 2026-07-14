@@ -3,16 +3,23 @@ import 'package:hive_ce/hive.dart';
 import 'package:rat_race_escape/features/gameplay/data/repositories/hive_game_state_repository.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_state.dart';
 
+import 'dart:io';
+
 void main() {
   late HiveGameStateRepository repository;
+  late Directory tempDir;
 
   setUp(() async {
-    Hive.init('./test_hive_data');
+    tempDir = await Directory.systemTemp.createTemp();
+    Hive.init(tempDir.path);
     repository = HiveGameStateRepository();
   });
 
   tearDown(() async {
-    await Hive.deleteBoxFromDisk('game_state_box');
+    await Hive.close();
+    if (tempDir.existsSync()) {
+      tempDir.deleteSync(recursive: true);
+    }
   });
 
   group('HiveGameStateRepository', () {

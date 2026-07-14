@@ -2,7 +2,7 @@ import 'package:injectable/injectable.dart';
 import '../entities/game_state.dart';
 import '../entities/loan.dart';
 
-@injectable
+@lazySingleton
 class ProcessLoansUseCase {
 
   GameState call(GameState currentState) {

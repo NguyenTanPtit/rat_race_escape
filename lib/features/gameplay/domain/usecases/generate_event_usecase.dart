@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:injectable/injectable.dart';
 import '../entities/game_state.dart';
 
-@injectable
+@lazySingleton
 class GenerateEventUseCase {
   final Random _random;
 

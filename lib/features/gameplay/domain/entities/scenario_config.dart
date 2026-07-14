@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'asset.dart';
 
 part 'scenario_config.freezed.dart';
 part 'scenario_config.g.dart';
@@ -9,7 +10,7 @@ abstract class ScenarioConfig with _$ScenarioConfig {
     required double initialCash,
     required double baseSalary,
     required double monthlyRent,
-    @Default(0.0) double initialPassiveIncome,
+    @Default([]) List<Asset> initialAssets,
     @Default(0.0) double familySupportExpense,
   }) = _ScenarioConfig;
 

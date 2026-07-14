@@ -9,7 +9,7 @@ import 'process_loans_usecase.dart';
 import 'update_metrics_usecase.dart';
 import 'check_game_status_usecase.dart';
 
-@injectable
+@lazySingleton
 class ProcessNextMonthUseCase {
   final CalculateCashflowUseCase _calculateCashflow;
   final ProcessLoansUseCase _processLoans;

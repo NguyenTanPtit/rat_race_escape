@@ -2,7 +2,7 @@ import 'package:injectable/injectable.dart';
 import '../entities/game_state.dart';
 import '../entities/turn_result.dart';
 
-@injectable
+@lazySingleton
 class CheckGameStatusUseCase {
   static const int bankruptcyMonthsThreshold = 3;
 

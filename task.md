@@ -114,25 +114,44 @@ enum GameOverReason { burnout, bankruptcy, debtSpiral, poorAtRetirement }
 **Definition of Done cho Task 0:** `dart analyze` 0 lỗi; toàn bộ test pass; test tính tay ở 0.1 và 0.2 có comment giải thích công thức; không còn `mapOrNull`/`when` của Freezed trong codebase.
 
 ### Task 1 — Repository interfaces + Persistence (save/load game)
-- Tạo interface trong `gameplay/domain/repositories/`:
+- Tạo interface trong `gameplay/domain/repositories/` (nếu đã tạo trước đó, liệt kê nguyên văn nội dung hiện tại trong plan để review):
   - `GameStateRepository`: `saveGame(GameState)`, `loadGame()`, `hasSavedGame()`, `deleteSave()`.
   - `EventPoolRepository`: `loadEventPool(CountryId, ScenarioId)` — trả về danh sách GameEvent kèm điều kiện trigger (độ tuổi min/max, ngưỡng stress, tháng trong năm, xác suất).
   - `ScenarioConfigRepository`: `loadScenarioConfig(CountryId, ScenarioId)` — trả về thông số khởi đầu (lương, tiền thuê nhà, khoản gửi về quê, nợ ban đầu...).
+  - Plan phải ghi rõ signature đầy đủ từng method (kiểu trả về, tham số) — đây là hợp đồng domain ↔ data, deliverable chính của task.
 - Implement persistence bằng **hive_ce** (đã có trong pubspec — KHÔNG dùng Isar hay Hive gốc, cả hai đều ngừng bảo trì) trong `gameplay/data/`: tận dụng `toJson`/`fromJson` từ Task 0.8 để lưu entity dưới dạng JSON string trong Hive box, không cần TypeAdapter riêng cho từng entity.
-- Setup **get_it** làm DI container, đăng ký toàn bộ repository + usecase. Tạo file `lib/core/di/injection.dart`.
-- Unit test: save → load ra state giống hệt (round-trip test); load khi chưa có save trả về null/failure đúng thiết kế.
+- Implementation tạm cho EventPool/ScenarioConfig (chờ Task 2): đặt tên `InMemory...` (KHÔNG dùng tiền tố `Mock` trong lib/), dữ liệu stub ở mức tối thiểu đủ compile + test, mỗi file có comment `// TODO(task-2): Replace with JSON-based implementation and DELETE this file.`
+- Setup DI bằng **get_it + injectable**, tạo `lib/core/di/injection.dart` export `configureDependencies()`:
+  - Convention: use case stateless và repository → `@lazySingleton`; Cubit → `@injectable` (factory — mỗi ván chơi một instance mới, KHÔNG singleton kẻo state ván cũ dính sang ván mới). Đăng ký cả `GameEngineCubit`.
+  - Tạo `@module` đăng ký `Random` làm `@lazySingleton` — `GenerateEventUseCase` nhận `Random` qua constructor sẽ fail DI nếu thiếu. Giữ điểm inject này để Task 3 thay bằng `Random(seed)` trong simulation test.
+- `main.dart`: gọi `WidgetsFlutterBinding.ensureInitialized()` TRƯỚC `await Hive.initFlutter()`, rồi mới `configureDependencies()`.
+- Test:
+  - Round-trip: save → load ra state giống hệt; load khi chưa có save trả về null/failure đúng thiết kế. Test Hive dùng thư mục temp (`Directory.systemTemp.createTemp`), tearDown gọi `Hive.deleteBoxFromDisk` + `Hive.close()`.
+  - Smoke test DI: `configureDependencies()` rồi resolve `ProcessNextMonthUseCase`, `GameEngineCubit`, `GameStateRepository` từ container không throw.
 
 ### Task 2 — Event Pool & Scenario Config dạng JSON
-- Tạo `assets/config/vn_provincial.json` cho bối cảnh **"Thanh niên tỉnh lẻ lên phố"** (bản miễn phí) gồm:
-  - Thông số khởi đầu: tuổi 22, lương thấp, tiền thuê trọ hàng tháng, khoản "Trách nhiệm gia đình" tự động trừ hàng tháng gửi về quê.
+- **Bước 0 (BẮT BUỘC, làm đầu tiên):** XÓA `InMemoryEventPoolRepository` và `InMemoryScenarioConfigRepository` (placeholder từ Task 1) sau khi implementation JSON hoạt động. Cuối task, chạy `grep -ri "InMemory\|TODO(task-2)" lib/` phải không còn kết quả. TUYỆT ĐỐI không để 2 implementation cùng tồn tại — DI chỉ được trỏ vào bản JSON.
+- **Cảnh báo async DI:** nếu repository đọc asset JSON dùng `@preResolve` hoặc bất kỳ dependency async nào, injectable sẽ đổi `init()` thành `Future` — khi đó BẮT BUỘC đổi `configureDependencies()` trong `lib/core/di/injection.dart` thành `Future<void>` và thêm `await` tại `main.dart` + toàn bộ test setUp (kể cả DI smoke test). Quên `await` là lỗi im lặng: app chạy nhưng DI chưa xong, crash lúc resolve. Sau khi chạy build_runner, kiểm tra kiểu trả về của `init()` trong `injection.config.dart` và xác nhận mọi call-site khớp.
+- **Mở rộng `ScenarioConfig`** (đã ghi nhận ở Task 1 là bản tối thiểu): thêm `monthlyExpenses`, `@Default([]) List<Loan> initialLoans`, `startAgeInMonths`, `startCalendarMonth`, `initialCreditScore`, `housingLevel`, `country`, `currency`, `bankruptcyMonthsThreshold`. Refactor `GameStateFactory` thành hàm build `GameState` từ `ScenarioConfig` (hoặc thay thế hẳn factory), số liệu chuyển hết vào JSON.
+- Tách cấu trúc asset theo nguyên tắc **logic/số liệu tách khỏi text hiển thị** (chuẩn bị cho đa ngôn ngữ):
+```
+assets/config/
+  scenarios/vn_provincial.json   # số liệu, xác suất, hiệu ứng, textKey — KHÔNG chứa text hiển thị
+  i18n/events_vi.json            # map textKey -> title/description/label tiếng Việt
+```
+- Event/option trong scenario JSON tham chiếu text qua `textKey` (ví dụ `"textKey": "event_tet_holiday"`). `EventPoolRepository` ghép scenario + file i18n theo locale khi load. Lý do: thêm ngôn ngữ mới hoặc bán bản mở rộng Mỹ/Nhật chỉ cần thêm file JSON, không đụng logic.
+- Nội dung `vn_provincial.json` cho bối cảnh **"Thanh niên tỉnh lẻ lên phố"** (bản miễn phí):
+  - Thông số khởi đầu: tuổi 22, lương thấp, tiền thuê trọ hàng tháng, khoản "Trách nhiệm gia đình" tự động trừ hàng tháng gửi về quê, và ngưỡng phá sản `bankruptcyMonthsThreshold` (đọc từ config thay cho hằng số mặc định — xem Task 0.3).
   - Event pool tối thiểu 15 sự kiện, trong đó BẮT BUỘC có:
-    - "Tết Nguyên Đán" (chỉ trigger tháng 1 hoặc 2): cộng Thưởng Tết, trừ mạnh chi phí mua sắm + lì xì.
+    - "Tết Nguyên Đán" (chỉ trigger tháng 1 hoặc 2 theo `calendarMonth`): cộng Thưởng Tết, trừ mạnh chi phí mua sắm + lì xì.
     - "Đám cưới bạn thân" (tốn tiền phong bì, tăng Network).
     - Bẫy "Mua xe cũ giá rẻ": chọn xe mới trả góp vs xe cũ trả đứt; nếu chọn xe cũ, set flag ngầm tăng xác suất event "Xe hỏng giữa đường" lên 30% (tốn tiền sửa, trừ lương do đi trễ, tăng Stress).
     - Bẫy "Tiết kiệm thái quá": cắt hết chi tiêu giao lưu → Network về 0, đóng băng thăng chức, tăng xác suất event "Đau dạ dày" viện phí lớn.
-- Schema JSON tự thiết kế nhưng phải hỗ trợ: điều kiện trigger (tuổi, stress, tháng, flag), trọng số xác suất, nhiều lựa chọn cho người chơi, hiệu ứng lên cash/stress/network/credit/flags, và `insightCardId` (tham chiếu bài học, dùng ở Task 4).
+- Schema JSON tự thiết kế nhưng phải hỗ trợ: điều kiện trigger (tuổi, stress, `calendarMonth`, flag), trọng số xác suất, nhiều lựa chọn cho người chơi, hiệu ứng lên cash/stress/network/credit/flags (kể cả thêm Loan/Asset — xem `EventEffect`), và `insightCardId` (tham chiếu bài học, dùng ở Task 4).
+- Việc mở rộng kiểu trả về của `EventPoolRepository.loadEventPool` để mang điều kiện trigger (thêm field vào `GameEvent` hoặc bọc trong `EventDefinition`) đã được ghi nhận là thay đổi có chủ đích từ Task 1 — nêu rõ lựa chọn trong plan.
 - Refactor `generate_event_usecase` để đọc từ `EventPoolRepository` thay vì nguồn hiện tại (nếu đang hardcode).
-- Unit test: parse JSON đúng schema; filter điều kiện trigger đúng (event Tết không xuất hiện tháng 6); trọng số xác suất hoạt động (test thống kê với seed cố định).
+- **Convention nhắc lại:** toàn bộ comment trong code viết bằng TIẾNG ANH (đã có comment tiếng Việt lọt vào ở các task trước — không lặp lại).
+- Unit test: parse JSON đúng schema; ghép textKey → text đúng locale; filter điều kiện trigger đúng (event Tết không xuất hiện khi `calendarMonth` = 6); trọng số xác suất hoạt động (test thống kê với seed cố định qua `Random` đã đăng ký trong DI module).
 
 ### Task 3 — Simulation test cho Game Engine
 - Viết integration test giả lập chạy `process_next_month_usecase` liên tục 200 tháng với các chiến lược bot khác nhau:

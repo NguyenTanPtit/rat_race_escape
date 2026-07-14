@@ -3,16 +3,11 @@ import '../../domain/entities/game_state.dart';
 import '../../domain/entities/scenario_config.dart';
 import '../../domain/repositories/scenario_config_repository.dart';
 
+// TODO(task-2): Delete this file and replace with JSON implementation.
 @LazySingleton(as: ScenarioConfigRepository)
-class MockScenarioConfigRepository implements ScenarioConfigRepository {
+class InMemoryScenarioConfigRepository implements ScenarioConfigRepository {
   @override
   Future<ScenarioConfig> loadScenarioConfig(Country country, String scenarioId) async {
-    // Return mock data for now
-    return const ScenarioConfig(
-      initialCash: 10000000,
-      baseSalary: 15000000,
-      monthlyRent: 3000000,
-      familySupportExpense: 2000000,
-    );
+    throw ArgumentError('Scenario $scenarioId not found in memory stub.');
   }
 }

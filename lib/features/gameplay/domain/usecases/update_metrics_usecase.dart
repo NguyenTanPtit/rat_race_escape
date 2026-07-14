@@ -1,7 +1,7 @@
 import 'package:injectable/injectable.dart';
 import '../entities/game_state.dart';
 
-@injectable
+@lazySingleton
 class UpdateMetricsUseCase {
   /// Modifies stress and creditScore. 
   /// E.g., if cash < 0, increase stress by 10 and decrease credit score by 20. 

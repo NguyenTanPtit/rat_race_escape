@@ -11,8 +11,11 @@ _ScenarioConfig _$ScenarioConfigFromJson(Map<String, dynamic> json) =>
       initialCash: (json['initialCash'] as num).toDouble(),
       baseSalary: (json['baseSalary'] as num).toDouble(),
       monthlyRent: (json['monthlyRent'] as num).toDouble(),
-      initialPassiveIncome:
-          (json['initialPassiveIncome'] as num?)?.toDouble() ?? 0.0,
+      initialAssets:
+          (json['initialAssets'] as List<dynamic>?)
+              ?.map((e) => Asset.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
       familySupportExpense:
           (json['familySupportExpense'] as num?)?.toDouble() ?? 0.0,
     );
@@ -22,6 +25,6 @@ Map<String, dynamic> _$ScenarioConfigToJson(_ScenarioConfig instance) =>
       'initialCash': instance.initialCash,
       'baseSalary': instance.baseSalary,
       'monthlyRent': instance.monthlyRent,
-      'initialPassiveIncome': instance.initialPassiveIncome,
+      'initialAssets': instance.initialAssets.map((e) => e.toJson()).toList(),
       'familySupportExpense': instance.familySupportExpense,
     };
