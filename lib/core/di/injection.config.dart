@@ -26,6 +26,8 @@ import '../../features/gameplay/domain/repositories/game_state_repository.dart'
     as _i688;
 import '../../features/gameplay/domain/repositories/scenario_config_repository.dart'
     as _i96;
+import '../../features/gameplay/domain/usecases/apply_event_option_usecase.dart'
+    as _i742;
 import '../../features/gameplay/domain/usecases/calculate_cashflow_usecase.dart'
     as _i521;
 import '../../features/gameplay/domain/usecases/check_game_status_usecase.dart'
@@ -69,6 +71,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i690.EventPoolRepository>(
       () => _i831.JsonEventPoolRepository(),
     );
+    gh.lazySingleton<_i742.ApplyEventOptionUseCase>(
+      () => _i742.ApplyEventOptionUseCase(
+        gh<_i690.EventPoolRepository>(),
+        gh<_i669.CheckGameStatusUseCase>(),
+      ),
+    );
     gh.lazySingleton<_i96.ScenarioConfigRepository>(
       () => _i248.JsonScenarioConfigRepository(),
     );
@@ -88,7 +96,10 @@ extension GetItInjectableX on _i174.GetIt {
       ),
     );
     gh.factory<_i910.GameEngineCubit>(
-      () => _i910.GameEngineCubit(gh<_i541.ProcessNextMonthUseCase>()),
+      () => _i910.GameEngineCubit(
+        gh<_i541.ProcessNextMonthUseCase>(),
+        gh<_i742.ApplyEventOptionUseCase>(),
+      ),
     );
     return this;
   }

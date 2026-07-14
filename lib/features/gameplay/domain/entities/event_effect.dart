@@ -19,6 +19,8 @@ abstract class EventEffect with _$EventEffect {
     String? insightCardId,
     @Default(0.0) double salaryDelta,
     @Default(0.0) double monthlyExpensesDelta,
+    @Default(0.0) double cashBySalaryMultiplier,
+    @Default(0.0) double cashByOutflowMultiplier,
   }) = _EventEffect;
 
   factory EventEffect.fromJson(Map<String, dynamic> json) => _$EventEffectFromJson(json);

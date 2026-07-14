@@ -32,6 +32,11 @@ _GameState _$GameStateFromJson(Map<String, dynamic> json) => _GameState(
   flags:
       (json['flags'] as List<dynamic>?)?.map((e) => e as String).toSet() ??
       const {},
+  unlockedInsightCardIds:
+      (json['unlockedInsightCardIds'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toSet() ??
+      const {},
   familySupportExpense:
       (json['familySupportExpense'] as num?)?.toDouble() ?? 0.0,
   baseEventChance: (json['baseEventChance'] as num?)?.toDouble() ?? 0.2,
@@ -68,6 +73,7 @@ Map<String, dynamic> _$GameStateToJson(_GameState instance) =>
       'ownedItems': instance.ownedItems,
       'currentEventId': instance.currentEventId,
       'flags': instance.flags.toList(),
+      'unlockedInsightCardIds': instance.unlockedInsightCardIds.toList(),
       'familySupportExpense': instance.familySupportExpense,
       'baseEventChance': instance.baseEventChance,
       'bankruptcyMonthsThreshold': instance.bankruptcyMonthsThreshold,

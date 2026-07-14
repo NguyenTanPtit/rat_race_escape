@@ -1,16 +1,23 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/error/failure.dart';
 import '../../domain/entities/game_state.dart';
 import '../../domain/entities/turn_result.dart';
+import '../../domain/usecases/apply_event_option_usecase.dart';
 import '../../domain/usecases/process_next_month_usecase.dart';
 import 'game_engine_state.dart';
 
 @injectable
 class GameEngineCubit extends Cubit<GameEngineState> {
   final ProcessNextMonthUseCase _processNextMonthUseCase;
+  final ApplyEventOptionUseCase _applyEventOptionUseCase;
 
-  GameEngineCubit(this._processNextMonthUseCase) : super(const GameEngineState.initial());
+  GameEngineCubit(
+    this._processNextMonthUseCase,
+    this._applyEventOptionUseCase,
+  ) : super(const GameEngineState.initial());
 
   /// Starts the game by emitting the playing state with the initial data.
   void startGame(GameState initialState) {
@@ -26,27 +33,50 @@ class GameEngineCubit extends Cubit<GameEngineState> {
     // Process the next month
     final result = await _processNextMonthUseCase.call(playingState.gameState);
 
-    // Handle the Either result
+    _handleTurnResult(result);
+  }
+
+  /// Applies the selected event option to the current game state.
+  Future<void> chooseEventOption(String eventId, String optionId) async {
+    if (state is! GameEnginePlaying) return;
+    
+    final playingState = state as GameEnginePlaying;
+
+    final result = await _applyEventOptionUseCase.call(
+      playingState.gameState,
+      eventId,
+      optionId,
+    );
+
+    result.fold(
+      (failure) {
+        // Ignored: keep playing state without emitting error (e.g. double tap)
+      },
+      (turnResult) {
+        _emitTurnResult(turnResult);
+      },
+    );
+  }
+
+  void _handleTurnResult(Either<Failure, TurnResult> result) {
     result.fold(
       (failure) {
         emit(GameEngineState.error(failure.message));
       },
       (turnResult) {
-        switch (turnResult) {
-          case TurnContinued():
-            emit(GameEngineState.playing(turnResult.state));
-          case TurnWon():
-            emit(GameEngineState.gameOver('Victory: You have achieved financial freedom!', turnResult.state));
-          case TurnLost():
-            final reasonStr = switch (turnResult.reason) {
-              GameOverReason.burnout => 'Burnout: Stress level reached maximum capacity.',
-              GameOverReason.bankruptcy => 'Bankrupt: You ran out of cash to survive.',
-              GameOverReason.debtSpiral => 'Debt Spiral: Unrecoverable debt and poor credit.',
-              GameOverReason.poorAtRetirement => 'Retirement: Reached age 65 without financial freedom.',
-            };
-            emit(GameEngineState.gameOver(reasonStr, turnResult.state));
-        }
+        _emitTurnResult(turnResult);
       },
     );
+  }
+
+  void _emitTurnResult(TurnResult turnResult) {
+    switch (turnResult) {
+      case TurnContinued():
+        emit(GameEngineState.playing(turnResult.state));
+      case TurnWon():
+        emit(GameEngineState.won(turnResult.state));
+      case TurnLost():
+        emit(GameEngineState.gameOver(turnResult.reason, turnResult.state));
+    }
   }
 }

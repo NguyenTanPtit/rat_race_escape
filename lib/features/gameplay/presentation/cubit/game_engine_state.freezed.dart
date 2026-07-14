@@ -55,13 +55,14 @@ extension GameEngineStatePatterns on GameEngineState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( GameEngineInitial value)?  initial,TResult Function( GameEnginePlaying value)?  playing,TResult Function( GameEngineGameOver value)?  gameOver,TResult Function( GameEngineError value)?  error,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( GameEngineInitial value)?  initial,TResult Function( GameEnginePlaying value)?  playing,TResult Function( GameEngineGameOver value)?  gameOver,TResult Function( GameEngineWon value)?  won,TResult Function( GameEngineError value)?  error,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case GameEngineInitial() when initial != null:
 return initial(_that);case GameEnginePlaying() when playing != null:
 return playing(_that);case GameEngineGameOver() when gameOver != null:
-return gameOver(_that);case GameEngineError() when error != null:
+return gameOver(_that);case GameEngineWon() when won != null:
+return won(_that);case GameEngineError() when error != null:
 return error(_that);case _:
   return orElse();
 
@@ -80,13 +81,14 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( GameEngineInitial value)  initial,required TResult Function( GameEnginePlaying value)  playing,required TResult Function( GameEngineGameOver value)  gameOver,required TResult Function( GameEngineError value)  error,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( GameEngineInitial value)  initial,required TResult Function( GameEnginePlaying value)  playing,required TResult Function( GameEngineGameOver value)  gameOver,required TResult Function( GameEngineWon value)  won,required TResult Function( GameEngineError value)  error,}){
 final _that = this;
 switch (_that) {
 case GameEngineInitial():
 return initial(_that);case GameEnginePlaying():
 return playing(_that);case GameEngineGameOver():
-return gameOver(_that);case GameEngineError():
+return gameOver(_that);case GameEngineWon():
+return won(_that);case GameEngineError():
 return error(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
@@ -101,13 +103,14 @@ return error(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( GameEngineInitial value)?  initial,TResult? Function( GameEnginePlaying value)?  playing,TResult? Function( GameEngineGameOver value)?  gameOver,TResult? Function( GameEngineError value)?  error,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( GameEngineInitial value)?  initial,TResult? Function( GameEnginePlaying value)?  playing,TResult? Function( GameEngineGameOver value)?  gameOver,TResult? Function( GameEngineWon value)?  won,TResult? Function( GameEngineError value)?  error,}){
 final _that = this;
 switch (_that) {
 case GameEngineInitial() when initial != null:
 return initial(_that);case GameEnginePlaying() when playing != null:
 return playing(_that);case GameEngineGameOver() when gameOver != null:
-return gameOver(_that);case GameEngineError() when error != null:
+return gameOver(_that);case GameEngineWon() when won != null:
+return won(_that);case GameEngineError() when error != null:
 return error(_that);case _:
   return null;
 
@@ -125,12 +128,13 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function( GameState gameState)?  playing,TResult Function( String reason,  GameState finalState)?  gameOver,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function( GameState gameState)?  playing,TResult Function( GameOverReason reason,  GameState finalState)?  gameOver,TResult Function( GameState finalState)?  won,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case GameEngineInitial() when initial != null:
 return initial();case GameEnginePlaying() when playing != null:
 return playing(_that.gameState);case GameEngineGameOver() when gameOver != null:
-return gameOver(_that.reason,_that.finalState);case GameEngineError() when error != null:
+return gameOver(_that.reason,_that.finalState);case GameEngineWon() when won != null:
+return won(_that.finalState);case GameEngineError() when error != null:
 return error(_that.message);case _:
   return orElse();
 
@@ -149,12 +153,13 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function( GameState gameState)  playing,required TResult Function( String reason,  GameState finalState)  gameOver,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function( GameState gameState)  playing,required TResult Function( GameOverReason reason,  GameState finalState)  gameOver,required TResult Function( GameState finalState)  won,required TResult Function( String message)  error,}) {final _that = this;
 switch (_that) {
 case GameEngineInitial():
 return initial();case GameEnginePlaying():
 return playing(_that.gameState);case GameEngineGameOver():
-return gameOver(_that.reason,_that.finalState);case GameEngineError():
+return gameOver(_that.reason,_that.finalState);case GameEngineWon():
+return won(_that.finalState);case GameEngineError():
 return error(_that.message);}
 }
 /// A variant of `when` that fallback to returning `null`
@@ -169,12 +174,13 @@ return error(_that.message);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function( GameState gameState)?  playing,TResult? Function( String reason,  GameState finalState)?  gameOver,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function( GameState gameState)?  playing,TResult? Function( GameOverReason reason,  GameState finalState)?  gameOver,TResult? Function( GameState finalState)?  won,TResult? Function( String message)?  error,}) {final _that = this;
 switch (_that) {
 case GameEngineInitial() when initial != null:
 return initial();case GameEnginePlaying() when playing != null:
 return playing(_that.gameState);case GameEngineGameOver() when gameOver != null:
-return gameOver(_that.reason,_that.finalState);case GameEngineError() when error != null:
+return gameOver(_that.reason,_that.finalState);case GameEngineWon() when won != null:
+return won(_that.finalState);case GameEngineError() when error != null:
 return error(_that.message);case _:
   return null;
 
@@ -297,7 +303,7 @@ class GameEngineGameOver implements GameEngineState {
   const GameEngineGameOver(this.reason, this.finalState);
   
 
- final  String reason;
+ final  GameOverReason reason;
  final  GameState finalState;
 
 /// Create a copy of GameEngineState
@@ -330,7 +336,7 @@ abstract mixin class $GameEngineGameOverCopyWith<$Res> implements $GameEngineSta
   factory $GameEngineGameOverCopyWith(GameEngineGameOver value, $Res Function(GameEngineGameOver) _then) = _$GameEngineGameOverCopyWithImpl;
 @useResult
 $Res call({
- String reason, GameState finalState
+ GameOverReason reason, GameState finalState
 });
 
 
@@ -350,7 +356,82 @@ class _$GameEngineGameOverCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') $Res call({Object? reason = null,Object? finalState = null,}) {
   return _then(GameEngineGameOver(
 null == reason ? _self.reason : reason // ignore: cast_nullable_to_non_nullable
-as String,null == finalState ? _self.finalState : finalState // ignore: cast_nullable_to_non_nullable
+as GameOverReason,null == finalState ? _self.finalState : finalState // ignore: cast_nullable_to_non_nullable
+as GameState,
+  ));
+}
+
+/// Create a copy of GameEngineState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$GameStateCopyWith<$Res> get finalState {
+  
+  return $GameStateCopyWith<$Res>(_self.finalState, (value) {
+    return _then(_self.copyWith(finalState: value));
+  });
+}
+}
+
+/// @nodoc
+
+
+class GameEngineWon implements GameEngineState {
+  const GameEngineWon(this.finalState);
+  
+
+ final  GameState finalState;
+
+/// Create a copy of GameEngineState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$GameEngineWonCopyWith<GameEngineWon> get copyWith => _$GameEngineWonCopyWithImpl<GameEngineWon>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GameEngineWon&&(identical(other.finalState, finalState) || other.finalState == finalState));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,finalState);
+
+@override
+String toString() {
+  return 'GameEngineState.won(finalState: $finalState)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $GameEngineWonCopyWith<$Res> implements $GameEngineStateCopyWith<$Res> {
+  factory $GameEngineWonCopyWith(GameEngineWon value, $Res Function(GameEngineWon) _then) = _$GameEngineWonCopyWithImpl;
+@useResult
+$Res call({
+ GameState finalState
+});
+
+
+$GameStateCopyWith<$Res> get finalState;
+
+}
+/// @nodoc
+class _$GameEngineWonCopyWithImpl<$Res>
+    implements $GameEngineWonCopyWith<$Res> {
+  _$GameEngineWonCopyWithImpl(this._self, this._then);
+
+  final GameEngineWon _self;
+  final $Res Function(GameEngineWon) _then;
+
+/// Create a copy of GameEngineState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? finalState = null,}) {
+  return _then(GameEngineWon(
+null == finalState ? _self.finalState : finalState // ignore: cast_nullable_to_non_nullable
 as GameState,
   ));
 }

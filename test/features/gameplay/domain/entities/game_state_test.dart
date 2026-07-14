@@ -56,6 +56,7 @@ void main() {
         housingLevel: HousingLevel.studio,
         ownedItems: ['Laptop', 'Bike'],
         flags: {'owns_old_car', 'met_stranger'},
+        unlockedInsightCardIds: {'card_1', 'card_2'},
         assets: [
           const Asset(
             id: 'a1',
@@ -82,6 +83,7 @@ void main() {
 
       expect(newState, equals(state));
       expect(newState.flags.contains('owns_old_car'), isTrue);
+      expect(newState.unlockedInsightCardIds.contains('card_1'), isTrue);
       expect(newState.assets.length, 1);
       expect(newState.assets.first.name, 'Stock A');
       expect(newState.loans.length, 1);

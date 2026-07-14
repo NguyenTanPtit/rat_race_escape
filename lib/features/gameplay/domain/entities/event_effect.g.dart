@@ -35,6 +35,10 @@ _EventEffect _$EventEffectFromJson(Map<String, dynamic> json) => _EventEffect(
   salaryDelta: (json['salaryDelta'] as num?)?.toDouble() ?? 0.0,
   monthlyExpensesDelta:
       (json['monthlyExpensesDelta'] as num?)?.toDouble() ?? 0.0,
+  cashBySalaryMultiplier:
+      (json['cashBySalaryMultiplier'] as num?)?.toDouble() ?? 0.0,
+  cashByOutflowMultiplier:
+      (json['cashByOutflowMultiplier'] as num?)?.toDouble() ?? 0.0,
 );
 
 Map<String, dynamic> _$EventEffectToJson(_EventEffect instance) =>
@@ -50,4 +54,6 @@ Map<String, dynamic> _$EventEffectToJson(_EventEffect instance) =>
       'insightCardId': instance.insightCardId,
       'salaryDelta': instance.salaryDelta,
       'monthlyExpensesDelta': instance.monthlyExpensesDelta,
+      'cashBySalaryMultiplier': instance.cashBySalaryMultiplier,
+      'cashByOutflowMultiplier': instance.cashByOutflowMultiplier,
     };

@@ -15,8 +15,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Asset {
 
- String get id; String get name; double get baseValue;// Giá trị hiện tại của tài sản
- double get monthlyPassiveIncome;// Dòng tiền thụ động sinh ra mỗi tháng
+ String get id; String get name; double get baseValue;// Current value of the asset
+ double get monthlyPassiveIncome;// Passive income generated each month
  AssetType get type;
 /// Create a copy of Asset
 /// with the given fields replaced by the non-null parameter values.
@@ -221,9 +221,9 @@ class _Asset implements Asset {
 @override final  String id;
 @override final  String name;
 @override final  double baseValue;
-// Giá trị hiện tại của tài sản
+// Current value of the asset
 @override@JsonKey() final  double monthlyPassiveIncome;
-// Dòng tiền thụ động sinh ra mỗi tháng
+// Passive income generated each month
 @override@JsonKey() final  AssetType type;
 
 /// Create a copy of Asset

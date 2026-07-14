@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$EventEffect {
 
- double get cash; int get stress; int get network; int get credit; List<Loan> get addedLoans; List<Asset> get addedAssets; List<String> get addedFlags; List<String> get removedFlags; String? get insightCardId; double get salaryDelta; double get monthlyExpensesDelta;
+ double get cash; int get stress; int get network; int get credit; List<Loan> get addedLoans; List<Asset> get addedAssets; List<String> get addedFlags; List<String> get removedFlags; String? get insightCardId; double get salaryDelta; double get monthlyExpensesDelta; double get cashBySalaryMultiplier; double get cashByOutflowMultiplier;
 /// Create a copy of EventEffect
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $EventEffectCopyWith<EventEffect> get copyWith => _$EventEffectCopyWithImpl<Even
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventEffect&&(identical(other.cash, cash) || other.cash == cash)&&(identical(other.stress, stress) || other.stress == stress)&&(identical(other.network, network) || other.network == network)&&(identical(other.credit, credit) || other.credit == credit)&&const DeepCollectionEquality().equals(other.addedLoans, addedLoans)&&const DeepCollectionEquality().equals(other.addedAssets, addedAssets)&&const DeepCollectionEquality().equals(other.addedFlags, addedFlags)&&const DeepCollectionEquality().equals(other.removedFlags, removedFlags)&&(identical(other.insightCardId, insightCardId) || other.insightCardId == insightCardId)&&(identical(other.salaryDelta, salaryDelta) || other.salaryDelta == salaryDelta)&&(identical(other.monthlyExpensesDelta, monthlyExpensesDelta) || other.monthlyExpensesDelta == monthlyExpensesDelta));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventEffect&&(identical(other.cash, cash) || other.cash == cash)&&(identical(other.stress, stress) || other.stress == stress)&&(identical(other.network, network) || other.network == network)&&(identical(other.credit, credit) || other.credit == credit)&&const DeepCollectionEquality().equals(other.addedLoans, addedLoans)&&const DeepCollectionEquality().equals(other.addedAssets, addedAssets)&&const DeepCollectionEquality().equals(other.addedFlags, addedFlags)&&const DeepCollectionEquality().equals(other.removedFlags, removedFlags)&&(identical(other.insightCardId, insightCardId) || other.insightCardId == insightCardId)&&(identical(other.salaryDelta, salaryDelta) || other.salaryDelta == salaryDelta)&&(identical(other.monthlyExpensesDelta, monthlyExpensesDelta) || other.monthlyExpensesDelta == monthlyExpensesDelta)&&(identical(other.cashBySalaryMultiplier, cashBySalaryMultiplier) || other.cashBySalaryMultiplier == cashBySalaryMultiplier)&&(identical(other.cashByOutflowMultiplier, cashByOutflowMultiplier) || other.cashByOutflowMultiplier == cashByOutflowMultiplier));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,cash,stress,network,credit,const DeepCollectionEquality().hash(addedLoans),const DeepCollectionEquality().hash(addedAssets),const DeepCollectionEquality().hash(addedFlags),const DeepCollectionEquality().hash(removedFlags),insightCardId,salaryDelta,monthlyExpensesDelta);
+int get hashCode => Object.hash(runtimeType,cash,stress,network,credit,const DeepCollectionEquality().hash(addedLoans),const DeepCollectionEquality().hash(addedAssets),const DeepCollectionEquality().hash(addedFlags),const DeepCollectionEquality().hash(removedFlags),insightCardId,salaryDelta,monthlyExpensesDelta,cashBySalaryMultiplier,cashByOutflowMultiplier);
 
 @override
 String toString() {
-  return 'EventEffect(cash: $cash, stress: $stress, network: $network, credit: $credit, addedLoans: $addedLoans, addedAssets: $addedAssets, addedFlags: $addedFlags, removedFlags: $removedFlags, insightCardId: $insightCardId, salaryDelta: $salaryDelta, monthlyExpensesDelta: $monthlyExpensesDelta)';
+  return 'EventEffect(cash: $cash, stress: $stress, network: $network, credit: $credit, addedLoans: $addedLoans, addedAssets: $addedAssets, addedFlags: $addedFlags, removedFlags: $removedFlags, insightCardId: $insightCardId, salaryDelta: $salaryDelta, monthlyExpensesDelta: $monthlyExpensesDelta, cashBySalaryMultiplier: $cashBySalaryMultiplier, cashByOutflowMultiplier: $cashByOutflowMultiplier)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $EventEffectCopyWith<$Res>  {
   factory $EventEffectCopyWith(EventEffect value, $Res Function(EventEffect) _then) = _$EventEffectCopyWithImpl;
 @useResult
 $Res call({
- double cash, int stress, int network, int credit, List<Loan> addedLoans, List<Asset> addedAssets, List<String> addedFlags, List<String> removedFlags, String? insightCardId, double salaryDelta, double monthlyExpensesDelta
+ double cash, int stress, int network, int credit, List<Loan> addedLoans, List<Asset> addedAssets, List<String> addedFlags, List<String> removedFlags, String? insightCardId, double salaryDelta, double monthlyExpensesDelta, double cashBySalaryMultiplier, double cashByOutflowMultiplier
 });
 
 
@@ -65,7 +65,7 @@ class _$EventEffectCopyWithImpl<$Res>
 
 /// Create a copy of EventEffect
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? cash = null,Object? stress = null,Object? network = null,Object? credit = null,Object? addedLoans = null,Object? addedAssets = null,Object? addedFlags = null,Object? removedFlags = null,Object? insightCardId = freezed,Object? salaryDelta = null,Object? monthlyExpensesDelta = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? cash = null,Object? stress = null,Object? network = null,Object? credit = null,Object? addedLoans = null,Object? addedAssets = null,Object? addedFlags = null,Object? removedFlags = null,Object? insightCardId = freezed,Object? salaryDelta = null,Object? monthlyExpensesDelta = null,Object? cashBySalaryMultiplier = null,Object? cashByOutflowMultiplier = null,}) {
   return _then(_self.copyWith(
 cash: null == cash ? _self.cash : cash // ignore: cast_nullable_to_non_nullable
 as double,stress: null == stress ? _self.stress : stress // ignore: cast_nullable_to_non_nullable
@@ -78,6 +78,8 @@ as List<String>,removedFlags: null == removedFlags ? _self.removedFlags : remove
 as List<String>,insightCardId: freezed == insightCardId ? _self.insightCardId : insightCardId // ignore: cast_nullable_to_non_nullable
 as String?,salaryDelta: null == salaryDelta ? _self.salaryDelta : salaryDelta // ignore: cast_nullable_to_non_nullable
 as double,monthlyExpensesDelta: null == monthlyExpensesDelta ? _self.monthlyExpensesDelta : monthlyExpensesDelta // ignore: cast_nullable_to_non_nullable
+as double,cashBySalaryMultiplier: null == cashBySalaryMultiplier ? _self.cashBySalaryMultiplier : cashBySalaryMultiplier // ignore: cast_nullable_to_non_nullable
+as double,cashByOutflowMultiplier: null == cashByOutflowMultiplier ? _self.cashByOutflowMultiplier : cashByOutflowMultiplier // ignore: cast_nullable_to_non_nullable
 as double,
   ));
 }
@@ -163,10 +165,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( double cash,  int stress,  int network,  int credit,  List<Loan> addedLoans,  List<Asset> addedAssets,  List<String> addedFlags,  List<String> removedFlags,  String? insightCardId,  double salaryDelta,  double monthlyExpensesDelta)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( double cash,  int stress,  int network,  int credit,  List<Loan> addedLoans,  List<Asset> addedAssets,  List<String> addedFlags,  List<String> removedFlags,  String? insightCardId,  double salaryDelta,  double monthlyExpensesDelta,  double cashBySalaryMultiplier,  double cashByOutflowMultiplier)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _EventEffect() when $default != null:
-return $default(_that.cash,_that.stress,_that.network,_that.credit,_that.addedLoans,_that.addedAssets,_that.addedFlags,_that.removedFlags,_that.insightCardId,_that.salaryDelta,_that.monthlyExpensesDelta);case _:
+return $default(_that.cash,_that.stress,_that.network,_that.credit,_that.addedLoans,_that.addedAssets,_that.addedFlags,_that.removedFlags,_that.insightCardId,_that.salaryDelta,_that.monthlyExpensesDelta,_that.cashBySalaryMultiplier,_that.cashByOutflowMultiplier);case _:
   return orElse();
 
 }
@@ -184,10 +186,10 @@ return $default(_that.cash,_that.stress,_that.network,_that.credit,_that.addedLo
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double cash,  int stress,  int network,  int credit,  List<Loan> addedLoans,  List<Asset> addedAssets,  List<String> addedFlags,  List<String> removedFlags,  String? insightCardId,  double salaryDelta,  double monthlyExpensesDelta)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double cash,  int stress,  int network,  int credit,  List<Loan> addedLoans,  List<Asset> addedAssets,  List<String> addedFlags,  List<String> removedFlags,  String? insightCardId,  double salaryDelta,  double monthlyExpensesDelta,  double cashBySalaryMultiplier,  double cashByOutflowMultiplier)  $default,) {final _that = this;
 switch (_that) {
 case _EventEffect():
-return $default(_that.cash,_that.stress,_that.network,_that.credit,_that.addedLoans,_that.addedAssets,_that.addedFlags,_that.removedFlags,_that.insightCardId,_that.salaryDelta,_that.monthlyExpensesDelta);case _:
+return $default(_that.cash,_that.stress,_that.network,_that.credit,_that.addedLoans,_that.addedAssets,_that.addedFlags,_that.removedFlags,_that.insightCardId,_that.salaryDelta,_that.monthlyExpensesDelta,_that.cashBySalaryMultiplier,_that.cashByOutflowMultiplier);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -204,10 +206,10 @@ return $default(_that.cash,_that.stress,_that.network,_that.credit,_that.addedLo
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( double cash,  int stress,  int network,  int credit,  List<Loan> addedLoans,  List<Asset> addedAssets,  List<String> addedFlags,  List<String> removedFlags,  String? insightCardId,  double salaryDelta,  double monthlyExpensesDelta)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( double cash,  int stress,  int network,  int credit,  List<Loan> addedLoans,  List<Asset> addedAssets,  List<String> addedFlags,  List<String> removedFlags,  String? insightCardId,  double salaryDelta,  double monthlyExpensesDelta,  double cashBySalaryMultiplier,  double cashByOutflowMultiplier)?  $default,) {final _that = this;
 switch (_that) {
 case _EventEffect() when $default != null:
-return $default(_that.cash,_that.stress,_that.network,_that.credit,_that.addedLoans,_that.addedAssets,_that.addedFlags,_that.removedFlags,_that.insightCardId,_that.salaryDelta,_that.monthlyExpensesDelta);case _:
+return $default(_that.cash,_that.stress,_that.network,_that.credit,_that.addedLoans,_that.addedAssets,_that.addedFlags,_that.removedFlags,_that.insightCardId,_that.salaryDelta,_that.monthlyExpensesDelta,_that.cashBySalaryMultiplier,_that.cashByOutflowMultiplier);case _:
   return null;
 
 }
@@ -219,7 +221,7 @@ return $default(_that.cash,_that.stress,_that.network,_that.credit,_that.addedLo
 @JsonSerializable()
 
 class _EventEffect implements EventEffect {
-  const _EventEffect({this.cash = 0.0, this.stress = 0, this.network = 0, this.credit = 0, final  List<Loan> addedLoans = const [], final  List<Asset> addedAssets = const [], final  List<String> addedFlags = const [], final  List<String> removedFlags = const [], this.insightCardId, this.salaryDelta = 0.0, this.monthlyExpensesDelta = 0.0}): _addedLoans = addedLoans,_addedAssets = addedAssets,_addedFlags = addedFlags,_removedFlags = removedFlags;
+  const _EventEffect({this.cash = 0.0, this.stress = 0, this.network = 0, this.credit = 0, final  List<Loan> addedLoans = const [], final  List<Asset> addedAssets = const [], final  List<String> addedFlags = const [], final  List<String> removedFlags = const [], this.insightCardId, this.salaryDelta = 0.0, this.monthlyExpensesDelta = 0.0, this.cashBySalaryMultiplier = 0.0, this.cashByOutflowMultiplier = 0.0}): _addedLoans = addedLoans,_addedAssets = addedAssets,_addedFlags = addedFlags,_removedFlags = removedFlags;
   factory _EventEffect.fromJson(Map<String, dynamic> json) => _$EventEffectFromJson(json);
 
 @override@JsonKey() final  double cash;
@@ -257,6 +259,8 @@ class _EventEffect implements EventEffect {
 @override final  String? insightCardId;
 @override@JsonKey() final  double salaryDelta;
 @override@JsonKey() final  double monthlyExpensesDelta;
+@override@JsonKey() final  double cashBySalaryMultiplier;
+@override@JsonKey() final  double cashByOutflowMultiplier;
 
 /// Create a copy of EventEffect
 /// with the given fields replaced by the non-null parameter values.
@@ -271,16 +275,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventEffect&&(identical(other.cash, cash) || other.cash == cash)&&(identical(other.stress, stress) || other.stress == stress)&&(identical(other.network, network) || other.network == network)&&(identical(other.credit, credit) || other.credit == credit)&&const DeepCollectionEquality().equals(other._addedLoans, _addedLoans)&&const DeepCollectionEquality().equals(other._addedAssets, _addedAssets)&&const DeepCollectionEquality().equals(other._addedFlags, _addedFlags)&&const DeepCollectionEquality().equals(other._removedFlags, _removedFlags)&&(identical(other.insightCardId, insightCardId) || other.insightCardId == insightCardId)&&(identical(other.salaryDelta, salaryDelta) || other.salaryDelta == salaryDelta)&&(identical(other.monthlyExpensesDelta, monthlyExpensesDelta) || other.monthlyExpensesDelta == monthlyExpensesDelta));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventEffect&&(identical(other.cash, cash) || other.cash == cash)&&(identical(other.stress, stress) || other.stress == stress)&&(identical(other.network, network) || other.network == network)&&(identical(other.credit, credit) || other.credit == credit)&&const DeepCollectionEquality().equals(other._addedLoans, _addedLoans)&&const DeepCollectionEquality().equals(other._addedAssets, _addedAssets)&&const DeepCollectionEquality().equals(other._addedFlags, _addedFlags)&&const DeepCollectionEquality().equals(other._removedFlags, _removedFlags)&&(identical(other.insightCardId, insightCardId) || other.insightCardId == insightCardId)&&(identical(other.salaryDelta, salaryDelta) || other.salaryDelta == salaryDelta)&&(identical(other.monthlyExpensesDelta, monthlyExpensesDelta) || other.monthlyExpensesDelta == monthlyExpensesDelta)&&(identical(other.cashBySalaryMultiplier, cashBySalaryMultiplier) || other.cashBySalaryMultiplier == cashBySalaryMultiplier)&&(identical(other.cashByOutflowMultiplier, cashByOutflowMultiplier) || other.cashByOutflowMultiplier == cashByOutflowMultiplier));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,cash,stress,network,credit,const DeepCollectionEquality().hash(_addedLoans),const DeepCollectionEquality().hash(_addedAssets),const DeepCollectionEquality().hash(_addedFlags),const DeepCollectionEquality().hash(_removedFlags),insightCardId,salaryDelta,monthlyExpensesDelta);
+int get hashCode => Object.hash(runtimeType,cash,stress,network,credit,const DeepCollectionEquality().hash(_addedLoans),const DeepCollectionEquality().hash(_addedAssets),const DeepCollectionEquality().hash(_addedFlags),const DeepCollectionEquality().hash(_removedFlags),insightCardId,salaryDelta,monthlyExpensesDelta,cashBySalaryMultiplier,cashByOutflowMultiplier);
 
 @override
 String toString() {
-  return 'EventEffect(cash: $cash, stress: $stress, network: $network, credit: $credit, addedLoans: $addedLoans, addedAssets: $addedAssets, addedFlags: $addedFlags, removedFlags: $removedFlags, insightCardId: $insightCardId, salaryDelta: $salaryDelta, monthlyExpensesDelta: $monthlyExpensesDelta)';
+  return 'EventEffect(cash: $cash, stress: $stress, network: $network, credit: $credit, addedLoans: $addedLoans, addedAssets: $addedAssets, addedFlags: $addedFlags, removedFlags: $removedFlags, insightCardId: $insightCardId, salaryDelta: $salaryDelta, monthlyExpensesDelta: $monthlyExpensesDelta, cashBySalaryMultiplier: $cashBySalaryMultiplier, cashByOutflowMultiplier: $cashByOutflowMultiplier)';
 }
 
 
@@ -291,7 +295,7 @@ abstract mixin class _$EventEffectCopyWith<$Res> implements $EventEffectCopyWith
   factory _$EventEffectCopyWith(_EventEffect value, $Res Function(_EventEffect) _then) = __$EventEffectCopyWithImpl;
 @override @useResult
 $Res call({
- double cash, int stress, int network, int credit, List<Loan> addedLoans, List<Asset> addedAssets, List<String> addedFlags, List<String> removedFlags, String? insightCardId, double salaryDelta, double monthlyExpensesDelta
+ double cash, int stress, int network, int credit, List<Loan> addedLoans, List<Asset> addedAssets, List<String> addedFlags, List<String> removedFlags, String? insightCardId, double salaryDelta, double monthlyExpensesDelta, double cashBySalaryMultiplier, double cashByOutflowMultiplier
 });
 
 
@@ -308,7 +312,7 @@ class __$EventEffectCopyWithImpl<$Res>
 
 /// Create a copy of EventEffect
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? cash = null,Object? stress = null,Object? network = null,Object? credit = null,Object? addedLoans = null,Object? addedAssets = null,Object? addedFlags = null,Object? removedFlags = null,Object? insightCardId = freezed,Object? salaryDelta = null,Object? monthlyExpensesDelta = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? cash = null,Object? stress = null,Object? network = null,Object? credit = null,Object? addedLoans = null,Object? addedAssets = null,Object? addedFlags = null,Object? removedFlags = null,Object? insightCardId = freezed,Object? salaryDelta = null,Object? monthlyExpensesDelta = null,Object? cashBySalaryMultiplier = null,Object? cashByOutflowMultiplier = null,}) {
   return _then(_EventEffect(
 cash: null == cash ? _self.cash : cash // ignore: cast_nullable_to_non_nullable
 as double,stress: null == stress ? _self.stress : stress // ignore: cast_nullable_to_non_nullable
@@ -321,6 +325,8 @@ as List<String>,removedFlags: null == removedFlags ? _self._removedFlags : remov
 as List<String>,insightCardId: freezed == insightCardId ? _self.insightCardId : insightCardId // ignore: cast_nullable_to_non_nullable
 as String?,salaryDelta: null == salaryDelta ? _self.salaryDelta : salaryDelta // ignore: cast_nullable_to_non_nullable
 as double,monthlyExpensesDelta: null == monthlyExpensesDelta ? _self.monthlyExpensesDelta : monthlyExpensesDelta // ignore: cast_nullable_to_non_nullable
+as double,cashBySalaryMultiplier: null == cashBySalaryMultiplier ? _self.cashBySalaryMultiplier : cashBySalaryMultiplier // ignore: cast_nullable_to_non_nullable
+as double,cashByOutflowMultiplier: null == cashByOutflowMultiplier ? _self.cashByOutflowMultiplier : cashByOutflowMultiplier // ignore: cast_nullable_to_non_nullable
 as double,
   ));
 }

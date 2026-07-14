@@ -40,6 +40,7 @@ abstract class GameState with _$GameState {
     // 5. Active Event & Flags
     String? currentEventId,
     @Default({}) Set<String> flags,
+    @Default({}) Set<String> unlockedInsightCardIds,
     @Default(0.0) double familySupportExpense,
     @Default(0.2) double baseEventChance,
     @Default(3) int bankruptcyMonthsThreshold,

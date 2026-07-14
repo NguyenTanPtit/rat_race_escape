@@ -15,9 +15,9 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Loan {
 
- String get id; String get name; double get principalAmount;// Dư nợ gốc còn lại
- double get interestRatePerYear;// Lãi suất % / năm
- double get minimumMonthlyPayment;// Số tiền phải trả tối thiểu mỗi tháng
+ String get id; String get name; double get principalAmount;// Remaining principal amount
+ double get interestRatePerYear;// Interest rate % / year
+ double get minimumMonthlyPayment;// Minimum amount to pay each month
  LoanType get type;
 /// Create a copy of Loan
 /// with the given fields replaced by the non-null parameter values.
@@ -223,11 +223,11 @@ class _Loan implements Loan {
 @override final  String id;
 @override final  String name;
 @override final  double principalAmount;
-// Dư nợ gốc còn lại
+// Remaining principal amount
 @override final  double interestRatePerYear;
-// Lãi suất % / năm
+// Interest rate % / year
 @override final  double minimumMonthlyPayment;
-// Số tiền phải trả tối thiểu mỗi tháng
+// Minimum amount to pay each month
 @override@JsonKey() final  LoanType type;
 
 /// Create a copy of Loan

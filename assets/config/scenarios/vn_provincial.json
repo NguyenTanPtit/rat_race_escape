@@ -26,9 +26,20 @@
           "id": "tet_opt1",
           "labelKey": "tet_opt1",
           "effect": {
-            "cash": 5000000,
+            "cashBySalaryMultiplier": 1.0,
+            "cash": -12000000,
             "stress": -10,
             "network": 5
+          }
+        },
+        {
+          "id": "tet_opt2",
+          "labelKey": "tet_opt2",
+          "effect": {
+            "cashBySalaryMultiplier": 1.0,
+            "cash": -5000000,
+            "stress": 5,
+            "network": -3
           }
         }
       ]

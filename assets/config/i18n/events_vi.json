@@ -1,9 +1,10 @@
 {
   "tet_holiday": {
     "title": "Tết Nguyên Đán",
-    "description": "Đến hẹn lại lên, một năm cố gắng cũng chỉ để có một cái Tết ấm no. Bạn cần chuẩn bị tiền mừng tuổi, mua quà biếu nội ngoại, vé tàu xe về quê, và sắm sửa đồ đạc mới cho gia đình.",
+    "description": "Đến hẹn lại lên, một năm cố gắng cũng chỉ để có một cái Tết ấm no. Bạn nhận được Thưởng Tết nhưng cũng cần chuẩn bị tiền mừng tuổi, mua quà biếu nội ngoại, vé tàu xe về quê, và sắm sửa đồ đạc mới cho gia đình.",
     "options": {
-      "tet_opt1": "Biếu bố mẹ & Lì xì"
+      "tet_opt1": "Ăn Tết lớn",
+      "tet_opt2": "Ăn Tết tiết kiệm"
     }
   },
   "friend_wedding": {
