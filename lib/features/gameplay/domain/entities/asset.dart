@@ -1,9 +1,10 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'asset.freezed.dart';
+part 'asset.g.dart';
 
 @freezed
-class Asset with _$Asset {
+abstract class Asset with _$Asset {
   const factory Asset({
     required String id,
     required String name,
@@ -11,6 +12,8 @@ class Asset with _$Asset {
     @Default(0.0) double monthlyPassiveIncome, // Dòng tiền thụ động sinh ra mỗi tháng
     @Default(AssetType.stock) AssetType type,
   }) = _Asset;
+
+  factory Asset.fromJson(Map<String, dynamic> json) => _$AssetFromJson(json);
 }
 
 enum AssetType { stock, realEstate, business, crypto }

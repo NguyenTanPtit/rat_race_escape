@@ -50,31 +50,94 @@ lib/features/
 
 ## DANH SÁCH TASK (làm tuần tự, hoàn thành + test xong task trước mới sang task sau)
 
+### Task 0 — Fix bugs hiện có + Migrate Freezed 3 (BẮT BUỘC làm đầu tiên)
+
+Codebase hiện tại có các bug logic đã được xác định. Sửa từng mục dưới đây, mỗi mục kèm unit test khóa hành vi đúng.
+
+**0.1. Bug lãi suất sai đơn vị 100 lần (`process_loans_usecase.dart`):**
+- Code đang tính `principalAmount * (interestRatePerYear / 12)` nhưng factory truyền lãi suất dạng phần trăm (`5.5` nghĩa là 5.5%/năm). Kết quả lãi bị nhân 100 lần.
+- Chốt convention: `interestRatePerYear` LUÔN là phần trăm (5.5 = 5.5%/năm). Sửa công thức thành `principalAmount * (interestRatePerYear / 100 / 12)`.
+- Thêm assert/validate: `interestRatePerYear >= 0 && interestRatePerYear < 100`.
+- Test tính tay BẮT BUỘC (ghi cách tính trong comment): nợ gốc 30,000, lãi 5.5%/năm, trả tối thiểu 300/tháng → sau tháng 1: lãi = 30,000 × 0.055/12 = 137.50; dư nợ mới = 30,000 + 137.50 − 300 = 29,837.50. Chạy tiếp 12 tháng, assert dư nợ cuối ≈ 27,972 (sai số < 1).
+
+**0.2. Bug "nợ ma" — loan trả hết vẫn trừ tiền vĩnh viễn (`process_loans_usecase.dart`):**
+- Loan có principal = 0 vẫn nằm trong list và vẫn bị trừ `minimumMonthlyPayment` mỗi tháng.
+- Tháng tất toán: nếu (dư nợ + lãi tháng) < min payment thì chỉ trả đúng phần còn nợ, không trừ nguyên min payment.
+- Loan sau khi tất toán (dư nợ ≤ 0.01) phải bị loại khỏi `GameState.loans`.
+- Test: loan dư nợ 250, lãi 12%/năm, min payment 300 → tháng đó chỉ bị trừ 250 + 2.50 = 252.50, tháng sau list loans rỗng và cash không đổi.
+
+**0.3. Bug ngưỡng phá sản hardcode theo tiền tệ (`game_engine_cubit.dart`):**
+- `cash < -10000` đang dùng chung cho cả VND lẫn USD — vô nghĩa (âm 10,000 VND không phải phá sản).
+- Thay bằng ngưỡng tương đối: `cash < -(bankruptcyMonthsThreshold × monthlyExpenses)` với `bankruptcyMonthsThreshold` mặc định = 3, đọc được từ scenario config sau này (để dạng hằng số có tên, KHÔNG magic number).
+
+**0.4. Chuyển logic Win/Loss từ Cubit xuống Domain:**
+- Tạo `CheckGameStatusUseCase` trong `domain/usecases/`, gắn vào CUỐI pipeline của `ProcessNextMonthUseCase`.
+- `ProcessNextMonthUseCase` đổi kiểu trả về từ `Either<Failure, GameState>` sang `Either<Failure, TurnResult>`:
+```dart
+@freezed
+sealed class TurnResult with _$TurnResult {
+  const factory TurnResult.continued(GameState state) = TurnContinued;
+  const factory TurnResult.won(GameState state) = TurnWon;
+  const factory TurnResult.lost(GameState state, GameOverReason reason) = TurnLost;
+}
+enum GameOverReason { burnout, bankruptcy, debtSpiral, poorAtRetirement }
+```
+- Cài đủ điều kiện theo GDD: THẮNG khi passive income ≥ monthly expenses; THUA khi stress ≥ 100 (burnout), phá sản (mục 0.3), hoặc tuổi ≥ 65 mà chưa thắng (poorAtRetirement).
+- Cubit chỉ còn map `TurnResult` → `GameEngineState`, KHÔNG chứa business rule. Lý do dùng enum thay chuỗi lý do: UI sẽ map enum → chuỗi đã localize (ARB), không hardcode tiếng Anh trong domain.
+- Test đủ 4 nhánh của `CheckGameStatusUseCase`.
+
+**0.5. `passiveIncome` chuyển từ field lưu sẵn thành computed getter:**
+- Xóa field `passiveIncome` khỏi `GameState`. Thêm getter: `double get passiveIncome => assets.fold(0, (sum, a) => sum + a.monthlyPassiveIncome);`
+- Sửa mọi chỗ đang dùng field cũ. Lý do: tránh lệch dữ liệu khi mua/bán asset, và điều kiện Thắng phụ thuộc trực tiếp con số này.
+
+**0.6. Thêm calendar month + flags vào `GameState`:**
+- Thêm `@Default(1) int startCalendarMonth` và getter `int get calendarMonth => ((startCalendarMonth - 1 + currentMonth - 1) % 12) + 1;` (cần cho event theo mùa như "Tết Nguyên Đán" tháng 1-2).
+- Thêm `@Default({}) Set<String> flags` (cần cho cơ chế bẫy ẩn như `owns_old_car` ở Task 2).
+- Test getter calendarMonth với các case biên (start tháng 12, qua năm mới).
+
+**0.7. Migrate cú pháp Freezed 2 → 3 (pubspec đã nâng `freezed: ^3.2.0`):**
+- Thêm `abstract` vào mọi class Freezed thường (`Asset`, `GameEvent`, `EventOption`, `GameState`, `Loan`), thêm `sealed` vào mọi union (`GameEngineState`, `TurnResult`).
+- Freezed 3 không sinh `when`/`map`/`mapOrNull` mặc định: thay `state.mapOrNull(playing: ...)` trong `GameEngineCubit` bằng Dart 3 pattern matching (`if (state is! GameEnginePlaying) return;` hoặc `switch`).
+- Đổi tên các case union từ private (`_Playing`, `_GameOver`...) thành public (`GameEnginePlaying`, `GameEngineGameOver`...) để UI pattern-match được.
+- Chạy `dart run build_runner build --delete-conflicting-outputs` sạch lỗi.
+
+**0.8. Thêm serialization cho toàn bộ entity:**
+- Thêm `fromJson`/`toJson` (json_serializable, đã có trong pubspec) cho `GameState`, `Asset`, `Loan`, `GameEvent`, `EventOption` — điều kiện tiên quyết cho save/load ở Task 1 và parse config ở Task 2.
+- Test round-trip: `GameState.fromJson(state.toJson()) == state` với state có đủ assets, loans, flags.
+
+**0.9. Dọn dẹp:**
+- Chuyển class `Failure` từ `process_next_month_usecase.dart` ra `lib/core/error/failure.dart`.
+- Bỏ `try/catch` bọc toàn bộ pipeline trong `ProcessNextMonthUseCase` (catch-all nuốt bug lập trình); chỉ giữ Either cho lỗi nghiệp vụ thật.
+- Bỏ `emit(GameEngineState.loading())` trong `nextMonth()` (pipeline đồng bộ, emit loading chỉ gây nháy UI).
+- Đồng bộ số liệu factory với GDD: nợ sinh viên Mỹ là $50,000 (không phải $30,000).
+
+**Definition of Done cho Task 0:** `dart analyze` 0 lỗi; toàn bộ test pass; test tính tay ở 0.1 và 0.2 có comment giải thích công thức; không còn `mapOrNull`/`when` của Freezed trong codebase.
+
 ### Task 1 — Repository interfaces + Persistence (save/load game)
 - Tạo interface trong `gameplay/domain/repositories/`:
-    - `GameStateRepository`: `saveGame(GameState)`, `loadGame()`, `hasSavedGame()`, `deleteSave()`.
-    - `EventPoolRepository`: `loadEventPool(CountryId, ScenarioId)` — trả về danh sách GameEvent kèm điều kiện trigger (độ tuổi min/max, ngưỡng stress, tháng trong năm, xác suất).
-    - `ScenarioConfigRepository`: `loadScenarioConfig(CountryId, ScenarioId)` — trả về thông số khởi đầu (lương, tiền thuê nhà, khoản gửi về quê, nợ ban đầu...).
-- Implement persistence bằng **Hive** trong `gameplay/data/`: model Hive/JSON riêng (không đụng entity domain), mapper 2 chiều model ↔ entity.
+  - `GameStateRepository`: `saveGame(GameState)`, `loadGame()`, `hasSavedGame()`, `deleteSave()`.
+  - `EventPoolRepository`: `loadEventPool(CountryId, ScenarioId)` — trả về danh sách GameEvent kèm điều kiện trigger (độ tuổi min/max, ngưỡng stress, tháng trong năm, xác suất).
+  - `ScenarioConfigRepository`: `loadScenarioConfig(CountryId, ScenarioId)` — trả về thông số khởi đầu (lương, tiền thuê nhà, khoản gửi về quê, nợ ban đầu...).
+- Implement persistence bằng **hive_ce** (đã có trong pubspec — KHÔNG dùng Isar hay Hive gốc, cả hai đều ngừng bảo trì) trong `gameplay/data/`: tận dụng `toJson`/`fromJson` từ Task 0.8 để lưu entity dưới dạng JSON string trong Hive box, không cần TypeAdapter riêng cho từng entity.
 - Setup **get_it** làm DI container, đăng ký toàn bộ repository + usecase. Tạo file `lib/core/di/injection.dart`.
 - Unit test: save → load ra state giống hệt (round-trip test); load khi chưa có save trả về null/failure đúng thiết kế.
 
 ### Task 2 — Event Pool & Scenario Config dạng JSON
 - Tạo `assets/config/vn_provincial.json` cho bối cảnh **"Thanh niên tỉnh lẻ lên phố"** (bản miễn phí) gồm:
-    - Thông số khởi đầu: tuổi 22, lương thấp, tiền thuê trọ hàng tháng, khoản "Trách nhiệm gia đình" tự động trừ hàng tháng gửi về quê.
-    - Event pool tối thiểu 15 sự kiện, trong đó BẮT BUỘC có:
-        - "Tết Nguyên Đán" (chỉ trigger tháng 1 hoặc 2): cộng Thưởng Tết, trừ mạnh chi phí mua sắm + lì xì.
-        - "Đám cưới bạn thân" (tốn tiền phong bì, tăng Network).
-        - Bẫy "Mua xe cũ giá rẻ": chọn xe mới trả góp vs xe cũ trả đứt; nếu chọn xe cũ, set flag ngầm tăng xác suất event "Xe hỏng giữa đường" lên 30% (tốn tiền sửa, trừ lương do đi trễ, tăng Stress).
-        - Bẫy "Tiết kiệm thái quá": cắt hết chi tiêu giao lưu → Network về 0, đóng băng thăng chức, tăng xác suất event "Đau dạ dày" viện phí lớn.
+  - Thông số khởi đầu: tuổi 22, lương thấp, tiền thuê trọ hàng tháng, khoản "Trách nhiệm gia đình" tự động trừ hàng tháng gửi về quê.
+  - Event pool tối thiểu 15 sự kiện, trong đó BẮT BUỘC có:
+    - "Tết Nguyên Đán" (chỉ trigger tháng 1 hoặc 2): cộng Thưởng Tết, trừ mạnh chi phí mua sắm + lì xì.
+    - "Đám cưới bạn thân" (tốn tiền phong bì, tăng Network).
+    - Bẫy "Mua xe cũ giá rẻ": chọn xe mới trả góp vs xe cũ trả đứt; nếu chọn xe cũ, set flag ngầm tăng xác suất event "Xe hỏng giữa đường" lên 30% (tốn tiền sửa, trừ lương do đi trễ, tăng Stress).
+    - Bẫy "Tiết kiệm thái quá": cắt hết chi tiêu giao lưu → Network về 0, đóng băng thăng chức, tăng xác suất event "Đau dạ dày" viện phí lớn.
 - Schema JSON tự thiết kế nhưng phải hỗ trợ: điều kiện trigger (tuổi, stress, tháng, flag), trọng số xác suất, nhiều lựa chọn cho người chơi, hiệu ứng lên cash/stress/network/credit/flags, và `insightCardId` (tham chiếu bài học, dùng ở Task 4).
 - Refactor `generate_event_usecase` để đọc từ `EventPoolRepository` thay vì nguồn hiện tại (nếu đang hardcode).
 - Unit test: parse JSON đúng schema; filter điều kiện trigger đúng (event Tết không xuất hiện tháng 6); trọng số xác suất hoạt động (test thống kê với seed cố định).
 
 ### Task 3 — Simulation test cho Game Engine
 - Viết integration test giả lập chạy `process_next_month_usecase` liên tục 200 tháng với các chiến lược bot khác nhau:
-    - Bot "không làm gì": phải phá sản hoặc Bad Ending trong khoảng hợp lý, không được sống khỏe mãi.
-    - Bot "trả nợ đúng hạn + đầu tư DCA đều": credit score phải tăng dần, net worth tăng theo lãi kép.
+  - Bot "không làm gì": phải phá sản hoặc Bad Ending trong khoảng hợp lý, không được sống khỏe mãi.
+  - Bot "trả nợ đúng hạn + đầu tư DCA đều": credit score phải tăng dần, net worth tăng theo lãi kép.
 - Assert các bất biến (invariants): Stress luôn trong [0,100]; credit score trong [300,850]; tuổi tăng đúng 1/12 mỗi tháng; Net Worth = tổng tài sản − tổng nợ tại mọi thời điểm.
 - Kiểm chứng công thức lãi kép và tính lãi vay bằng giá trị tính tay trong test (ví dụ: nợ 100tr lãi 12%/năm, sau 12 tháng trả tối thiểu thì dư nợ phải = X, ghi rõ cách tính trong comment).
 - Nếu phát hiện logic hiện có sai hoặc balance vô lý, báo cáo chi tiết trước khi sửa.

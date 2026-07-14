@@ -1,32 +1,35 @@
+import 'package:injectable/injectable.dart';
 import '../entities/game_state.dart';
 import '../entities/loan.dart';
 
+@injectable
 class ProcessLoansUseCase {
-  /// Loops through GameState.loans. 
-  /// For each loan, calculates monthly interest (annual rate / 12) and adds to principal. 
-  /// Subtracts minimumMonthlyPayment from GameState.cash.
+
   GameState call(GameState currentState) {
-    double totalMinimumPayments = 0.0;
+    double totalPayments = 0.0;
     List<Loan> updatedLoans = [];
 
     for (final loan in currentState.loans) {
-      // Calculate monthly interest (interestRatePerYear is assumed to be a decimal like 0.05 for 5%)
-      // If it's a percentage (like 5.0), you might need to divide by 100 first, 
-      // but assuming it's correctly formatted as a decimal.
-      final monthlyInterest = loan.principalAmount * (loan.interestRatePerYear / 12);
+      // Calculate monthly interest based on percentage (e.g., 5.5 for 5.5%)
+      // Therefore divide by 100 to get decimal, then by 12 for monthly
+      final monthlyInterest = loan.principalAmount * (loan.interestRatePerYear / 100 / 12);
       
-      // Add interest to principal, then subtract minimum payment
-      final newPrincipal = loan.principalAmount + monthlyInterest - loan.minimumMonthlyPayment;
+      final totalDebt = loan.principalAmount + monthlyInterest;
       
-      totalMinimumPayments += loan.minimumMonthlyPayment;
+      // If total debt is less than the minimum payment, we only pay the total debt
+      final payment = totalDebt < loan.minimumMonthlyPayment ? totalDebt : loan.minimumMonthlyPayment;
+      
+      final newPrincipal = totalDebt - payment;
 
-      // Ensure principal doesn't go below 0
-      final finalPrincipal = newPrincipal < 0 ? 0.0 : newPrincipal;
+      totalPayments += payment;
 
-      updatedLoans.add(loan.copyWith(principalAmount: finalPrincipal));
+      // Keep the loan if there is still a significant balance
+      if (newPrincipal > 0.01) {
+        updatedLoans.add(loan.copyWith(principalAmount: newPrincipal));
+      }
     }
 
-    final newCash = currentState.cash - totalMinimumPayments;
+    final newCash = currentState.cash - totalPayments;
 
     return currentState.copyWith(
       cash: newCash,

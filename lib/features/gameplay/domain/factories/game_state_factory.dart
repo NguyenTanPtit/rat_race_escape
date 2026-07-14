@@ -29,7 +29,7 @@ class GameStateFactory {
         Loan(
           id: 'usa_student_loan',
           name: 'Student Loan',
-          principalAmount: 30000.0, // Nợ 30 ngàn đô
+          principalAmount: 50000.0, // Nợ 50 ngàn đô
           interestRatePerYear: 5.5,
           minimumMonthlyPayment: 300.0,
           type: LoanType.personalLoan,

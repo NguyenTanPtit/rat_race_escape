@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 
-import 'di/injection_container.dart';
+import 'core/di/injection.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // TODO: Khởi tạo Isar Database và GetIt (DI) ở đây sau
-  await initDI();
+  
+  // Initialize Hive
+  await Hive.initFlutter();
+
+  // Initialize GetIt (DI)
+  configureDependencies();
+  
   runApp(const RatRaceEscapeApp());
 }
 

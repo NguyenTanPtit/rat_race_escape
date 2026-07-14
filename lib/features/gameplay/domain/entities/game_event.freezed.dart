@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,425 +9,566 @@ part of 'game_event.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$GameEvent {
-  String get id => throw _privateConstructorUsedError;
-  String get title => throw _privateConstructorUsedError;
-  String get description => throw _privateConstructorUsedError;
-  List<EventOption> get options => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
-  $GameEventCopyWith<GameEvent> get copyWith =>
-      throw _privateConstructorUsedError;
+ String get id; String get title; String get description; List<EventOption> get options;
+/// Create a copy of GameEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$GameEventCopyWith<GameEvent> get copyWith => _$GameEventCopyWithImpl<GameEvent>(this as GameEvent, _$identity);
+
+  /// Serializes this GameEvent to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GameEvent&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other.options, options));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,title,description,const DeepCollectionEquality().hash(options));
+
+@override
+String toString() {
+  return 'GameEvent(id: $id, title: $title, description: $description, options: $options)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $GameEventCopyWith<$Res> {
-  factory $GameEventCopyWith(GameEvent value, $Res Function(GameEvent) then) =
-      _$GameEventCopyWithImpl<$Res, GameEvent>;
-  @useResult
-  $Res call(
-      {String id, String title, String description, List<EventOption> options});
-}
+abstract mixin class $GameEventCopyWith<$Res>  {
+  factory $GameEventCopyWith(GameEvent value, $Res Function(GameEvent) _then) = _$GameEventCopyWithImpl;
+@useResult
+$Res call({
+ String id, String title, String description, List<EventOption> options
+});
 
+
+
+
+}
 /// @nodoc
-class _$GameEventCopyWithImpl<$Res, $Val extends GameEvent>
+class _$GameEventCopyWithImpl<$Res>
     implements $GameEventCopyWith<$Res> {
-  _$GameEventCopyWithImpl(this._value, this._then);
+  _$GameEventCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final GameEvent _self;
+  final $Res Function(GameEvent) _then;
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? title = null,
-    Object? description = null,
-    Object? options = null,
-  }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      description: null == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String,
-      options: null == options
-          ? _value.options
-          : options // ignore: cast_nullable_to_non_nullable
-              as List<EventOption>,
-    ) as $Val);
-  }
+/// Create a copy of GameEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? description = null,Object? options = null,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String,options: null == options ? _self.options : options // ignore: cast_nullable_to_non_nullable
+as List<EventOption>,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [GameEvent].
+extension GameEventPatterns on GameEvent {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _GameEvent value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _GameEvent() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _GameEvent value)  $default,){
+final _that = this;
+switch (_that) {
+case _GameEvent():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _GameEvent value)?  $default,){
+final _that = this;
+switch (_that) {
+case _GameEvent() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String description,  List<EventOption> options)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _GameEvent() when $default != null:
+return $default(_that.id,_that.title,_that.description,_that.options);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String description,  List<EventOption> options)  $default,) {final _that = this;
+switch (_that) {
+case _GameEvent():
+return $default(_that.id,_that.title,_that.description,_that.options);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String description,  List<EventOption> options)?  $default,) {final _that = this;
+switch (_that) {
+case _GameEvent() when $default != null:
+return $default(_that.id,_that.title,_that.description,_that.options);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
-abstract class _$$GameEventImplCopyWith<$Res>
-    implements $GameEventCopyWith<$Res> {
-  factory _$$GameEventImplCopyWith(
-          _$GameEventImpl value, $Res Function(_$GameEventImpl) then) =
-      __$$GameEventImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {String id, String title, String description, List<EventOption> options});
+@JsonSerializable()
+
+class _GameEvent implements GameEvent {
+  const _GameEvent({required this.id, required this.title, required this.description, final  List<EventOption> options = const []}): _options = options;
+  factory _GameEvent.fromJson(Map<String, dynamic> json) => _$GameEventFromJson(json);
+
+@override final  String id;
+@override final  String title;
+@override final  String description;
+ final  List<EventOption> _options;
+@override@JsonKey() List<EventOption> get options {
+  if (_options is EqualUnmodifiableListView) return _options;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_options);
+}
+
+
+/// Create a copy of GameEvent
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$GameEventCopyWith<_GameEvent> get copyWith => __$GameEventCopyWithImpl<_GameEvent>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$GameEventToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GameEvent&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other._options, _options));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,title,description,const DeepCollectionEquality().hash(_options));
+
+@override
+String toString() {
+  return 'GameEvent(id: $id, title: $title, description: $description, options: $options)';
+}
+
+
 }
 
 /// @nodoc
-class __$$GameEventImplCopyWithImpl<$Res>
-    extends _$GameEventCopyWithImpl<$Res, _$GameEventImpl>
-    implements _$$GameEventImplCopyWith<$Res> {
-  __$$GameEventImplCopyWithImpl(
-      _$GameEventImpl _value, $Res Function(_$GameEventImpl) _then)
-      : super(_value, _then);
+abstract mixin class _$GameEventCopyWith<$Res> implements $GameEventCopyWith<$Res> {
+  factory _$GameEventCopyWith(_GameEvent value, $Res Function(_GameEvent) _then) = __$GameEventCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String title, String description, List<EventOption> options
+});
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? title = null,
-    Object? description = null,
-    Object? options = null,
-  }) {
-    return _then(_$GameEventImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      description: null == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String,
-      options: null == options
-          ? _value._options
-          : options // ignore: cast_nullable_to_non_nullable
-              as List<EventOption>,
-    ));
-  }
+
+
+
 }
-
 /// @nodoc
+class __$GameEventCopyWithImpl<$Res>
+    implements _$GameEventCopyWith<$Res> {
+  __$GameEventCopyWithImpl(this._self, this._then);
 
-class _$GameEventImpl implements _GameEvent {
-  const _$GameEventImpl(
-      {required this.id,
-      required this.title,
-      required this.description,
-      final List<EventOption> options = const []})
-      : _options = options;
+  final _GameEvent _self;
+  final $Res Function(_GameEvent) _then;
 
-  @override
-  final String id;
-  @override
-  final String title;
-  @override
-  final String description;
-  final List<EventOption> _options;
-  @override
-  @JsonKey()
-  List<EventOption> get options {
-    if (_options is EqualUnmodifiableListView) return _options;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_options);
-  }
-
-  @override
-  String toString() {
-    return 'GameEvent(id: $id, title: $title, description: $description, options: $options)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$GameEventImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.title, title) || other.title == title) &&
-            (identical(other.description, description) ||
-                other.description == description) &&
-            const DeepCollectionEquality().equals(other._options, _options));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, id, title, description,
-      const DeepCollectionEquality().hash(_options));
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$GameEventImplCopyWith<_$GameEventImpl> get copyWith =>
-      __$$GameEventImplCopyWithImpl<_$GameEventImpl>(this, _$identity);
+/// Create a copy of GameEvent
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? description = null,Object? options = null,}) {
+  return _then(_GameEvent(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String,options: null == options ? _self._options : options // ignore: cast_nullable_to_non_nullable
+as List<EventOption>,
+  ));
 }
 
-abstract class _GameEvent implements GameEvent {
-  const factory _GameEvent(
-      {required final String id,
-      required final String title,
-      required final String description,
-      final List<EventOption> options}) = _$GameEventImpl;
 
-  @override
-  String get id;
-  @override
-  String get title;
-  @override
-  String get description;
-  @override
-  List<EventOption> get options;
-  @override
-  @JsonKey(ignore: true)
-  _$$GameEventImplCopyWith<_$GameEventImpl> get copyWith =>
-      throw _privateConstructorUsedError;
 }
+
 
 /// @nodoc
 mixin _$EventOption {
-  String get id => throw _privateConstructorUsedError;
-  String get label =>
-      throw _privateConstructorUsedError; // Nút bấm hiển thị (VD: "Đi nhậu xả láng")
+
+ String get id; String get label;// Nút bấm hiển thị (VD: "Đi nhậu xả láng")
 // Các tác động (Trade-offs) khi chọn option này
-  double get cashEffect => throw _privateConstructorUsedError;
-  int get stressEffect => throw _privateConstructorUsedError;
-  int get networkEffect => throw _privateConstructorUsedError;
-  int get creditEffect => throw _privateConstructorUsedError;
+ double get cashEffect; int get stressEffect; int get networkEffect; int get creditEffect;
+/// Create a copy of EventOption
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$EventOptionCopyWith<EventOption> get copyWith => _$EventOptionCopyWithImpl<EventOption>(this as EventOption, _$identity);
 
-  @JsonKey(ignore: true)
-  $EventOptionCopyWith<EventOption> get copyWith =>
-      throw _privateConstructorUsedError;
+  /// Serializes this EventOption to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventOption&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.cashEffect, cashEffect) || other.cashEffect == cashEffect)&&(identical(other.stressEffect, stressEffect) || other.stressEffect == stressEffect)&&(identical(other.networkEffect, networkEffect) || other.networkEffect == networkEffect)&&(identical(other.creditEffect, creditEffect) || other.creditEffect == creditEffect));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,label,cashEffect,stressEffect,networkEffect,creditEffect);
+
+@override
+String toString() {
+  return 'EventOption(id: $id, label: $label, cashEffect: $cashEffect, stressEffect: $stressEffect, networkEffect: $networkEffect, creditEffect: $creditEffect)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $EventOptionCopyWith<$Res> {
-  factory $EventOptionCopyWith(
-          EventOption value, $Res Function(EventOption) then) =
-      _$EventOptionCopyWithImpl<$Res, EventOption>;
-  @useResult
-  $Res call(
-      {String id,
-      String label,
-      double cashEffect,
-      int stressEffect,
-      int networkEffect,
-      int creditEffect});
-}
+abstract mixin class $EventOptionCopyWith<$Res>  {
+  factory $EventOptionCopyWith(EventOption value, $Res Function(EventOption) _then) = _$EventOptionCopyWithImpl;
+@useResult
+$Res call({
+ String id, String label, double cashEffect, int stressEffect, int networkEffect, int creditEffect
+});
 
+
+
+
+}
 /// @nodoc
-class _$EventOptionCopyWithImpl<$Res, $Val extends EventOption>
+class _$EventOptionCopyWithImpl<$Res>
     implements $EventOptionCopyWith<$Res> {
-  _$EventOptionCopyWithImpl(this._value, this._then);
+  _$EventOptionCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final EventOption _self;
+  final $Res Function(EventOption) _then;
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? label = null,
-    Object? cashEffect = null,
-    Object? stressEffect = null,
-    Object? networkEffect = null,
-    Object? creditEffect = null,
-  }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      label: null == label
-          ? _value.label
-          : label // ignore: cast_nullable_to_non_nullable
-              as String,
-      cashEffect: null == cashEffect
-          ? _value.cashEffect
-          : cashEffect // ignore: cast_nullable_to_non_nullable
-              as double,
-      stressEffect: null == stressEffect
-          ? _value.stressEffect
-          : stressEffect // ignore: cast_nullable_to_non_nullable
-              as int,
-      networkEffect: null == networkEffect
-          ? _value.networkEffect
-          : networkEffect // ignore: cast_nullable_to_non_nullable
-              as int,
-      creditEffect: null == creditEffect
-          ? _value.creditEffect
-          : creditEffect // ignore: cast_nullable_to_non_nullable
-              as int,
-    ) as $Val);
-  }
+/// Create a copy of EventOption
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? label = null,Object? cashEffect = null,Object? stressEffect = null,Object? networkEffect = null,Object? creditEffect = null,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
+as String,cashEffect: null == cashEffect ? _self.cashEffect : cashEffect // ignore: cast_nullable_to_non_nullable
+as double,stressEffect: null == stressEffect ? _self.stressEffect : stressEffect // ignore: cast_nullable_to_non_nullable
+as int,networkEffect: null == networkEffect ? _self.networkEffect : networkEffect // ignore: cast_nullable_to_non_nullable
+as int,creditEffect: null == creditEffect ? _self.creditEffect : creditEffect // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [EventOption].
+extension EventOptionPatterns on EventOption {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _EventOption value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _EventOption() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _EventOption value)  $default,){
+final _that = this;
+switch (_that) {
+case _EventOption():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _EventOption value)?  $default,){
+final _that = this;
+switch (_that) {
+case _EventOption() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String label,  double cashEffect,  int stressEffect,  int networkEffect,  int creditEffect)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _EventOption() when $default != null:
+return $default(_that.id,_that.label,_that.cashEffect,_that.stressEffect,_that.networkEffect,_that.creditEffect);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String label,  double cashEffect,  int stressEffect,  int networkEffect,  int creditEffect)  $default,) {final _that = this;
+switch (_that) {
+case _EventOption():
+return $default(_that.id,_that.label,_that.cashEffect,_that.stressEffect,_that.networkEffect,_that.creditEffect);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String label,  double cashEffect,  int stressEffect,  int networkEffect,  int creditEffect)?  $default,) {final _that = this;
+switch (_that) {
+case _EventOption() when $default != null:
+return $default(_that.id,_that.label,_that.cashEffect,_that.stressEffect,_that.networkEffect,_that.creditEffect);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
-abstract class _$$EventOptionImplCopyWith<$Res>
-    implements $EventOptionCopyWith<$Res> {
-  factory _$$EventOptionImplCopyWith(
-          _$EventOptionImpl value, $Res Function(_$EventOptionImpl) then) =
-      __$$EventOptionImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {String id,
-      String label,
-      double cashEffect,
-      int stressEffect,
-      int networkEffect,
-      int creditEffect});
-}
+@JsonSerializable()
 
-/// @nodoc
-class __$$EventOptionImplCopyWithImpl<$Res>
-    extends _$EventOptionCopyWithImpl<$Res, _$EventOptionImpl>
-    implements _$$EventOptionImplCopyWith<$Res> {
-  __$$EventOptionImplCopyWithImpl(
-      _$EventOptionImpl _value, $Res Function(_$EventOptionImpl) _then)
-      : super(_value, _then);
+class _EventOption implements EventOption {
+  const _EventOption({required this.id, required this.label, this.cashEffect = 0.0, this.stressEffect = 0, this.networkEffect = 0, this.creditEffect = 0});
+  factory _EventOption.fromJson(Map<String, dynamic> json) => _$EventOptionFromJson(json);
 
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? label = null,
-    Object? cashEffect = null,
-    Object? stressEffect = null,
-    Object? networkEffect = null,
-    Object? creditEffect = null,
-  }) {
-    return _then(_$EventOptionImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      label: null == label
-          ? _value.label
-          : label // ignore: cast_nullable_to_non_nullable
-              as String,
-      cashEffect: null == cashEffect
-          ? _value.cashEffect
-          : cashEffect // ignore: cast_nullable_to_non_nullable
-              as double,
-      stressEffect: null == stressEffect
-          ? _value.stressEffect
-          : stressEffect // ignore: cast_nullable_to_non_nullable
-              as int,
-      networkEffect: null == networkEffect
-          ? _value.networkEffect
-          : networkEffect // ignore: cast_nullable_to_non_nullable
-              as int,
-      creditEffect: null == creditEffect
-          ? _value.creditEffect
-          : creditEffect // ignore: cast_nullable_to_non_nullable
-              as int,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$EventOptionImpl implements _EventOption {
-  const _$EventOptionImpl(
-      {required this.id,
-      required this.label,
-      this.cashEffect = 0.0,
-      this.stressEffect = 0,
-      this.networkEffect = 0,
-      this.creditEffect = 0});
-
-  @override
-  final String id;
-  @override
-  final String label;
+@override final  String id;
+@override final  String label;
 // Nút bấm hiển thị (VD: "Đi nhậu xả láng")
 // Các tác động (Trade-offs) khi chọn option này
-  @override
-  @JsonKey()
-  final double cashEffect;
-  @override
-  @JsonKey()
-  final int stressEffect;
-  @override
-  @JsonKey()
-  final int networkEffect;
-  @override
-  @JsonKey()
-  final int creditEffect;
+@override@JsonKey() final  double cashEffect;
+@override@JsonKey() final  int stressEffect;
+@override@JsonKey() final  int networkEffect;
+@override@JsonKey() final  int creditEffect;
 
-  @override
-  String toString() {
-    return 'EventOption(id: $id, label: $label, cashEffect: $cashEffect, stressEffect: $stressEffect, networkEffect: $networkEffect, creditEffect: $creditEffect)';
-  }
+/// Create a copy of EventOption
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$EventOptionCopyWith<_EventOption> get copyWith => __$EventOptionCopyWithImpl<_EventOption>(this, _$identity);
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$EventOptionImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.label, label) || other.label == label) &&
-            (identical(other.cashEffect, cashEffect) ||
-                other.cashEffect == cashEffect) &&
-            (identical(other.stressEffect, stressEffect) ||
-                other.stressEffect == stressEffect) &&
-            (identical(other.networkEffect, networkEffect) ||
-                other.networkEffect == networkEffect) &&
-            (identical(other.creditEffect, creditEffect) ||
-                other.creditEffect == creditEffect));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, id, label, cashEffect,
-      stressEffect, networkEffect, creditEffect);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$EventOptionImplCopyWith<_$EventOptionImpl> get copyWith =>
-      __$$EventOptionImplCopyWithImpl<_$EventOptionImpl>(this, _$identity);
+@override
+Map<String, dynamic> toJson() {
+  return _$EventOptionToJson(this, );
 }
 
-abstract class _EventOption implements EventOption {
-  const factory _EventOption(
-      {required final String id,
-      required final String label,
-      final double cashEffect,
-      final int stressEffect,
-      final int networkEffect,
-      final int creditEffect}) = _$EventOptionImpl;
-
-  @override
-  String get id;
-  @override
-  String get label;
-  @override // Nút bấm hiển thị (VD: "Đi nhậu xả láng")
-// Các tác động (Trade-offs) khi chọn option này
-  double get cashEffect;
-  @override
-  int get stressEffect;
-  @override
-  int get networkEffect;
-  @override
-  int get creditEffect;
-  @override
-  @JsonKey(ignore: true)
-  _$$EventOptionImplCopyWith<_$EventOptionImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventOption&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.cashEffect, cashEffect) || other.cashEffect == cashEffect)&&(identical(other.stressEffect, stressEffect) || other.stressEffect == stressEffect)&&(identical(other.networkEffect, networkEffect) || other.networkEffect == networkEffect)&&(identical(other.creditEffect, creditEffect) || other.creditEffect == creditEffect));
 }
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,label,cashEffect,stressEffect,networkEffect,creditEffect);
+
+@override
+String toString() {
+  return 'EventOption(id: $id, label: $label, cashEffect: $cashEffect, stressEffect: $stressEffect, networkEffect: $networkEffect, creditEffect: $creditEffect)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$EventOptionCopyWith<$Res> implements $EventOptionCopyWith<$Res> {
+  factory _$EventOptionCopyWith(_EventOption value, $Res Function(_EventOption) _then) = __$EventOptionCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String label, double cashEffect, int stressEffect, int networkEffect, int creditEffect
+});
+
+
+
+
+}
+/// @nodoc
+class __$EventOptionCopyWithImpl<$Res>
+    implements _$EventOptionCopyWith<$Res> {
+  __$EventOptionCopyWithImpl(this._self, this._then);
+
+  final _EventOption _self;
+  final $Res Function(_EventOption) _then;
+
+/// Create a copy of EventOption
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? label = null,Object? cashEffect = null,Object? stressEffect = null,Object? networkEffect = null,Object? creditEffect = null,}) {
+  return _then(_EventOption(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
+as String,cashEffect: null == cashEffect ? _self.cashEffect : cashEffect // ignore: cast_nullable_to_non_nullable
+as double,stressEffect: null == stressEffect ? _self.stressEffect : stressEffect // ignore: cast_nullable_to_non_nullable
+as int,networkEffect: null == networkEffect ? _self.networkEffect : networkEffect // ignore: cast_nullable_to_non_nullable
+as int,creditEffect: null == creditEffect ? _self.creditEffect : creditEffect // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+
+}
+
+// dart format on
