@@ -1,0 +1,46 @@
+{
+  "@@locale": "vi",
+  "appTitle": "Rat Race Escape",
+  "componentGallery": "Component Gallery",
+  
+  "month": "Tháng {month}",
+  "@month": {
+    "placeholders": {
+      "month": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "age": "Tuổi {age}",
+  "@age": {
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "netWorth": "Tài sản ròng",
+  "cashflow": "Dòng tiền",
+  "stress": "Stress",
+  "network": "Quan hệ",
+  "creditScore": "Tín dụng",
+  
+  "navAssets": "Tài sản",
+  "navInvest": "Đầu tư",
+  "navBank": "Ngân hàng",
+  "navUpgrades": "Nâng cấp",
+  
+  "btnEndTurn": "Tiếp tục (Qua tháng)",
+  "btnRelieveStress": "Giải trí xả stress",
+  
+  "statLow": "Thấp",
+  "statMedium": "Vừa",
+  "statHigh": "Cao",
+  
+  "galleryCards": "Game Cards",
+  "galleryButtons": "Game Buttons",
+  "galleryStats": "Stats & Displays",
+  "galleryNav": "Bottom Navigation"
+}
