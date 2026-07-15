@@ -1,7 +1,7 @@
 {
   "id": "vn_provincial",
   "initialCash": 5000000,
-  "baseSalary": 15000000,
+  "baseSalary": 11000000,
   "monthlyRent": 3500000,
   "monthlyExpenses": 5000000,
   "familySupportExpense": 2000000,
@@ -18,7 +18,7 @@
       "id": "e_tet",
       "textKey": "tet_holiday",
       "trigger": {
-        "targetCalendarMonths": [1, 2]
+        "targetCalendarMonths": [1]
       },
       "absoluteChance": 1.0,
       "options": [
@@ -141,9 +141,9 @@
           "id": "buc_opt1",
           "labelKey": "buc_opt1",
           "effect": {
-            "cash": -100000000,
+            "cash": -20000000,
             "addedFlags": ["owns_used_car"],
-            "monthlyExpensesDelta": 2000000,
+            "monthlyExpensesDelta": 500000,
             "stress": -5
           }
         },
@@ -155,13 +155,13 @@
               {
                 "id": "car_loan_1",
                 "name": "Vay mua ô tô mới",
-                "principalAmount": 500000000,
+                "principalAmount": 130000000,
                 "interestRatePerYear": 10.5,
-                "minimumMonthlyPayment": 10000000,
+                "minimumMonthlyPayment": 3000000,
                 "type": "mortgage"
               }
             ],
-            "monthlyExpensesDelta": 3000000,
+            "monthlyExpensesDelta": 1500000,
             "stress": -15
           }
         },

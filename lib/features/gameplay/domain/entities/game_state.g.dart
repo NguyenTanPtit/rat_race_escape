@@ -42,6 +42,12 @@ _GameState _$GameStateFromJson(Map<String, dynamic> json) => _GameState(
   baseEventChance: (json['baseEventChance'] as num?)?.toDouble() ?? 0.2,
   bankruptcyMonthsThreshold:
       (json['bankruptcyMonthsThreshold'] as num?)?.toInt() ?? 3,
+  leisureCostPerStressPoint:
+      (json['leisureCostPerStressPoint'] as num?)?.toDouble() ?? 100000,
+  maxLeisureStressReliefPerMonth:
+      (json['maxLeisureStressReliefPerMonth'] as num?)?.toInt() ?? 20,
+  leisureReliefUsedThisMonth:
+      (json['leisureReliefUsedThisMonth'] as num?)?.toInt() ?? 0,
   assets:
       (json['assets'] as List<dynamic>?)
           ?.map((e) => Asset.fromJson(e as Map<String, dynamic>))
@@ -77,6 +83,9 @@ Map<String, dynamic> _$GameStateToJson(_GameState instance) =>
       'familySupportExpense': instance.familySupportExpense,
       'baseEventChance': instance.baseEventChance,
       'bankruptcyMonthsThreshold': instance.bankruptcyMonthsThreshold,
+      'leisureCostPerStressPoint': instance.leisureCostPerStressPoint,
+      'maxLeisureStressReliefPerMonth': instance.maxLeisureStressReliefPerMonth,
+      'leisureReliefUsedThisMonth': instance.leisureReliefUsedThisMonth,
       'assets': instance.assets.map((e) => e.toJson()).toList(),
       'loans': instance.loans.map((e) => e.toJson()).toList(),
     };

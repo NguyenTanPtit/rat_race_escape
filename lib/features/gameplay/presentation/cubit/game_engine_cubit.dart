@@ -7,16 +7,19 @@ import '../../domain/entities/game_state.dart';
 import '../../domain/entities/turn_result.dart';
 import '../../domain/usecases/apply_event_option_usecase.dart';
 import '../../domain/usecases/process_next_month_usecase.dart';
+import '../../domain/usecases/spend_on_leisure_usecase.dart';
 import 'game_engine_state.dart';
 
 @injectable
 class GameEngineCubit extends Cubit<GameEngineState> {
   final ProcessNextMonthUseCase _processNextMonthUseCase;
   final ApplyEventOptionUseCase _applyEventOptionUseCase;
+  final SpendOnLeisureUseCase _spendOnLeisureUseCase;
 
   GameEngineCubit(
     this._processNextMonthUseCase,
     this._applyEventOptionUseCase,
+    this._spendOnLeisureUseCase,
   ) : super(const GameEngineState.initial());
 
   /// Starts the game by emitting the playing state with the initial data.
@@ -52,6 +55,21 @@ class GameEngineCubit extends Cubit<GameEngineState> {
       (failure) {
         // Ignored: keep playing state without emitting error (e.g. double tap)
       },
+      (turnResult) {
+        _emitTurnResult(turnResult);
+      },
+    );
+  }
+
+  /// Spend cash on leisure to reduce stress
+  void spendOnLeisure(double amount) {
+    if (state is! GameEnginePlaying) return;
+    final currentState = (state as GameEnginePlaying).gameState;
+
+    final result = _spendOnLeisureUseCase(currentState, amount);
+    
+    result.fold(
+      (failure) {},
       (turnResult) {
         _emitTurnResult(turnResult);
       },

@@ -29,22 +29,24 @@ class ProcessNextMonthUseCase {
   Future<Either<Failure, TurnResult>> call(GameState currentState) async {
     // a. Increase currentMonth and ageInMonths by 1.
     // b. Reset currentEventId (activeEventId equivalent) to null.
+    // c. Reset leisureReliefUsedThisMonth to 0.
     GameState state = currentState.copyWith(
       currentMonth: currentState.currentMonth + 1,
       ageInMonths: currentState.ageInMonths + 1,
       currentEventId: null,
+      leisureReliefUsedThisMonth: 0,
     );
 
-    // c. Pass the state sequentially through the injected use cases (Pipeline).
+    // d. Pass the state sequentially through the injected use cases (Pipeline).
     state = _calculateCashflow(state);
     state = _processLoans(state);
     state = _updateMetrics(state);
     state = await _generateEvent(state);
 
-    // d. Check game status
+    // e. Check game status
     final turnResult = _checkGameStatus(state);
 
-    // e. Return Either<Failure, TurnResult>
+    // f. Return Either<Failure, TurnResult>
     return Right(turnResult);
   }
 }

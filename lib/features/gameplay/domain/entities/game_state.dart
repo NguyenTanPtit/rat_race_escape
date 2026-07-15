@@ -44,6 +44,9 @@ abstract class GameState with _$GameState {
     @Default(0.0) double familySupportExpense,
     @Default(0.2) double baseEventChance,
     @Default(3) int bankruptcyMonthsThreshold,
+    @Default(100000) double leisureCostPerStressPoint,
+    @Default(20) int maxLeisureStressReliefPerMonth,
+    @Default(0) int leisureReliefUsedThisMonth,
 
     // 6. Inventories
     @Default([]) List<Asset> assets,

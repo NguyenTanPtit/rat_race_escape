@@ -31,8 +31,12 @@ _ScenarioConfig _$ScenarioConfigFromJson(Map<String, dynamic> json) =>
       housingLevel: $enumDecode(_$HousingLevelEnumMap, json['housingLevel']),
       country: $enumDecode(_$CountryEnumMap, json['country']),
       currency: json['currency'] as String,
-      bankruptcyMonthsThreshold: (json['bankruptcyMonthsThreshold'] as num)
-          .toInt(),
+      bankruptcyMonthsThreshold:
+          (json['bankruptcyMonthsThreshold'] as num?)?.toInt() ?? 3,
+      leisureCostPerStressPoint:
+          (json['leisureCostPerStressPoint'] as num?)?.toDouble() ?? 100000,
+      maxLeisureStressReliefPerMonth:
+          (json['maxLeisureStressReliefPerMonth'] as num?)?.toInt() ?? 20,
       baseEventChance: (json['baseEventChance'] as num?)?.toDouble() ?? 0.2,
     );
 
@@ -53,6 +57,8 @@ Map<String, dynamic> _$ScenarioConfigToJson(_ScenarioConfig instance) =>
       'country': _$CountryEnumMap[instance.country]!,
       'currency': instance.currency,
       'bankruptcyMonthsThreshold': instance.bankruptcyMonthsThreshold,
+      'leisureCostPerStressPoint': instance.leisureCostPerStressPoint,
+      'maxLeisureStressReliefPerMonth': instance.maxLeisureStressReliefPerMonth,
       'baseEventChance': instance.baseEventChance,
     };
 

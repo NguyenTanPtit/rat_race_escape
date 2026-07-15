@@ -23,7 +23,9 @@ abstract class ScenarioConfig with _$ScenarioConfig {
     required HousingLevel housingLevel,
     required Country country,
     required String currency,
-    required int bankruptcyMonthsThreshold,
+    @Default(3) int bankruptcyMonthsThreshold,
+    @Default(100000) double leisureCostPerStressPoint,
+    @Default(20) int maxLeisureStressReliefPerMonth,
     @Default(0.2) double baseEventChance,
   }) = _ScenarioConfig;
 

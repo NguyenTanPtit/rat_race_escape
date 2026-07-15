@@ -19,6 +19,8 @@ class GameStateFactory {
       housingLevel: config.housingLevel,
       bankruptcyMonthsThreshold: config.bankruptcyMonthsThreshold,
       baseEventChance: config.baseEventChance,
+      leisureCostPerStressPoint: config.leisureCostPerStressPoint,
+      maxLeisureStressReliefPerMonth: config.maxLeisureStressReliefPerMonth,
       assets: List.from(config.initialAssets),
       loans: List.from(config.initialLoans),
     );

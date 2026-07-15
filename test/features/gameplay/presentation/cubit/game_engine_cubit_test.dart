@@ -9,6 +9,8 @@ import 'package:rat_race_escape/features/gameplay/domain/usecases/process_next_m
 import 'package:rat_race_escape/features/gameplay/presentation/cubit/game_engine_cubit.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/cubit/game_engine_state.dart';
 
+import 'package:rat_race_escape/features/gameplay/domain/usecases/spend_on_leisure_usecase.dart';
+
 class MockProcessNextMonthUseCase implements ProcessNextMonthUseCase {
   Either<Failure, TurnResult> resultToReturn = Right(const TurnContinued(GameState(
     country: Country.vietnam,
@@ -48,17 +50,37 @@ class MockApplyEventOptionUseCase implements ApplyEventOptionUseCase {
   }
 }
 
+class MockSpendOnLeisureUseCase implements SpendOnLeisureUseCase {
+  Either<Failure, TurnResult> resultToReturn = Right(const TurnContinued(GameState(
+    country: Country.vietnam,
+    currency: Currency.vnd,
+    scenarioId: 'test',
+    cash: 0,
+    monthlyExpenses: 0,
+    monthlyRent: 0,
+    baseSalary: 0,
+  )));
+
+  @override
+  Either<Failure, TurnResult> call(GameState state, double amount) {
+    return resultToReturn;
+  }
+}
+
 void main() {
   late GameEngineCubit cubit;
   late MockProcessNextMonthUseCase mockProcessNextMonthUseCase;
   late MockApplyEventOptionUseCase mockApplyEventOptionUseCase;
+  late MockSpendOnLeisureUseCase mockSpendOnLeisureUseCase;
 
   setUp(() {
     mockProcessNextMonthUseCase = MockProcessNextMonthUseCase();
     mockApplyEventOptionUseCase = MockApplyEventOptionUseCase();
+    mockSpendOnLeisureUseCase = MockSpendOnLeisureUseCase();
     cubit = GameEngineCubit(
       mockProcessNextMonthUseCase,
       mockApplyEventOptionUseCase,
+      mockSpendOnLeisureUseCase,
     );
   });
 

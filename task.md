@@ -46,7 +46,9 @@ lib/features/
 4. Mọi usecase và logic tính toán tài chính PHẢI có unit test. Đây là game giáo dục tài chính — công thức sai là lỗi nghiêm trọng nhất.
 5. Sau mỗi task: chạy `dart analyze` không lỗi, `flutter test` pass toàn bộ, chạy build_runner nếu có freezed/json_serializable mới.
 6. Commit theo từng task, message rõ ràng (conventional commits: feat/fix/test/refactor).
-7. Nếu phát hiện code hiện có mâu thuẫn với yêu cầu, dừng lại báo cáo và đề xuất phương án, không tự ý refactor lớn.
+7. Nếu phát hiện code hiện có mâu thuẫn với yêu cầu, dừng lại báo cáo và đề xuất phương án, không tự ý refactor lớn. Tương tự với expected value trong test: nếu spec ghi một con số mà code cho kết quả khác, DỪNG và báo cáo mâu thuẫn — không tự điều chỉnh expected cho khớp code, không mềm hóa assertion.
+8. KHÔNG để lại comment dạng độc thoại/tự vấn trong code ("Wait...", "Let's assume...", "for now..."); mọi câu hỏi thiết kế chưa chốt đưa vào mục Open Questions của plan. Toàn bộ comment viết bằng TIẾNG ANH. Comment mô tả hành vi phải cập nhật cùng lúc với hành vi — comment lỗi thời tệ hơn không có comment.
+9. Mọi walkthrough phải có: timestamp của lần chạy test, raw log dán kèm (không phải đường dẫn máy cục bộ), và số liệu lấy TRỰC TIẾP từ lần chạy đó — không chép từ báo cáo cũ. Khai [MODIFY] cho file nào thì file đó phải tồn tại (kiểm tra trước khi khai).
 
 ## DANH SÁCH TASK (làm tuần tự, hoàn thành + test xong task trước mới sang task sau)
 
@@ -184,25 +186,69 @@ assets/config/
 - Kiểm chứng công thức lãi kép và tính lãi vay bằng giá trị tính tay trong test (ví dụ: nợ 100tr lãi 12%/năm, sau 12 tháng trả tối thiểu thì dư nợ phải = X, ghi rõ cách tính trong comment).
 - Nếu phát hiện logic hiện có sai hoặc balance vô lý, báo cáo chi tiết trước khi sửa.
 
-### Task 4 — Insight Card System ("Góc nhìn Chuyên gia")
-- Entity `InsightCard` (freezed): id, tiêu đề, nội dung bài học, khái niệm kinh tế (vd "Total Cost of Ownership", "Mental Accounting", "Paradox of Thrift"), điều kiện đã mở khóa.
-- Nội dung card đặt trong `assets/config/insight_cards_vi.json`.
-- Trigger: khi người chơi dính hậu quả từ các bẫy (event có `insightCardId`) hoặc hành vi xấu (trả thẻ tín dụng mức tối thiểu → card "Mental Accounting").
-- Lưu danh sách card đã mở khóa vào save game. Cubit expose stream/state để UI hiển thị card khi mở khóa.
-- Unit test cho trigger logic.
+### Task 3.5 — Van xả Stress + Tune Balance (dựa trên dữ liệu simulation)
+Bối cảnh từ kết quả Task 3: stress hiện là "bánh cóc một chiều" — không có cơ chế giảm nào ngoài vài option event hiếm. Simulation chứng minh Do-Nothing bot chết vì burnout ở tuổi 30 dù không làm gì; nghĩa là mọi người chơi đủ lâu đều đột quỵ. GDD mục 4 ghi rõ "Stress... Giảm khi chi tiêu giải trí" — cơ chế này chưa từng được cài. Task này cài nó và dùng chính simulation Task 3 để tune.
 
-### Task 5 — UI Skeleton (chỉ bắt đầu khi Task 1-4 xong)
-Code trong `gameplay/presentation/pages/` và `widgets/`, kết nối với `GameEngineCubit` qua BlocBuilder/BlocListener. Setup **go_router** cho điều hướng. Thứ tự màn hình:
-1. **Main Game Screen:** hiển thị tháng/tuổi hiện tại, Cash, Net Worth, thanh Stress (progress bar đổi màu theo mức), Network score, Credit score, danh sách dòng tiền tháng này (thu/chi), nút "Kết thúc tháng".
+**3.5.1 — [NEW] `domain/usecases/spend_on_leisure_usecase.dart`:**
+- Input: `GameState` + số tiền chi (double). Thuộc Phase 3 (Player Action), gọi được nhiều lần trước End Turn nhưng tổng stress giảm mỗi tháng có TRẦN.
+- Thang quy đổi đặt trong ScenarioConfig (KHÔNG hardcode — mỗi quốc gia chi phí giải trí khác nhau): `leisureCostPerStressPoint` (mặc định VN: 100000 = 100k/1 điểm stress) và `maxLeisureStressReliefPerMonth` (mặc định 20).
+- GameState cần counter `leisureReliefUsedThisMonth` (reset về 0 trong ProcessNextMonthUseCase khi sang tháng) để enforce trần.
+- Validate: amount > 0 và ≤ cash hiện có → nếu vi phạm trả `Left(Failure)`. Stress giảm = min(amount / leisureCostPerStressPoint, trần còn lại), làm tròn xuống; trừ cash đúng phần stress thực giảm (không "nuốt" tiền thừa — nếu trần còn 5 điểm mà người chơi đưa 2tr, chỉ trừ 500k).
+- Sau khi áp, chạy `CheckGameStatusUseCase` (nhất quán với ApplyEventOptionUseCase — chi tiền có thể xuyên ngưỡng phá sản).
+- `GameEngineCubit`: thêm method `spendOnLeisure(double amount)`, xử lý Left như chooseEventOption (giữ playing state, không emit error).
+- Unit test: quy đổi đúng thang; trần tháng enforce qua nhiều lần gọi; tiền thừa không bị nuốt; amount > cash → Left; counter reset khi sang tháng; chi tiền xuyên ngưỡng phá sản → lost(bankruptcy) ngay.
+
+**3.5.2 — Cập nhật DCA bot dùng van xả:**
+- Chiến lược: khi `stress > 60` và cash > quỹ khẩn cấp, chi tiền xả về ~40 (qua SpendOnLeisureUseCase thật, không copyWith — đây là usecase domain thật, khác Phase 3 mô phỏng).
+- Kỳ vọng cập nhật: DCA bot thắng ổn định hơn, KHÔNG còn phụ thuộc may mắn né option tăng stress.
+
+**3.5.3 — Tune balance bằng simulation (thứ tự BẮT BUỘC: cài 3.5.1-3.5.2 xong mới tune):**
+- Sửa bẫy "Mua xe" về thang GDD mục 10.1 (nguyên văn: trả góp 3tr/tháng vs trả đứt 15tr): option trả góp `principalAmount ~130tr, minimumMonthlyPayment 3000000, monthlyExpensesDelta 1500000`; option trả đứt xe cũ `cash: -20000000` + flag hỏng vặt như hiện có. Bẫy phải "đau nhưng sống được", không phải án tử (bản 500tr/10tr/tháng hiện tại là án tử tuyệt đối trên lương 15tr).
+- Hạ `baseSalary` trong vn_provincial.json xuống 11000000 (đã chốt sau vòng tune đầu: mức 9500000 âm 1tr/tháng là impossible khi chưa có side-job/market — cả 3 seed bot chết tuổi 23; 11tr cho dư +0,5tr/tháng: sống được nhưng nghẹt thở, thăng chức là cột sống của đường thắng). Sau khi hạ, chạy lại simulation cả 2 bot với 3 seed (42, 7, 2026) và BÁO CÁO: Do-Nothing bot phải chật vật/thua rõ rệt; DCA bot vẫn phải có đường thắng trước 65 tuổi ở ít nhất seed 42. Nếu DCA bot hết đường thắng → báo cáo và đề xuất nút chỉnh (lương khởi điểm, mức tăng lương thăng chức, lợi suất tài sản), KHÔNG tự quyết.
+- Quy tắc không đổi: mọi assertion fail do balance → báo cáo, không tự sửa assertion.
+
+### Task 4 — Insight Card System ("Góc nhìn Chuyên gia")
+Nền móng đã có sẵn từ Task 2.5: `EventEffect.insightCardId` và `GameState.unlockedInsightCardIds` (đã có test round-trip JSON). `ApplyEventOptionUseCase` đã tự ghi card vào set khi effect có insightCardId. Task này xây phần nội dung + trigger hành vi + hiển thị state.
+
+- Entity `InsightCard` (freezed): id, conceptKey (vd "total_cost_of_ownership", "mental_accounting", "paradox_of_thrift"), và text đã resolve (title, nội dung bài học). Theo pattern i18n đã chốt ở Task 2: text nằm trong `assets/config/i18n/insight_cards_vi.json`, domain entity chỉ giữ text đã resolve, repository (`InsightCardRepository`) ghép khi load.
+- **Nối vào event thật (BẮT BUỘC):** điền `insightCardId` vào các bẫy hiện có trong `vn_provincial.json` — tối thiểu: option mua xe (cả trả góp lẫn xe cũ) → card "Total Cost of Ownership"; `e_over_saving` option cắt giao lưu → "Paradox of Thrift"; `e_scam` → card về lừa đảo tài chính. Mở rộng test referential integrity: mọi `insightCardId` trong scenario JSON phải tồn tại trong file card i18n.
+- **Trigger hành vi** (không gắn event): trả thẻ tín dụng mức tối thiểu N tháng liên tiếp → card "Mental Accounting". Kiến trúc đề xuất: usecase kiểm tra hành vi chạy trong pipeline (sau ProcessLoans), đọc/ghi counter trong GameState; agent nêu thiết kế cụ thể trong plan trước khi code.
+- Card đã mở khóa lưu theo save game (đã tự động qua unlockedInsightCardIds). Cubit expose để UI biết có card MỚI mở trong lượt này (phân biệt "mới mở" vs "đã mở từ trước" — UI chỉ popup card mới).
+- Unit test cho trigger logic (cả event-based lẫn behavior-based) + referential integrity mở rộng.
+- Lưu ý cho agent: nội dung tiếng Việt của card sẽ do người dùng duyệt trực tiếp về mặt chữ nghĩa — viết thật, có chiều sâu, gắn với tình huống người chơi vừa trải, không viết văn mẫu định nghĩa khô khan.
+
+### Task 5 — UI Skeleton (chỉ bắt đầu khi Task 1-4 + 3.5 xong)
+Code trong `gameplay/presentation/pages/` và `widgets/`, kết nối với `GameEngineCubit` qua BlocBuilder/BlocListener. Setup **go_router** cho điều hướng. API Cubit hiện có: `startGame`, `nextMonth`, `chooseEventOption(eventId, optionId)`, `spendOnLeisure(amount)`; state union: `initial / loading / playing / won(finalState) / gameOver(GameOverReason, finalState) / error`. Thứ tự màn hình:
+1. **Main Game Screen:** hiển thị tháng/tuổi hiện tại, Cash, Net Worth, thanh Stress (progress bar đổi màu theo mức), Network score, Credit score, danh sách dòng tiền tháng này — hiển thị TÁCH DÒNG: lương, chi sinh hoạt, tiền thuê trọ, "Gửi về quê" (familySupportExpense là line item riêng theo quyết định Task 2 — người chơi phải NHÌN THẤY gánh nặng này), trả nợ. Nút "Kết thúc tháng" + nút "Giải trí xả stress" (mở dialog chọn mức chi, gọi spendOnLeisure; hiển thị trần còn lại trong tháng từ leisureReliefUsedThisMonth).
 2. **Event Dialog:** hiện sự kiện dạng card với các lựa chọn, hiển thị rõ hiệu ứng của từng lựa chọn (hoặc ẩn một phần nếu event là "bẫy").
 3. **Monthly Summary:** tổng kết sau End Turn — biến động cash, stress, tài sản.
-4. **Insight Card Screen:** giao diện dạng trang sách khi mở khóa bài học.
-5. **New Game Screen:** chọn Quốc gia → Bối cảnh (hiện tại chỉ VN - "Thanh niên tỉnh lẻ" khả dụng, các lựa chọn khác hiển thị khóa 🔒).
-6. **Win / Game Over Screen:** lý do kết thúc + thống kê cả đời chơi.
-- UI ưu tiên đúng và đủ dữ liệu, chưa cần đẹp. Widget test cơ bản cho Main Game Screen (render đúng số liệu từ state mock).
+4. **Insight Card Screen:** giao diện dạng trang sách; popup khi có card MỚI mở khóa (Task 4 đã expose), kèm thư viện xem lại card cũ.
+5. **New Game Screen:** chọn Quốc gia → Bối cảnh (hiện tại chỉ VN - "Thanh niên tỉnh lẻ" khả dụng, các lựa chọn khác hiển thị khóa 🔒). Nếu có save (GameStateRepository.hasSavedGame) → nút "Chơi tiếp".
+6. **Win / Game Over Screen:** hai màn RIÊNG BIỆT (state won vs gameOver). Game Over map `GameOverReason` enum → chuỗi ARB (KHÔNG hardcode chuỗi trong Cubit/domain — quyết định Task 0.4); mỗi reason một thông điệp bài học riêng. Kèm thống kê cả đời chơi.
+- Setup l10n ngay từ màn đầu tiên: flutter_localizations + ARB theo hướng dẫn đã có (l10n.yaml, app_vi.arb) — mọi chuỗi UI qua AppLocalizations, không hardcode.
+- UI ưu tiên đúng và đủ dữ liệu, chưa cần đẹp. Widget test cơ bản cho Main Game Screen (render đúng số liệu từ state mock) + Game Over Screen (map đủ 4 GameOverReason ra text).
 
-### Task 6 (nếu còn thời gian) — MarketCubit
-- Cubit riêng cho thị trường tài sản: danh sách asset có thể mua (cổ phiếu, nhà cho thuê...), giá biến động theo tháng đọc từ config, mua/bán cập nhật GameState qua usecase.
+### Task 6 — Market & Hành động Phase 3 (mua/bán tài sản, trả nợ, cày cuốc)
+Bối cảnh: simulation Task 3/3.5 đang mô phỏng các hành động này bằng `copyWith` trong test (đánh dấu `TODO(task-6)`). Task này biến chúng thành usecase domain thật và bổ sung các cơ chế còn thiếu mà dữ liệu simulation đã chỉ ra.
+
+**6.1 — Usecases Phase 3 (Player Action):**
+- `BuyAssetUseCase(GameState, assetListing, amount)`: trừ cash, thêm Asset. Validate đủ tiền.
+- `SellAssetUseCase(GameState, assetId)`: bán tài sản theo giá thị trường hiện tại, cộng cash, xóa khỏi inventory. Đây là cơ chế "bán cắt lỗ cứu thanh khoản" mà simulation đã chứng minh là thiếu (DCA bot từng phá sản với 800tr tài sản trên giấy vì không bán được).
+- `PayDebtUseCase(GameState, loanId, amount)`: trả thêm nợ gốc ngoài mức tối thiểu. Validate amount ≤ cash và ≤ dư nợ.
+- `WorkSideJobUseCase(GameState)` — cơ chế "Cày cuốc" (GDD GĐ1 Grind): +cash, +stress, giới hạn số lần/tháng. Thông số trong ScenarioConfig (VD VN: +2.500.000 cash, +8 stress, tối đa 2 lần/tháng — tune bằng simulation). Đây là đòn bẩy thu nhập chủ động đầu tiên của người chơi, điều kiện tiên quyết để mở lại chế độ khó (xem 6.4).
+- Tất cả usecase trên: chạy `CheckGameStatusUseCase` sau khi áp (nhất quán Task 2.5/3.5); mọi tham số balance nằm trong config, không hardcode.
+- Sau khi có usecases thật: cập nhật simulation test thay các khối `TODO(task-6)` copyWith bằng usecase thật; DCA bot học thêm chiến lược "bán cắt lỗ khi cash < 0" và "cày cuốc khi cash thấp + stress cho phép". Chạy lại 3 seed, báo cáo before/after.
+
+**6.2 — MarketCubit + biến động giá:**
+- Cubit riêng cho thị trường: danh sách asset mua được (cổ phiếu, chứng chỉ quỹ, nhà cho thuê...) đọc từ config, giá biến động theo tháng (đơn giản: random walk theo seed + chu kỳ kinh tế thô sơ; tinh vi hóa để sau). `Asset.baseValue` cập nhật theo giá thị trường mỗi tháng trong pipeline.
+- Lưu ý bất biến: khi giá tài sản biến động, netWorth thay đổi là ĐÚNG (không còn bất biến hoán đổi như khi mua/bán) — cập nhật assert trong simulation cho phù hợp: bất biến hoán đổi chỉ áp tại thời điểm giao dịch với giá hiện hành.
+
+**6.3 — Backlog từ simulation (làm nếu còn thời gian):**
+- `cooldownMonths` cho EventTrigger (thay giải pháp tạm Tết targetCalendarMonths [1]; khôi phục tinh thần "tháng 1 HOẶC 2" của GDD).
+- Chạy simulation ~20 seed, thống kê phân phối tuổi thắng/thua làm "bản đồ độ khó" chính thức của scenario trước khi phát hành.
+
+**6.4 — Scenario "Chế độ khó" (backlog, chỉ sau khi 6.1 xong):**
+- Dữ liệu Task 3.5 chốt: lương 9.500.000 với chi phí 10,5tr (âm 1tr/tháng) là impossible khi chưa có side-job/market — cả 3 seed bot chết tuổi 23. Sau khi 6.1 phát hành đủ "vũ khí", tạo `vn_provincial_hard.json` với lương 9,5tr làm scenario khó riêng (phù hợp mô hình bán bối cảnh của GDD mục 9). Bản thường giữ lương 11.000.000 (chốt tại Task 3.5).
 
 ## ĐỊNH DẠNG BÁO CÁO SAU MỖI TASK
 - Danh sách file đã tạo/sửa.
