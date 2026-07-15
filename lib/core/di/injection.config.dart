@@ -18,18 +18,24 @@ import '../../features/gameplay/data/repositories/hive_game_state_repository.dar
     as _i1051;
 import '../../features/gameplay/data/repositories/json_event_pool_repository.dart'
     as _i831;
+import '../../features/gameplay/data/repositories/json_insight_card_repository.dart'
+    as _i29;
 import '../../features/gameplay/data/repositories/json_scenario_config_repository.dart'
     as _i248;
 import '../../features/gameplay/domain/repositories/event_pool_repository.dart'
     as _i690;
 import '../../features/gameplay/domain/repositories/game_state_repository.dart'
     as _i688;
+import '../../features/gameplay/domain/repositories/insight_card_repository.dart'
+    as _i107;
 import '../../features/gameplay/domain/repositories/scenario_config_repository.dart'
     as _i96;
 import '../../features/gameplay/domain/usecases/apply_event_option_usecase.dart'
     as _i742;
 import '../../features/gameplay/domain/usecases/calculate_cashflow_usecase.dart'
     as _i521;
+import '../../features/gameplay/domain/usecases/check_behavioral_insights_usecase.dart'
+    as _i737;
 import '../../features/gameplay/domain/usecases/check_game_status_usecase.dart'
     as _i669;
 import '../../features/gameplay/domain/usecases/generate_event_usecase.dart'
@@ -58,6 +64,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i521.CalculateCashflowUseCase>(
       () => _i521.CalculateCashflowUseCase(),
     );
+    gh.lazySingleton<_i737.CheckBehavioralInsightsUseCase>(
+      () => _i737.CheckBehavioralInsightsUseCase(),
+    );
     gh.lazySingleton<_i669.CheckGameStatusUseCase>(
       () => _i669.CheckGameStatusUseCase(),
     );
@@ -69,6 +78,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i688.GameStateRepository>(
       () => _i1051.HiveGameStateRepository(),
+    );
+    gh.lazySingleton<_i107.InsightCardRepository>(
+      () => _i29.JsonInsightCardRepository(),
     );
     gh.lazySingleton<_i690.EventPoolRepository>(
       () => _i831.JsonEventPoolRepository(),
@@ -98,6 +110,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i454.UpdateMetricsUseCase>(),
         gh<_i588.GenerateEventUseCase>(),
         gh<_i669.CheckGameStatusUseCase>(),
+        gh<_i737.CheckBehavioralInsightsUseCase>(),
       ),
     );
     gh.factory<_i910.GameEngineCubit>(

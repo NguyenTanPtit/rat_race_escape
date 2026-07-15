@@ -34,7 +34,8 @@
     "title": "Đau dạ dày",
     "description": "Do ăn uống kham khổ cộng thêm áp lực và không có ai trò chuyện, bạn bị đau dạ dày dữ dội phải nhập viện.",
     "options": {
-      "stm_opt1": "Nằm viện điều trị (3tr)"
+      "stm_opt1": "Nằm viện điều trị (3tr)",
+      "stm_opt2": "Điều trị & thay đổi lối sống (10tr)"
     }
   },
   "buy_used_car": {

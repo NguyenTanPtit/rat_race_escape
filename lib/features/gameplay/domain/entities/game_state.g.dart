@@ -48,6 +48,8 @@ _GameState _$GameStateFromJson(Map<String, dynamic> json) => _GameState(
       (json['maxLeisureStressReliefPerMonth'] as num?)?.toInt() ?? 20,
   leisureReliefUsedThisMonth:
       (json['leisureReliefUsedThisMonth'] as num?)?.toInt() ?? 0,
+  consecutiveMinimumCreditCardPayments:
+      (json['consecutiveMinimumCreditCardPayments'] as num?)?.toInt() ?? 0,
   assets:
       (json['assets'] as List<dynamic>?)
           ?.map((e) => Asset.fromJson(e as Map<String, dynamic>))
@@ -86,6 +88,8 @@ Map<String, dynamic> _$GameStateToJson(_GameState instance) =>
       'leisureCostPerStressPoint': instance.leisureCostPerStressPoint,
       'maxLeisureStressReliefPerMonth': instance.maxLeisureStressReliefPerMonth,
       'leisureReliefUsedThisMonth': instance.leisureReliefUsedThisMonth,
+      'consecutiveMinimumCreditCardPayments':
+          instance.consecutiveMinimumCreditCardPayments,
       'assets': instance.assets.map((e) => e.toJson()).toList(),
       'loans': instance.loans.map((e) => e.toJson()).toList(),
     };

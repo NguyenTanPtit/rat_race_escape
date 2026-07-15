@@ -1,0 +1,22 @@
+{
+  "total_cost_of_ownership": {
+    "conceptKey": "total_cost_of_ownership",
+    "title": "Chi phí ẩn của việc sở hữu",
+    "description": "Khi sở hữu một tiêu sản, đặc biệt là ô tô, chi phí không chỉ dừng lại ở số tiền bạn bỏ ra ban đầu. 'Tổng chi phí sở hữu' (Total Cost of Ownership) bao gồm cả lãi vay, phí trước bạ, bảo hiểm bắt buộc, bảo hiểm vật chất, phí đường bộ, đăng kiểm, cũng như các khoản chi thường xuyên như xăng xe, gửi xe, bảo dưỡng định kỳ và khấu hao tài sản. Nếu chỉ tính toán dựa trên mức trả góp hàng tháng mà bỏ qua các loại phí ẩn này, bạn sẽ rất dễ rơi vào tình trạng kẹt thanh khoản và chịu áp lực tài chính nặng nề kéo dài."
+  },
+  "paradox_of_thrift": {
+    "conceptKey": "paradox_of_thrift",
+    "title": "Nghịch lý của sự tiết kiệm cực đoan",
+    "description": "Tiết kiệm là thói quen tốt để xây dựng nền tảng tài chính, nhưng tiết kiệm cực đoan lại phản tác dụng. Khi bạn cắt đứt mọi hoạt động giao lưu và từ chối các mối quan hệ xã hội chỉ để giữ lại từng đồng bạc lẻ, bạn đang tự đánh mất 'Vốn xã hội' (Social Capital) – thứ thường mang lại các cơ hội thăng tiến và các mối làm ăn sinh lời. Hơn nữa, việc thắt lưng buộc bụng quá mức, ví dụ như nhịn ăn hay ăn uống thiếu chất, sẽ dẫn đến hệ lụy sức khỏe nghiêm trọng. Khoản tiền viện phí và thuốc men bạn phải trả sau này thường lớn gấp nhiều lần số tiền bạn từng cố gắng chắt bóp."
+  },
+  "financial_scam": {
+    "conceptKey": "financial_scam",
+    "title": "Cạm bẫy lừa đảo tài chính",
+    "description": "Trong thế giới tài chính, nguyên tắc vàng luôn là 'high risk, high return' (rủi ro cao, lợi nhuận cao). Bất cứ lời hứa hẹn nào về một khoản đầu tư 'lợi nhuận siêu khủng, an toàn tuyệt đối, không làm cũng có ăn' đều là dấu hiệu đỏ của các vụ lừa đảo (scam) hoặc mô hình đa cấp Ponzi. Những kẻ lừa đảo thường đánh vào lòng tham và sự thiếu hiểu biết của người mới bắt đầu. Tiền mất đi không chỉ làm suy giảm giá trị tài sản ròng mà còn giáng một đòn mạnh vào tinh thần của bạn. Hãy luôn trang bị kiến thức và tuyệt đối không chuyển tiền cho những cơ hội mà bạn không hiểu rõ bản chất."
+  },
+  "mental_accounting": {
+    "conceptKey": "mental_accounting",
+    "title": "Bẫy thanh toán tối thiểu thẻ tín dụng",
+    "description": "Việc chỉ thanh toán mức tối thiểu (minimum payment) cho thẻ tín dụng hàng tháng là một ví dụ điển hình của bẫy tâm lý kế toán. Khi thấy số tiền phải trả trước mắt khá nhỏ, bạn dễ dàng tự nhủ rằng mình đang quản lý tài chính tốt. Tuy nhiên, phần dư nợ còn lại sẽ bị tính lãi suất kép ở mức rất cao (thường từ 20-30%/năm). Nếu chỉ trả mức tối thiểu, bạn có thể mất hàng chục năm để xóa sạch một khoản nợ nhỏ và số tiền lãi phải trả sẽ gấp nhiều lần số dư nợ gốc. Hãy luôn ưu tiên thanh toán toàn bộ dư nợ thẻ tín dụng mỗi tháng để tránh việc nuôi béo ngân hàng bằng mồ hôi công sức của bạn."
+  }
+}

@@ -148,7 +148,7 @@ void main() {
     );
 
     blocTest<GameEngineCubit, GameEngineState>(
-      'emits gameOver state when TurnWon is returned',
+      'emits won state when TurnWon is returned',
       build: () {
         mockProcessNextMonthUseCase.resultToReturn = Right(TurnWon(changedState));
         return cubit;
@@ -235,6 +235,50 @@ void main() {
       },
       expect: () => [
         GameEngineState.playing(changedState), // Only the first success is emitted
+      ],
+    );
+  });
+
+  group('newlyUnlockedInsightCardIds', () {
+    final stateWithCard1 = baseState.copyWith(unlockedInsightCardIds: {'card_1'});
+    final stateWithCard1And2 = baseState.copyWith(unlockedInsightCardIds: {'card_1', 'card_2'});
+
+    blocTest<GameEngineCubit, GameEngineState>(
+      'emits newly unlocked cards when playing state continues',
+      build: () {
+        mockProcessNextMonthUseCase.resultToReturn = Right(TurnContinued(stateWithCard1And2));
+        return cubit;
+      },
+      seed: () => GameEngineState.playing(stateWithCard1),
+      act: (cubit) => cubit.nextMonth(),
+      expect: () => [
+        GameEngineState.playing(stateWithCard1And2, {'card_2'}),
+      ],
+    );
+
+    blocTest<GameEngineCubit, GameEngineState>(
+      'emits newly unlocked cards when turn lost immediately after option chosen',
+      build: () {
+        mockApplyEventOptionUseCase.resultToReturn = Right(TurnLost(stateWithCard1And2, GameOverReason.burnout));
+        return cubit;
+      },
+      seed: () => GameEngineState.playing(stateWithCard1),
+      act: (cubit) => cubit.chooseEventOption('e_1', 'o_1'),
+      expect: () => [
+        GameEngineState.gameOver(GameOverReason.burnout, stateWithCard1And2, {'card_2'}),
+      ],
+    );
+
+    blocTest<GameEngineCubit, GameEngineState>(
+      'emits newly unlocked cards when won',
+      build: () {
+        mockProcessNextMonthUseCase.resultToReturn = Right(TurnWon(stateWithCard1And2));
+        return cubit;
+      },
+      seed: () => GameEngineState.playing(stateWithCard1),
+      act: (cubit) => cubit.nextMonth(),
+      expect: () => [
+        GameEngineState.won(stateWithCard1And2, {'card_2'}),
       ],
     );
   });

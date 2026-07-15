@@ -128,13 +128,13 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function( GameState gameState)?  playing,TResult Function( GameOverReason reason,  GameState finalState)?  gameOver,TResult Function( GameState finalState)?  won,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function( GameState gameState,  Set<String> newlyUnlockedInsightCardIds)?  playing,TResult Function( GameOverReason reason,  GameState finalState,  Set<String> newlyUnlockedInsightCardIds)?  gameOver,TResult Function( GameState finalState,  Set<String> newlyUnlockedInsightCardIds)?  won,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case GameEngineInitial() when initial != null:
 return initial();case GameEnginePlaying() when playing != null:
-return playing(_that.gameState);case GameEngineGameOver() when gameOver != null:
-return gameOver(_that.reason,_that.finalState);case GameEngineWon() when won != null:
-return won(_that.finalState);case GameEngineError() when error != null:
+return playing(_that.gameState,_that.newlyUnlockedInsightCardIds);case GameEngineGameOver() when gameOver != null:
+return gameOver(_that.reason,_that.finalState,_that.newlyUnlockedInsightCardIds);case GameEngineWon() when won != null:
+return won(_that.finalState,_that.newlyUnlockedInsightCardIds);case GameEngineError() when error != null:
 return error(_that.message);case _:
   return orElse();
 
@@ -153,13 +153,13 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function( GameState gameState)  playing,required TResult Function( GameOverReason reason,  GameState finalState)  gameOver,required TResult Function( GameState finalState)  won,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function( GameState gameState,  Set<String> newlyUnlockedInsightCardIds)  playing,required TResult Function( GameOverReason reason,  GameState finalState,  Set<String> newlyUnlockedInsightCardIds)  gameOver,required TResult Function( GameState finalState,  Set<String> newlyUnlockedInsightCardIds)  won,required TResult Function( String message)  error,}) {final _that = this;
 switch (_that) {
 case GameEngineInitial():
 return initial();case GameEnginePlaying():
-return playing(_that.gameState);case GameEngineGameOver():
-return gameOver(_that.reason,_that.finalState);case GameEngineWon():
-return won(_that.finalState);case GameEngineError():
+return playing(_that.gameState,_that.newlyUnlockedInsightCardIds);case GameEngineGameOver():
+return gameOver(_that.reason,_that.finalState,_that.newlyUnlockedInsightCardIds);case GameEngineWon():
+return won(_that.finalState,_that.newlyUnlockedInsightCardIds);case GameEngineError():
 return error(_that.message);}
 }
 /// A variant of `when` that fallback to returning `null`
@@ -174,13 +174,13 @@ return error(_that.message);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function( GameState gameState)?  playing,TResult? Function( GameOverReason reason,  GameState finalState)?  gameOver,TResult? Function( GameState finalState)?  won,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function( GameState gameState,  Set<String> newlyUnlockedInsightCardIds)?  playing,TResult? Function( GameOverReason reason,  GameState finalState,  Set<String> newlyUnlockedInsightCardIds)?  gameOver,TResult? Function( GameState finalState,  Set<String> newlyUnlockedInsightCardIds)?  won,TResult? Function( String message)?  error,}) {final _that = this;
 switch (_that) {
 case GameEngineInitial() when initial != null:
 return initial();case GameEnginePlaying() when playing != null:
-return playing(_that.gameState);case GameEngineGameOver() when gameOver != null:
-return gameOver(_that.reason,_that.finalState);case GameEngineWon() when won != null:
-return won(_that.finalState);case GameEngineError() when error != null:
+return playing(_that.gameState,_that.newlyUnlockedInsightCardIds);case GameEngineGameOver() when gameOver != null:
+return gameOver(_that.reason,_that.finalState,_that.newlyUnlockedInsightCardIds);case GameEngineWon() when won != null:
+return won(_that.finalState,_that.newlyUnlockedInsightCardIds);case GameEngineError() when error != null:
 return error(_that.message);case _:
   return null;
 
@@ -225,10 +225,17 @@ String toString() {
 
 
 class GameEnginePlaying implements GameEngineState {
-  const GameEnginePlaying(this.gameState);
+  const GameEnginePlaying(this.gameState, [final  Set<String> newlyUnlockedInsightCardIds = const {}]): _newlyUnlockedInsightCardIds = newlyUnlockedInsightCardIds;
   
 
  final  GameState gameState;
+ final  Set<String> _newlyUnlockedInsightCardIds;
+@JsonKey() Set<String> get newlyUnlockedInsightCardIds {
+  if (_newlyUnlockedInsightCardIds is EqualUnmodifiableSetView) return _newlyUnlockedInsightCardIds;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableSetView(_newlyUnlockedInsightCardIds);
+}
+
 
 /// Create a copy of GameEngineState
 /// with the given fields replaced by the non-null parameter values.
@@ -240,16 +247,16 @@ $GameEnginePlayingCopyWith<GameEnginePlaying> get copyWith => _$GameEnginePlayin
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GameEnginePlaying&&(identical(other.gameState, gameState) || other.gameState == gameState));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GameEnginePlaying&&(identical(other.gameState, gameState) || other.gameState == gameState)&&const DeepCollectionEquality().equals(other._newlyUnlockedInsightCardIds, _newlyUnlockedInsightCardIds));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,gameState);
+int get hashCode => Object.hash(runtimeType,gameState,const DeepCollectionEquality().hash(_newlyUnlockedInsightCardIds));
 
 @override
 String toString() {
-  return 'GameEngineState.playing(gameState: $gameState)';
+  return 'GameEngineState.playing(gameState: $gameState, newlyUnlockedInsightCardIds: $newlyUnlockedInsightCardIds)';
 }
 
 
@@ -260,7 +267,7 @@ abstract mixin class $GameEnginePlayingCopyWith<$Res> implements $GameEngineStat
   factory $GameEnginePlayingCopyWith(GameEnginePlaying value, $Res Function(GameEnginePlaying) _then) = _$GameEnginePlayingCopyWithImpl;
 @useResult
 $Res call({
- GameState gameState
+ GameState gameState, Set<String> newlyUnlockedInsightCardIds
 });
 
 
@@ -277,10 +284,11 @@ class _$GameEnginePlayingCopyWithImpl<$Res>
 
 /// Create a copy of GameEngineState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? gameState = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? gameState = null,Object? newlyUnlockedInsightCardIds = null,}) {
   return _then(GameEnginePlaying(
 null == gameState ? _self.gameState : gameState // ignore: cast_nullable_to_non_nullable
-as GameState,
+as GameState,null == newlyUnlockedInsightCardIds ? _self._newlyUnlockedInsightCardIds : newlyUnlockedInsightCardIds // ignore: cast_nullable_to_non_nullable
+as Set<String>,
   ));
 }
 
@@ -300,11 +308,18 @@ $GameStateCopyWith<$Res> get gameState {
 
 
 class GameEngineGameOver implements GameEngineState {
-  const GameEngineGameOver(this.reason, this.finalState);
+  const GameEngineGameOver(this.reason, this.finalState, [final  Set<String> newlyUnlockedInsightCardIds = const {}]): _newlyUnlockedInsightCardIds = newlyUnlockedInsightCardIds;
   
 
  final  GameOverReason reason;
  final  GameState finalState;
+ final  Set<String> _newlyUnlockedInsightCardIds;
+@JsonKey() Set<String> get newlyUnlockedInsightCardIds {
+  if (_newlyUnlockedInsightCardIds is EqualUnmodifiableSetView) return _newlyUnlockedInsightCardIds;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableSetView(_newlyUnlockedInsightCardIds);
+}
+
 
 /// Create a copy of GameEngineState
 /// with the given fields replaced by the non-null parameter values.
@@ -316,16 +331,16 @@ $GameEngineGameOverCopyWith<GameEngineGameOver> get copyWith => _$GameEngineGame
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GameEngineGameOver&&(identical(other.reason, reason) || other.reason == reason)&&(identical(other.finalState, finalState) || other.finalState == finalState));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GameEngineGameOver&&(identical(other.reason, reason) || other.reason == reason)&&(identical(other.finalState, finalState) || other.finalState == finalState)&&const DeepCollectionEquality().equals(other._newlyUnlockedInsightCardIds, _newlyUnlockedInsightCardIds));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,reason,finalState);
+int get hashCode => Object.hash(runtimeType,reason,finalState,const DeepCollectionEquality().hash(_newlyUnlockedInsightCardIds));
 
 @override
 String toString() {
-  return 'GameEngineState.gameOver(reason: $reason, finalState: $finalState)';
+  return 'GameEngineState.gameOver(reason: $reason, finalState: $finalState, newlyUnlockedInsightCardIds: $newlyUnlockedInsightCardIds)';
 }
 
 
@@ -336,7 +351,7 @@ abstract mixin class $GameEngineGameOverCopyWith<$Res> implements $GameEngineSta
   factory $GameEngineGameOverCopyWith(GameEngineGameOver value, $Res Function(GameEngineGameOver) _then) = _$GameEngineGameOverCopyWithImpl;
 @useResult
 $Res call({
- GameOverReason reason, GameState finalState
+ GameOverReason reason, GameState finalState, Set<String> newlyUnlockedInsightCardIds
 });
 
 
@@ -353,11 +368,12 @@ class _$GameEngineGameOverCopyWithImpl<$Res>
 
 /// Create a copy of GameEngineState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? reason = null,Object? finalState = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? reason = null,Object? finalState = null,Object? newlyUnlockedInsightCardIds = null,}) {
   return _then(GameEngineGameOver(
 null == reason ? _self.reason : reason // ignore: cast_nullable_to_non_nullable
 as GameOverReason,null == finalState ? _self.finalState : finalState // ignore: cast_nullable_to_non_nullable
-as GameState,
+as GameState,null == newlyUnlockedInsightCardIds ? _self._newlyUnlockedInsightCardIds : newlyUnlockedInsightCardIds // ignore: cast_nullable_to_non_nullable
+as Set<String>,
   ));
 }
 
@@ -377,10 +393,17 @@ $GameStateCopyWith<$Res> get finalState {
 
 
 class GameEngineWon implements GameEngineState {
-  const GameEngineWon(this.finalState);
+  const GameEngineWon(this.finalState, [final  Set<String> newlyUnlockedInsightCardIds = const {}]): _newlyUnlockedInsightCardIds = newlyUnlockedInsightCardIds;
   
 
  final  GameState finalState;
+ final  Set<String> _newlyUnlockedInsightCardIds;
+@JsonKey() Set<String> get newlyUnlockedInsightCardIds {
+  if (_newlyUnlockedInsightCardIds is EqualUnmodifiableSetView) return _newlyUnlockedInsightCardIds;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableSetView(_newlyUnlockedInsightCardIds);
+}
+
 
 /// Create a copy of GameEngineState
 /// with the given fields replaced by the non-null parameter values.
@@ -392,16 +415,16 @@ $GameEngineWonCopyWith<GameEngineWon> get copyWith => _$GameEngineWonCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GameEngineWon&&(identical(other.finalState, finalState) || other.finalState == finalState));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GameEngineWon&&(identical(other.finalState, finalState) || other.finalState == finalState)&&const DeepCollectionEquality().equals(other._newlyUnlockedInsightCardIds, _newlyUnlockedInsightCardIds));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,finalState);
+int get hashCode => Object.hash(runtimeType,finalState,const DeepCollectionEquality().hash(_newlyUnlockedInsightCardIds));
 
 @override
 String toString() {
-  return 'GameEngineState.won(finalState: $finalState)';
+  return 'GameEngineState.won(finalState: $finalState, newlyUnlockedInsightCardIds: $newlyUnlockedInsightCardIds)';
 }
 
 
@@ -412,7 +435,7 @@ abstract mixin class $GameEngineWonCopyWith<$Res> implements $GameEngineStateCop
   factory $GameEngineWonCopyWith(GameEngineWon value, $Res Function(GameEngineWon) _then) = _$GameEngineWonCopyWithImpl;
 @useResult
 $Res call({
- GameState finalState
+ GameState finalState, Set<String> newlyUnlockedInsightCardIds
 });
 
 
@@ -429,10 +452,11 @@ class _$GameEngineWonCopyWithImpl<$Res>
 
 /// Create a copy of GameEngineState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? finalState = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? finalState = null,Object? newlyUnlockedInsightCardIds = null,}) {
   return _then(GameEngineWon(
 null == finalState ? _self.finalState : finalState // ignore: cast_nullable_to_non_nullable
-as GameState,
+as GameState,null == newlyUnlockedInsightCardIds ? _self._newlyUnlockedInsightCardIds : newlyUnlockedInsightCardIds // ignore: cast_nullable_to_non_nullable
+as Set<String>,
   ));
 }
 

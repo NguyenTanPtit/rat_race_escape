@@ -88,13 +88,25 @@ class GameEngineCubit extends Cubit<GameEngineState> {
   }
 
   void _emitTurnResult(TurnResult turnResult) {
+    Set<String> oldUnlockedCards = {};
+    if (state is GameEnginePlaying) {
+      oldUnlockedCards = (state as GameEnginePlaying).gameState.unlockedInsightCardIds;
+    } else if (state is GameEngineWon) {
+      oldUnlockedCards = (state as GameEngineWon).finalState.unlockedInsightCardIds;
+    } else if (state is GameEngineGameOver) {
+      oldUnlockedCards = (state as GameEngineGameOver).finalState.unlockedInsightCardIds;
+    }
+
+    final newState = turnResult.state;
+    final newlyUnlockedInsightCardIds = newState.unlockedInsightCardIds.difference(oldUnlockedCards);
+
     switch (turnResult) {
       case TurnContinued():
-        emit(GameEngineState.playing(turnResult.state));
+        emit(GameEngineState.playing(newState, newlyUnlockedInsightCardIds));
       case TurnWon():
-        emit(GameEngineState.won(turnResult.state));
+        emit(GameEngineState.won(newState, newlyUnlockedInsightCardIds));
       case TurnLost():
-        emit(GameEngineState.gameOver(turnResult.reason, turnResult.state));
+        emit(GameEngineState.gameOver(turnResult.reason, newState, newlyUnlockedInsightCardIds));
     }
   }
 }

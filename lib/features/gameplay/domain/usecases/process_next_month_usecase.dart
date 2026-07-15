@@ -8,6 +8,7 @@ import 'generate_event_usecase.dart';
 import 'process_loans_usecase.dart';
 import 'update_metrics_usecase.dart';
 import 'check_game_status_usecase.dart';
+import 'check_behavioral_insights_usecase.dart';
 
 @lazySingleton
 class ProcessNextMonthUseCase {
@@ -16,6 +17,7 @@ class ProcessNextMonthUseCase {
   final UpdateMetricsUseCase _updateMetrics;
   final GenerateEventUseCase _generateEvent;
   final CheckGameStatusUseCase _checkGameStatus;
+  final CheckBehavioralInsightsUseCase _checkBehavioralInsights;
 
   ProcessNextMonthUseCase(
     this._calculateCashflow,
@@ -23,6 +25,7 @@ class ProcessNextMonthUseCase {
     this._updateMetrics,
     this._generateEvent,
     this._checkGameStatus,
+    this._checkBehavioralInsights,
   );
 
   /// Executes the core logic for advancing the game to the next month using a Pipeline pattern.
@@ -40,6 +43,7 @@ class ProcessNextMonthUseCase {
     // d. Pass the state sequentially through the injected use cases (Pipeline).
     state = _calculateCashflow(state);
     state = _processLoans(state);
+    state = _checkBehavioralInsights(state);
     state = _updateMetrics(state);
     state = await _generateEvent(state);
 

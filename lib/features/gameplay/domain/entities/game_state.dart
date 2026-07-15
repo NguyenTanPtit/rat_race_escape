@@ -47,6 +47,7 @@ abstract class GameState with _$GameState {
     @Default(100000) double leisureCostPerStressPoint,
     @Default(20) int maxLeisureStressReliefPerMonth,
     @Default(0) int leisureReliefUsedThisMonth,
+    @Default(0) int consecutiveMinimumCreditCardPayments,
 
     // 6. Inventories
     @Default([]) List<Asset> assets,

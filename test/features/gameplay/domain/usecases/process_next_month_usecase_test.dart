@@ -9,6 +9,7 @@ import 'package:rat_race_escape/features/gameplay/domain/usecases/generate_event
 import 'package:rat_race_escape/features/gameplay/domain/usecases/process_loans_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/process_next_month_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/update_metrics_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/check_behavioral_insights_usecase.dart';
 
 class MockCalculateCashflowUseCase extends Mock implements CalculateCashflowUseCase {}
 class MockProcessLoansUseCase extends Mock implements ProcessLoansUseCase {}
@@ -18,6 +19,8 @@ class MockCheckGameStatusUseCase extends Mock implements CheckGameStatusUseCase 
 
 class FakeGameState extends Fake implements GameState {}
 
+class MockCheckBehavioralInsightsUseCase extends Mock implements CheckBehavioralInsightsUseCase {}
+
 void main() {
   late ProcessNextMonthUseCase usecase;
   late MockCalculateCashflowUseCase mockCalculateCashflowUseCase;
@@ -25,6 +28,7 @@ void main() {
   late MockUpdateMetricsUseCase mockUpdateMetricsUseCase;
   late MockGenerateEventUseCase mockGenerateEventUseCase;
   late MockCheckGameStatusUseCase mockCheckGameStatusUseCase;
+  late MockCheckBehavioralInsightsUseCase mockCheckBehavioralInsightsUseCase;
 
   setUpAll(() {
     registerFallbackValue(FakeGameState());
@@ -36,6 +40,7 @@ void main() {
     mockUpdateMetricsUseCase = MockUpdateMetricsUseCase();
     mockGenerateEventUseCase = MockGenerateEventUseCase();
     mockCheckGameStatusUseCase = MockCheckGameStatusUseCase();
+    mockCheckBehavioralInsightsUseCase = MockCheckBehavioralInsightsUseCase();
 
     usecase = ProcessNextMonthUseCase(
       mockCalculateCashflowUseCase,
@@ -43,6 +48,7 @@ void main() {
       mockUpdateMetricsUseCase,
       mockGenerateEventUseCase,
       mockCheckGameStatusUseCase,
+      mockCheckBehavioralInsightsUseCase,
     );
   });
 
@@ -70,6 +76,7 @@ void main() {
 
     when(() => mockCalculateCashflowUseCase(stateWithMonthAdvanced)).thenReturn(stateWithMonthAdvanced);
     when(() => mockProcessLoansUseCase(stateWithMonthAdvanced)).thenReturn(stateWithMonthAdvanced);
+    when(() => mockCheckBehavioralInsightsUseCase(stateWithMonthAdvanced)).thenReturn(stateWithMonthAdvanced);
     when(() => mockUpdateMetricsUseCase(stateWithMonthAdvanced)).thenReturn(stateWithMonthAdvanced);
     when(() => mockGenerateEventUseCase(stateWithMonthAdvanced)).thenAnswer((_) async => stateAfterPipeline);
     when(() => mockCheckGameStatusUseCase(stateAfterPipeline)).thenReturn(TurnResult.continued(stateAfterPipeline));

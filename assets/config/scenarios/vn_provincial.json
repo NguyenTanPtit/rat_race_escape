@@ -88,7 +88,8 @@
       "id": "e_over_saving",
       "textKey": "over_saving",
       "trigger": {
-        "minStress": 60
+        "minStress": 60,
+        "excludedFlags": ["extreme_frugality"]
       },
       "weight": 1.5,
       "options": [
@@ -96,9 +97,10 @@
           "id": "os_opt1",
           "labelKey": "os_opt1",
           "effect": {
+            "monthlyExpensesDelta": -1000000,
             "stress": 10,
-            "network": -20,
-            "addedFlags": ["anti_social"]
+            "network": -30,
+            "addedFlags": ["extreme_frugality"]
           }
         },
         {
@@ -115,7 +117,7 @@
       "id": "e_stomachache",
       "textKey": "stomachache",
       "trigger": {
-        "requiredFlags": ["anti_social"]
+        "requiredFlags": ["extreme_frugality"]
       },
       "absoluteChance": 0.2,
       "options": [
@@ -124,7 +126,18 @@
           "labelKey": "stm_opt1",
           "effect": {
             "cash": -3000000,
-            "stress": 20
+            "stress": 20,
+            "insightCardId": "paradox_of_thrift"
+          }
+        },
+        {
+          "id": "stm_opt2",
+          "labelKey": "stm_opt2",
+          "effect": {
+            "cash": -10000000,
+            "monthlyExpensesDelta": 1000000,
+            "removedFlags": ["extreme_frugality"],
+            "insightCardId": "paradox_of_thrift"
           }
         }
       ]
@@ -144,7 +157,8 @@
             "cash": -20000000,
             "addedFlags": ["owns_used_car"],
             "monthlyExpensesDelta": 500000,
-            "stress": -5
+            "stress": -5,
+            "insightCardId": "total_cost_of_ownership"
           }
         },
         {
@@ -162,7 +176,8 @@
               }
             ],
             "monthlyExpensesDelta": 1500000,
-            "stress": -15
+            "stress": -15,
+            "insightCardId": "total_cost_of_ownership"
           }
         },
         {
@@ -317,7 +332,8 @@
           "labelKey": "osc_opt1",
           "effect": {
             "cash": -1000000,
-            "stress": 20
+            "stress": 20,
+            "insightCardId": "financial_scam"
           }
         }
       ]

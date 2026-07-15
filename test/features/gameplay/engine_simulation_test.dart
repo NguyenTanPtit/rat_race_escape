@@ -14,6 +14,7 @@ import 'package:rat_race_escape/features/gameplay/domain/usecases/process_loans_
 import 'package:rat_race_escape/features/gameplay/domain/usecases/process_next_month_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/spend_on_leisure_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/update_metrics_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/check_behavioral_insights_usecase.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rat_race_escape/features/gameplay/domain/factories/game_state_factory.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_event.dart';
@@ -62,6 +63,7 @@ void main() {
     generateEventUseCase = GenerateEventUseCase(eventPoolRepository, random);
     
     checkGameStatusUseCase = CheckGameStatusUseCase();
+    final checkBehavioralInsightsUseCase = CheckBehavioralInsightsUseCase();
     
     processNextMonthUseCase = ProcessNextMonthUseCase(
       calculateCashflowUseCase,
@@ -69,6 +71,7 @@ void main() {
       updateMetricsUseCase,
       generateEventUseCase,
       checkGameStatusUseCase,
+      checkBehavioralInsightsUseCase,
     );
     
     applyEventOptionUseCase = ApplyEventOptionUseCase(
