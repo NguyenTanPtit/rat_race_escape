@@ -5,6 +5,9 @@ import 'package:rat_race_escape/core/routes/app_router.dart';
 import 'package:rat_race_escape/core/theme/app_theme.dart';
 import 'package:rat_race_escape/l10n/app_localizations.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/cubit/game_engine_cubit.dart';
 import 'core/di/injection.dart';
 
 void main() async {
@@ -24,19 +27,22 @@ class RatRaceEscapeApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Rat Race Escape',
-      theme: AppTheme.lightTheme,
-      routerConfig: AppRouter.router,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('vi'),
-      ],
+    return BlocProvider<GameEngineCubit>(
+      create: (_) => GetIt.I<GameEngineCubit>(),
+      child: MaterialApp.router(
+        title: 'Rat Race Escape',
+        theme: AppTheme.lightTheme,
+        routerConfig: AppRouter.router,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('vi'),
+        ],
+      ),
     );
   }
 }

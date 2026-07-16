@@ -49,7 +49,7 @@ lib/features/
 7. Nếu phát hiện code hiện có mâu thuẫn với yêu cầu, dừng lại báo cáo và đề xuất phương án, không tự ý refactor lớn. Tương tự với expected value trong test: nếu spec ghi một con số mà code cho kết quả khác, DỪNG và báo cáo mâu thuẫn — không tự điều chỉnh expected cho khớp code, không mềm hóa assertion.
 8. KHÔNG để lại comment dạng độc thoại/tự vấn trong code ("Wait...", "Let's assume...", "for now..."); mọi câu hỏi thiết kế chưa chốt đưa vào mục Open Questions của plan. Toàn bộ comment viết bằng TIẾNG ANH. Comment mô tả hành vi phải cập nhật cùng lúc với hành vi — comment lỗi thời tệ hơn không có comment.
 9. Mọi walkthrough phải có: timestamp của lần chạy test, raw log dán kèm (không phải đường dẫn máy cục bộ), và số liệu lấy TRỰC TIẾP từ lần chạy đó — không chép từ báo cáo cũ. Raw log BẮT BUỘC sinh bằng redirect (`flutter test --reporter expanded > run.log 2>&1`) và dán nguyên văn nội dung file — TUYỆT ĐỐI CẤM gõ lại, tái dựng, hay "format lại cho đẹp" log bằng tay/bằng trí nhớ: một log tái dựng là bằng chứng giả, tệ hơn không có log. Khai [MODIFY] cho file nào thì file đó phải tồn tại (kiểm tra trước khi khai).
-
+10. Mọi component mới hoặc đổi spec BẮT BUỘC cập nhật Gallery trong cùng commit — Gallery lỗi thời coi như component chưa hoàn thành.
 ## DANH SÁCH TASK (làm tuần tự, hoàn thành + test xong task trước mới sang task sau)
 
 ### Task 0 — Fix bugs hiện có + Migrate Freezed 3 (BẮT BUỘC làm đầu tiên)

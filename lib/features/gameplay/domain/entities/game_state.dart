@@ -59,6 +59,8 @@ abstract class GameState with _$GameState {
 
   factory GameState.fromJson(Map<String, dynamic> json) => _$GameStateFromJson(json);
 
+  int get age => ageInMonths ~/ 12;
+
   double get netWorth {
     double totalAssets = assets.fold(0, (sum, asset) => sum + asset.baseValue);
     double totalLoans = loans.fold(0, (sum, loan) => sum + loan.principalAmount);
@@ -70,6 +72,9 @@ abstract class GameState with _$GameState {
   double get totalMonthlyOutflow => monthlyExpenses + familySupportExpense + monthlyRent;
 
   double get totalCashFlow => baseSalary + passiveIncome - totalMonthlyOutflow;
+
+  double get totalLoanPayment => loans.fold(0, (sum, loan) => sum + loan.minimumMonthlyPayment);
+  double get totalLoanInterest => loans.fold(0, (sum, loan) => sum + (loan.principalAmount * loan.interestRatePerYear / 100 / 12));
 
   int get calendarMonth => ((startCalendarMonth - 1 + currentMonth - 1) % 12) + 1;
 }

@@ -77,4 +77,91 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get galleryNav => 'Bottom Navigation';
+
+  @override
+  String get monthlySummaryTitle => 'Tổng kết tháng';
+
+  @override
+  String get monthlySummaryCash => 'Tiền mặt';
+
+  @override
+  String get monthlySummaryStress => 'Mức độ Stress';
+
+  @override
+  String get monthlySummaryNetWorth => 'Tài sản ròng';
+
+  @override
+  String get btnOk => 'Đồng ý';
+
+  @override
+  String get gameOverReasonBurnout =>
+      'Bạn đã gục ngã vì kiệt sức (Stress đạt 100%). Hãy chú ý nghỉ ngơi!';
+
+  @override
+  String get gameOverReasonBankruptcy =>
+      'Bạn đã vỡ nợ (Tiền mặt âm quá sâu và không còn khả năng vay mượn).';
+
+  @override
+  String get gameOverReasonDebtSpiral =>
+      'Bạn đã rơi vào vòng xoáy nợ nần không lối thoát.';
+
+  @override
+  String get gameOverReasonPoorAtRetirement =>
+      'Bạn đã đến tuổi nghỉ hưu nhưng vẫn chưa đạt được tự do tài chính.';
+
+  @override
+  String get winTitle => 'Chiến thắng!';
+
+  @override
+  String get gameOverTitle => 'Thất bại!';
+
+  @override
+  String get lifetimeStats => 'Thống kê cả đời';
+
+  @override
+  String statMonthsPlayed(int months) {
+    return 'Số tháng đã chơi: $months';
+  }
+
+  @override
+  String statFinalCredit(int score) {
+    return 'Tín dụng cuối: $score';
+  }
+
+  @override
+  String statLessonsCollected(int collected, int total) {
+    return 'Bài học thu thập: $collected/$total';
+  }
+
+  @override
+  String get btnContinueGame => 'Chơi tiếp';
+
+  @override
+  String get btnNewGame => 'Trò chơi mới';
+
+  @override
+  String get selectCountry => 'Chọn Quốc gia';
+
+  @override
+  String get selectContext => 'Chọn Bối cảnh';
+
+  @override
+  String get expenseSalary => 'Lương';
+
+  @override
+  String get expenseLiving => 'Sinh hoạt';
+
+  @override
+  String get expenseRent => 'Thuê trọ';
+
+  @override
+  String get expenseFamily => 'Gửi về quê';
+
+  @override
+  String expenseLoan(String total, String interest) {
+    return 'Trả nợ: $total (lãi $interest)';
+  }
+
+  @override
+  String get insightCardsLibrary => 'Góc nhìn Chuyên gia';
 }

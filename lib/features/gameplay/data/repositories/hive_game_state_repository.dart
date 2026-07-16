@@ -22,6 +22,13 @@ class HiveGameStateRepository implements GameStateRepository {
     if (jsonString != null) {
       try {
         final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
+        
+        // Invalidate legacy saves with 'default' scenario
+        if (jsonMap['scenarioId'] == 'default') {
+          await deleteSave();
+          return null;
+        }
+        
         return GameState.fromJson(jsonMap);
       } catch (e) {
         // Can log error here
@@ -34,7 +41,20 @@ class HiveGameStateRepository implements GameStateRepository {
   @override
   Future<bool> hasSavedGame() async {
     final box = await Hive.openBox<String>(_boxName);
-    return box.containsKey(_key);
+    if (!box.containsKey(_key)) return false;
+    
+    final jsonString = box.get(_key);
+    if (jsonString != null) {
+      try {
+        final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
+        if (jsonMap['scenarioId'] == 'default') {
+          await deleteSave();
+          return false;
+        }
+        return true;
+      } catch (_) {}
+    }
+    return false;
   }
 
   @override

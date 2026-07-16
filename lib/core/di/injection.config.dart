@@ -118,6 +118,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i541.ProcessNextMonthUseCase>(),
         gh<_i742.ApplyEventOptionUseCase>(),
         gh<_i102.SpendOnLeisureUseCase>(),
+        gh<_i688.GameStateRepository>(),
+        gh<_i96.ScenarioConfigRepository>(),
+        gh<_i690.EventPoolRepository>(),
       ),
     );
     return this;

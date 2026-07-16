@@ -19,6 +19,9 @@ class AppColors {
   
   static const Color networkColor = Color(0xFF8B5CF6); // Purple
   
+  static const Color navFill = Color(0xFFF3FCEF);
+  static const Color shadowOnPrimary = Color(0xFF004B1E);
+  
   static const Color shadowVariantDark = Color(0xFF000000);
   static const Color shadowVariantInk = ink;
 }

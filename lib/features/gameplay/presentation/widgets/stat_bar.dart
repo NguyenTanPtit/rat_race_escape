@@ -3,7 +3,7 @@ import 'package:rat_race_escape/core/theme/app_colors.dart';
 import 'package:rat_race_escape/core/theme/app_spacing.dart';
 import 'package:rat_race_escape/core/theme/app_text_styles.dart';
 
-enum StatType { stress, network }
+enum StatType { stress, network, credit }
 
 class StatBar extends StatelessWidget {
   final String label;
@@ -26,8 +26,12 @@ class StatBar extends StatelessWidget {
       if (ratio < 0.4) return AppColors.stressLow;
       if (ratio < 0.7) return AppColors.stressMedium;
       return AppColors.stressHigh;
-    } else {
+    } else if (type == StatType.network) {
       return AppColors.networkColor;
+    } else {
+      if (ratio < 0.4) return AppColors.stressHigh;
+      if (ratio < 0.7) return AppColors.stressMedium;
+      return AppColors.stressLow; // High credit is good
     }
   }
 

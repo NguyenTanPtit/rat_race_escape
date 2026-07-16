@@ -59,7 +59,7 @@ void main() {
       when(() => mockRepo.loadEventPool(any(), any(), locale: any(named: 'locale'))).thenAnswer((_) async => [
         const EventDefinition(
           event: GameEvent(id: 'car_broken', title: 'Car Broken', description: ''),
-          trigger: const EventTrigger(requiredFlags: {'has_car'}),
+          trigger: EventTrigger(requiredFlags: {'has_car'}),
         ),
       ]);
 
@@ -75,13 +75,13 @@ void main() {
     test('(b) Absolute chance is rolled first and wins if successful', () async {
       when(() => mockRepo.loadEventPool(any(), any(), locale: any(named: 'locale'))).thenAnswer((_) async => [
         const EventDefinition(
-          event: const GameEvent(id: 'absolute_event', title: 'Absolute', description: ''),
-          trigger: const EventTrigger(),
+          event: GameEvent(id: 'absolute_event', title: 'Absolute', description: ''),
+          trigger: EventTrigger(),
           absoluteChance: 1.0, // 100% chance
         ),
         const EventDefinition(
-          event: const GameEvent(id: 'weighted_event', title: 'Weighted', description: ''),
-          trigger: const EventTrigger(),
+          event: GameEvent(id: 'weighted_event', title: 'Weighted', description: ''),
+          trigger: EventTrigger(),
           weight: 1000.0, // Huge weight, but should be ignored because absolute triggers first
         ),
       ]);
@@ -93,13 +93,13 @@ void main() {
     test('(c) Weight distribution with fixed Random seed', () async {
       when(() => mockRepo.loadEventPool(any(), any(), locale: any(named: 'locale'))).thenAnswer((_) async => [
         const EventDefinition(
-          event: const GameEvent(id: 'event_A', title: 'A', description: ''),
-          trigger: const EventTrigger(),
+          event: GameEvent(id: 'event_A', title: 'A', description: ''),
+          trigger: EventTrigger(),
           weight: 70.0, // 70% chance relative to B
         ),
         const EventDefinition(
-          event: const GameEvent(id: 'event_B', title: 'B', description: ''),
-          trigger: const EventTrigger(),
+          event: GameEvent(id: 'event_B', title: 'B', description: ''),
+          trigger: EventTrigger(),
           weight: 30.0, // 30% chance relative to A
         ),
       ]);

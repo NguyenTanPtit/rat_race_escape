@@ -9,5 +9,7 @@ class AppTokens {
   static const double shadowOffsetX = 4.0;
   static const double shadowOffsetY = 4.0;
   
+  static const Offset shadowOffsetUp = Offset(0.0, -4.0);
+  
   static const BorderRadius borderRadius = BorderRadius.all(Radius.circular(cardRadius));
 }

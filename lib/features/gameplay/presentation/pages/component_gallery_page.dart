@@ -3,6 +3,7 @@ import 'package:rat_race_escape/core/theme/app_colors.dart';
 import 'package:rat_race_escape/core/theme/app_spacing.dart';
 import 'package:rat_race_escape/core/theme/app_text_styles.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/widgets/bottom_nav.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/end_turn_button.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/widgets/game_button.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/widgets/game_card.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/widgets/money_display.dart';
@@ -130,6 +131,48 @@ class ComponentGalleryPage extends StatelessWidget {
             const MoneyDisplay(label: 'Nợ xấu', amount: -20000000, cashflow: -1000000),
             const SizedBox(height: AppSpacing.l),
             const MoneyDisplay(label: 'Tài sản', amount: 1250000000, cashflow: 0),
+          ]),
+          _buildSection('6. EndTurnButton (80x80)', [
+            Container(
+              color: const Color(0xFFF3FCEF), // Nav background
+              padding: const EdgeInsets.all(AppSpacing.l),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
+                    children: [
+                      const Text('Normal', style: TextStyle(color: AppColors.ink)),
+                      const SizedBox(height: AppSpacing.s),
+                      EndTurnButton(onPressed: () {}),
+                    ],
+                  ),
+                  const Column(
+                    children: [
+                      Text('Disabled', style: TextStyle(color: AppColors.ink)),
+                      SizedBox(height: AppSpacing.s),
+                      EndTurnButton(onPressed: null),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ]),
+          const SizedBox(height: AppSpacing.xl),
+
+          _buildSection('7. BottomNav + EndTurnButton (Docked)', [
+            SizedBox(
+              height: 120,
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  const BottomNav(),
+                  Positioned(
+                    bottom: 24, // Docked vertically overlapping
+                    child: EndTurnButton(onPressed: () {}),
+                  ),
+                ],
+              ),
+            ),
           ]),
           
           const SizedBox(height: AppSpacing.xxl),

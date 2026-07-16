@@ -225,6 +225,156 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Bottom Navigation'**
   String get galleryNav;
+
+  /// No description provided for @monthlySummaryTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tổng kết tháng'**
+  String get monthlySummaryTitle;
+
+  /// No description provided for @monthlySummaryCash.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiền mặt'**
+  String get monthlySummaryCash;
+
+  /// No description provided for @monthlySummaryStress.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mức độ Stress'**
+  String get monthlySummaryStress;
+
+  /// No description provided for @monthlySummaryNetWorth.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tài sản ròng'**
+  String get monthlySummaryNetWorth;
+
+  /// No description provided for @btnOk.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đồng ý'**
+  String get btnOk;
+
+  /// No description provided for @gameOverReasonBurnout.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn đã gục ngã vì kiệt sức (Stress đạt 100%). Hãy chú ý nghỉ ngơi!'**
+  String get gameOverReasonBurnout;
+
+  /// No description provided for @gameOverReasonBankruptcy.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn đã vỡ nợ (Tiền mặt âm quá sâu và không còn khả năng vay mượn).'**
+  String get gameOverReasonBankruptcy;
+
+  /// No description provided for @gameOverReasonDebtSpiral.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn đã rơi vào vòng xoáy nợ nần không lối thoát.'**
+  String get gameOverReasonDebtSpiral;
+
+  /// No description provided for @gameOverReasonPoorAtRetirement.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn đã đến tuổi nghỉ hưu nhưng vẫn chưa đạt được tự do tài chính.'**
+  String get gameOverReasonPoorAtRetirement;
+
+  /// No description provided for @winTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chiến thắng!'**
+  String get winTitle;
+
+  /// No description provided for @gameOverTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thất bại!'**
+  String get gameOverTitle;
+
+  /// No description provided for @lifetimeStats.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thống kê cả đời'**
+  String get lifetimeStats;
+
+  /// No description provided for @statMonthsPlayed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Số tháng đã chơi: {months}'**
+  String statMonthsPlayed(int months);
+
+  /// No description provided for @statFinalCredit.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tín dụng cuối: {score}'**
+  String statFinalCredit(int score);
+
+  /// No description provided for @statLessonsCollected.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bài học thu thập: {collected}/{total}'**
+  String statLessonsCollected(int collected, int total);
+
+  /// No description provided for @btnContinueGame.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chơi tiếp'**
+  String get btnContinueGame;
+
+  /// No description provided for @btnNewGame.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trò chơi mới'**
+  String get btnNewGame;
+
+  /// No description provided for @selectCountry.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn Quốc gia'**
+  String get selectCountry;
+
+  /// No description provided for @selectContext.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn Bối cảnh'**
+  String get selectContext;
+
+  /// No description provided for @expenseSalary.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lương'**
+  String get expenseSalary;
+
+  /// No description provided for @expenseLiving.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sinh hoạt'**
+  String get expenseLiving;
+
+  /// No description provided for @expenseRent.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thuê trọ'**
+  String get expenseRent;
+
+  /// No description provided for @expenseFamily.
+  ///
+  /// In vi, this message translates to:
+  /// **'Gửi về quê'**
+  String get expenseFamily;
+
+  /// No description provided for @expenseLoan.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trả nợ: {total} (lãi {interest})'**
+  String expenseLoan(String total, String interest);
+
+  /// No description provided for @insightCardsLibrary.
+  ///
+  /// In vi, this message translates to:
+  /// **'Góc nhìn Chuyên gia'**
+  String get insightCardsLibrary;
 }
 
 class _AppLocalizationsDelegate

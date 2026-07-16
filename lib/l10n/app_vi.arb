@@ -42,5 +42,69 @@
   "galleryCards": "Game Cards",
   "galleryButtons": "Game Buttons",
   "galleryStats": "Stats & Displays",
-  "galleryNav": "Bottom Navigation"
+  "galleryNav": "Bottom Navigation",
+
+  "monthlySummaryTitle": "Tổng kết tháng",
+  "monthlySummaryCash": "Tiền mặt",
+  "monthlySummaryStress": "Mức độ Stress",
+  "monthlySummaryNetWorth": "Tài sản ròng",
+  "btnOk": "Đồng ý",
+
+  "gameOverReasonBurnout": "Bạn đã gục ngã vì kiệt sức (Stress đạt 100%). Hãy chú ý nghỉ ngơi!",
+  "gameOverReasonBankruptcy": "Bạn đã vỡ nợ (Tiền mặt âm quá sâu và không còn khả năng vay mượn).",
+  "gameOverReasonDebtSpiral": "Bạn đã rơi vào vòng xoáy nợ nần không lối thoát.",
+  "gameOverReasonPoorAtRetirement": "Bạn đã đến tuổi nghỉ hưu nhưng vẫn chưa đạt được tự do tài chính.",
+  
+  "winTitle": "Chiến thắng!",
+  "gameOverTitle": "Thất bại!",
+  "lifetimeStats": "Thống kê cả đời",
+  "statMonthsPlayed": "Số tháng đã chơi: {months}",
+  "@statMonthsPlayed": {
+    "placeholders": {
+      "months": {
+        "type": "int"
+      }
+    }
+  },
+  "statFinalCredit": "Tín dụng cuối: {score}",
+  "@statFinalCredit": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "statLessonsCollected": "Bài học thu thập: {collected}/{total}",
+  "@statLessonsCollected": {
+    "placeholders": {
+      "collected": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+
+  "btnContinueGame": "Chơi tiếp",
+  "btnNewGame": "Trò chơi mới",
+  "selectCountry": "Chọn Quốc gia",
+  "selectContext": "Chọn Bối cảnh",
+  
+  "expenseSalary": "Lương",
+  "expenseLiving": "Sinh hoạt",
+  "expenseRent": "Thuê trọ",
+  "expenseFamily": "Gửi về quê",
+  "expenseLoan": "Trả nợ: {total} (lãi {interest})",
+  "@expenseLoan": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      },
+      "interest": {
+        "type": "String"
+      }
+    }
+  },
+  "insightCardsLibrary": "Góc nhìn Chuyên gia"
 }

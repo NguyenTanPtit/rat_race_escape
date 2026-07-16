@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_state.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/turn_result.dart';

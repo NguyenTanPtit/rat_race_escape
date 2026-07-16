@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:rat_race_escape/core/theme/app_colors.dart';
-import 'package:rat_race_escape/core/theme/app_spacing.dart';
 import 'package:rat_race_escape/core/theme/app_text_styles.dart';
 import 'package:rat_race_escape/core/theme/app_tokens.dart';
 
@@ -10,21 +9,35 @@ class BottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 85,
       decoration: const BoxDecoration(
-        color: AppColors.cardFill,
+        color: AppColors.navFill,
         border: Border(
           top: BorderSide(color: AppColors.ink, width: AppTokens.borderWidth),
+          left: BorderSide(color: AppColors.ink, width: AppTokens.borderWidth),
+          right: BorderSide(color: AppColors.ink, width: AppTokens.borderWidth),
         ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0xFF000000), // Shadow always black for nav
+            offset: AppTokens.shadowOffsetUp,
+            blurRadius: 0,
+            spreadRadius: 0,
+          ),
+        ],
       ),
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.s),
+      padding: const EdgeInsets.symmetric(horizontal: 24),
       child: SafeArea(
+        top: false,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: const [
-            _NavItem(icon: Icons.account_balance_wallet, label: 'Tài sản', isLocked: true),
-            _NavItem(icon: Icons.trending_up, label: 'Đầu tư', isLocked: true),
-            _NavItem(icon: Icons.account_balance, label: 'Ngân hàng', isLocked: true),
-            _NavItem(icon: Icons.upgrade, label: 'Nâng cấp', isLocked: true),
+            Expanded(child: _NavItem(icon: Icons.account_balance_wallet, label: 'Tài sản', isLocked: true)),
+            Expanded(child: _NavItem(icon: Icons.trending_up, label: 'Đầu tư', isLocked: true)),
+            SizedBox(width: 96), // Space for EndTurnButton
+            Expanded(child: _NavItem(icon: Icons.account_balance, label: 'Ngân hàng', isLocked: true)),
+            Expanded(child: _NavItem(icon: Icons.upgrade, label: 'Nâng cấp', isLocked: true)),
           ],
         ),
       ),

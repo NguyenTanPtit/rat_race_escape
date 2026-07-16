@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import 'dart:math';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rat_race_escape/features/gameplay/data/repositories/json_event_pool_repository.dart';
@@ -141,7 +143,7 @@ void main() {
               if (r is TurnLost) {
                 isGameOver = true;
                 state = r.state;
-                print('Game Over Reason in Event: ${r.reason}');
+                debugPrint('Game Over Reason in Event: ${r.reason}');
               } else if (r is TurnWon) {
                 fail('Do-Nothing bot should never win');
               } else {
@@ -163,7 +165,7 @@ void main() {
             state = r.state;
             if (r is TurnLost) {
               isGameOver = true;
-              print('Game Over Reason in NextMonth: ${r.reason}');
+              debugPrint('Game Over Reason in NextMonth: ${r.reason}');
             } else if (r is TurnWon) {
               fail('Do-Nothing bot should never win');
             }
@@ -174,12 +176,12 @@ void main() {
         assertInvariants(state, prevState);
 
         if (logMonths.contains(monthsPlayed)) {
-          print('Do-Nothing Bot - Month $monthsPlayed (Age: ${state.ageInMonths ~/ 12} years): Net Worth = ${calculateNetWorth(state)}');
+          debugPrint('Do-Nothing Bot - Month $monthsPlayed (Age: ${state.ageInMonths ~/ 12} years): Net Worth = ${calculateNetWorth(state)}');
         }
       }
 
-      print('Do-Nothing Bot Finished at Month $monthsPlayed (Age: ${state.ageInMonths ~/ 12} years)');
-      print('Final Net Worth: ${state.netWorth}');
+      debugPrint('Do-Nothing Bot Finished at Month $monthsPlayed (Age: ${state.ageInMonths ~/ 12} years)');
+      debugPrint('Final Net Worth: ${state.netWorth}');
 
       // Assertions
       expect(isGameOver, isTrue, reason: 'Bot should have lost by burnout, bankruptcy, or poorAtRetirement');
@@ -286,7 +288,7 @@ void main() {
             }
           }
           
-          print('[Month $monthsPlayed] Event: ${state.currentEventId} -> Chose: ${bestOption.id}');
+          debugPrint('[Month $monthsPlayed] Event: ${state.currentEventId} -> Chose: ${bestOption.id}');
           
           final eventResult = await applyEventOptionUseCase(state, state.currentEventId!, bestOption.id);
           eventResult.fold(
@@ -295,7 +297,7 @@ void main() {
               if (r is TurnLost) {
                 isGameOver = true;
                 state = r.state;
-                print('DCA Bot Game Over in Event! Reason: ${r.reason}');
+                debugPrint('DCA Bot Game Over in Event! Reason: ${r.reason}');
               } else if (r is TurnWon) {
                 isWon = true;
                 state = r.state;
@@ -318,7 +320,7 @@ void main() {
             state = r.state;
             if (r is TurnLost) {
               isGameOver = true;
-              print('DCA Bot Game Over in NextMonth! Reason: ${r.reason}');
+              debugPrint('DCA Bot Game Over in NextMonth! Reason: ${r.reason}');
             } else if (r is TurnWon) {
               isWon = true;
             }
@@ -329,16 +331,16 @@ void main() {
         assertInvariants(state, prevState);
       }
 
-      print('DCA Bot Finished at Month $monthsPlayed (Age: ${state.ageInMonths ~/ 12} years)');
-      print('Final Net Worth: ${calculateNetWorth(state)}');
-      print('Final Credit Score: ${state.creditScore}');
+      debugPrint('DCA Bot Finished at Month $monthsPlayed (Age: ${state.ageInMonths ~/ 12} years)');
+      debugPrint('Final Net Worth: ${calculateNetWorth(state)}');
+      debugPrint('Final Credit Score: ${state.creditScore}');
       
       if (isGameOver) {
-        print('Final Loans:');
+        debugPrint('Final Loans:');
         for (var loan in state.loans) {
-          print('- ${loan.name}: Principal = ${loan.principalAmount}, Min Payment = ${loan.minimumMonthlyPayment}');
+          debugPrint('- ${loan.name}: Principal = ${loan.principalAmount}, Min Payment = ${loan.minimumMonthlyPayment}');
         }
-        print('Final Monthly Expenses: ${state.monthlyExpenses}');
+        debugPrint('Final Monthly Expenses: ${state.monthlyExpenses}');
       }
       
       if (assertWin) {
@@ -374,9 +376,9 @@ void main() {
       final score2 = calculateOptionScore(opt2, state);
       final score3 = calculateOptionScore(opt3, state);
       
-      print('Score buc_opt1: $score1');
-      print('Score buc_opt2: $score2');
-      print('Score buc_opt3: $score3');
+      debugPrint('Score buc_opt1: $score1');
+      debugPrint('Score buc_opt2: $score2');
+      debugPrint('Score buc_opt3: $score3');
 
       expect(score2, lessThan(score1), reason: 'Buying new car on loan should be worse than buying used car outright');
       expect(score2, lessThan(score3), reason: 'Buying new car on loan should be worse than declining');

@@ -10,7 +10,7 @@ void main() {
     usecase = CheckBehavioralInsightsUseCase();
   });
 
-  GameState _createState({
+  GameState createState({
     double cash = 10000,
     double outflow = 5000,
     int counter = 0,
@@ -42,7 +42,7 @@ void main() {
   }
 
   test('increments counter if there is a credit card and cash >= outflow', () {
-    final state = _createState(cash: 10000, outflow: 5000, counter: 0, hasCreditCard: true);
+    final state = createState(cash: 10000, outflow: 5000, counter: 0, hasCreditCard: true);
     final result = usecase(state);
 
     expect(result.consecutiveMinimumCreditCardPayments, 1);
@@ -50,7 +50,7 @@ void main() {
   });
 
   test('unlocks mental_accounting when counter reaches 3', () {
-    final state = _createState(cash: 10000, outflow: 5000, counter: 2, hasCreditCard: true);
+    final state = createState(cash: 10000, outflow: 5000, counter: 2, hasCreditCard: true);
     final result = usecase(state);
 
     expect(result.consecutiveMinimumCreditCardPayments, 3);
@@ -58,7 +58,7 @@ void main() {
   });
 
   test('does not unlock again if already unlocked', () {
-    var state = _createState(cash: 10000, outflow: 5000, counter: 3, hasCreditCard: true);
+    var state = createState(cash: 10000, outflow: 5000, counter: 3, hasCreditCard: true);
     state = state.copyWith(unlockedInsightCardIds: {'mental_accounting', 'other_card'});
 
     final result = usecase(state);
@@ -68,7 +68,7 @@ void main() {
   });
 
   test('resets counter if no credit card', () {
-    final state = _createState(cash: 10000, outflow: 5000, counter: 2, hasCreditCard: false);
+    final state = createState(cash: 10000, outflow: 5000, counter: 2, hasCreditCard: false);
     final result = usecase(state);
 
     expect(result.consecutiveMinimumCreditCardPayments, 0);
@@ -76,7 +76,7 @@ void main() {
 
   test('resets counter if cash < outflow even with credit card', () {
     // Has credit card, but cash is 4000, outflow is 5000
-    final state = _createState(cash: 4000, outflow: 5000, counter: 2, hasCreditCard: true);
+    final state = createState(cash: 4000, outflow: 5000, counter: 2, hasCreditCard: true);
     final result = usecase(state);
 
     expect(result.consecutiveMinimumCreditCardPayments, 0);
