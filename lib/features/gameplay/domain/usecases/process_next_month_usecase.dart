@@ -38,6 +38,7 @@ class ProcessNextMonthUseCase {
       ageInMonths: currentState.ageInMonths + 1,
       currentEventId: null,
       leisureReliefUsedThisMonth: 0,
+      sideJobsWorkedThisMonth: 0,
     );
 
     // d. Pass the state sequentially through the injected use cases (Pipeline).

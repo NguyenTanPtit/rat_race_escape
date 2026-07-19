@@ -20,6 +20,11 @@ import 'package:rat_race_escape/features/gameplay/domain/usecases/check_behavior
 import 'package:get_it/get_it.dart';
 import 'package:rat_race_escape/features/gameplay/domain/factories/game_state_factory.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_event.dart';
+import 'package:rat_race_escape/features/gameplay/domain/entities/asset_listing.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/buy_asset_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/pay_debt_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/sell_asset_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/work_side_job_usecase.dart';
 
 const stressToCashWeight = 500000.0;
 
@@ -52,6 +57,10 @@ void main() {
   late CheckGameStatusUseCase checkGameStatusUseCase;
   late ProcessNextMonthUseCase processNextMonthUseCase;
   late ApplyEventOptionUseCase applyEventOptionUseCase;
+  late BuyAssetUseCase buyAssetUseCase;
+  late PayDebtUseCase payDebtUseCase;
+  late SellAssetUseCase sellAssetUseCase;
+  late WorkSideJobUseCase workSideJobUseCase;
 
   void setUpDependencies(int randomSeed) {
     eventPoolRepository = JsonEventPoolRepository();
@@ -81,6 +90,11 @@ void main() {
       checkGameStatusUseCase,
     );
 
+    buyAssetUseCase = BuyAssetUseCase(checkGameStatusUseCase);
+    payDebtUseCase = PayDebtUseCase(checkGameStatusUseCase);
+    sellAssetUseCase = SellAssetUseCase(checkGameStatusUseCase);
+    workSideJobUseCase = WorkSideJobUseCase(checkGameStatusUseCase);
+
     if (!GetIt.instance.isRegistered<SpendOnLeisureUseCase>()) {
       GetIt.instance.registerSingleton<SpendOnLeisureUseCase>(SpendOnLeisureUseCase(checkGameStatusUseCase));
     }
@@ -101,20 +115,6 @@ void main() {
     expect(state.creditScore, inInclusiveRange(300, 850), reason: 'Credit score invariant violated');
     expect(state.ageInMonths, prevState.ageInMonths + 1, reason: 'Age should increment by 1 each month');
     expect((calculateNetWorth(state) - state.netWorth).abs(), lessThan(0.01), reason: 'Net worth calculation mismatch');
-  }
-
-  GameState simulatePhase3Action(GameState currentState, GameState Function(GameState) action) {
-    final netWorthBefore = calculateNetWorth(currentState);
-    
-    final newState = action(currentState);
-    
-    // TODO(task-6): Replace this simulation with real BuyAssetUseCase / PayDebtUseCase
-    final netWorthAfter = calculateNetWorth(newState);
-    
-    // Net worth should be exactly the same after swapping cash for asset/debt
-    expect((netWorthAfter - netWorthBefore).abs(), lessThan(0.01), reason: 'Net worth invariant violated during asset/debt swap');
-    
-    return newState;
   }
 
   group('Simulation Tests', () {
@@ -198,6 +198,54 @@ void main() {
 
       while (monthsPlayed < 520 && !isGameOver && !isWon) {
         // Phase 3: Player Action (Repay debt + DCA)
+        
+        // 0. Sell LIFO if cash < 0
+        while (state.cash < 0 && state.assets.isNotEmpty) {
+           final assetToSell = state.assets.last; // LIFO
+           final netWorthBefore = calculateNetWorth(state);
+           final result = sellAssetUseCase(state, assetToSell.id);
+           result.fold(
+             (l) => fail('Failed to sell asset: ${l.message}'),
+             (r) {
+               if (r is TurnLost) {
+                 isGameOver = true;
+                 state = r.state;
+               } else {
+                 state = r.state;
+               }
+             }
+           );
+           final netWorthAfter = calculateNetWorth(state);
+           final expectedFee = assetToSell.baseValue * state.assetSellFeeRate;
+           final receivedCash = assetToSell.baseValue - expectedFee;
+           debugPrint('[Month $monthsPlayed] SellAsset: ${assetToSell.id}, +$receivedCash');
+           expect((netWorthBefore - expectedFee - netWorthAfter).abs(), lessThan(0.01), reason: 'Net worth must decrease by exactly the sell fee');
+           
+           if (isGameOver) break;
+        }
+
+        if (isGameOver) break;
+
+        // 0.5 Work side job if cash < totalMonthlyOutflow and stress <= 60
+        while (state.cash < state.totalMonthlyOutflow && state.stress <= 60 && state.sideJobsWorkedThisMonth < state.maxSideJobsPerMonth) {
+           final result = workSideJobUseCase(state);
+           result.fold(
+             (l) => fail('Failed to work side job: ${l.message}'),
+             (r) {
+               if (r is TurnLost) {
+                 isGameOver = true;
+                 state = r.state;
+               } else {
+                 state = r.state;
+                 debugPrint('[Month $monthsPlayed] SideJob: +${state.sideJobIncome}, stress ${state.stress}');
+               }
+             }
+           );
+           if (isGameOver) break;
+        }
+
+        if (isGameOver) break;
+
         // 1. Pay Debt
         if (state.cash > state.monthlyExpenses * 2 && state.loans.isNotEmpty) {
           final badLoans = state.loans.where((l) => l.interestRatePerYear > 0).toList();
@@ -208,22 +256,20 @@ void main() {
             final amountToPay = (state.cash * 0.3).clamp(0.0, targetLoan.principalAmount).toDouble();
             
             if (amountToPay > 0) {
-              state = simulatePhase3Action(state, (s) {
-                final updatedLoans = s.loans.map((l) {
-                  if (l.id == targetLoan.id) {
-                    return l.copyWith(principalAmount: l.principalAmount - amountToPay);
-                  }
-                  return l;
-                }).where((l) => l.principalAmount > 0.01).toList();
-                
-                return s.copyWith(
-                  cash: s.cash - amountToPay,
-                  loans: updatedLoans,
-                );
+              final result = payDebtUseCase(state, targetLoan.id, amountToPay);
+              result.fold((l) => fail('Failed to pay debt: ${l.message}'), (r) {
+                if (r is TurnLost) {
+                  isGameOver = true;
+                  state = r.state;
+                } else {
+                  state = r.state;
+                }
               });
             }
           }
         }
+        
+        if (isGameOver) break;
 
         // 2. Buy Asset (DCA)
           // Phase 2: Action Phase -> DCA Bot Action
@@ -254,20 +300,21 @@ void main() {
           // Continue to DCA
           double investAmount = state.cash - (state.totalMonthlyOutflow * 3);
           if (investAmount > 0) {
-            state = simulatePhase3Action(state, (s) {
-              // Assume buying an ETF with 8% annual return (0.66% monthly)
-              final asset = Asset(
-                id: 'etf_${s.currentMonth}',
+              final listing = AssetListing(
+                id: 'etf_${state.currentMonth}',
                 name: 'VFMVN Diamond ETF',
-                baseValue: investAmount,
                 type: AssetType.stock,
-                monthlyPassiveIncome: investAmount * 0.08 / 12,
+                annualYieldRate: 8.0, // 8% per year
               );
-              return s.copyWith(
-                cash: s.cash - investAmount,
-                assets: [...s.assets, asset],
-              );
-            });
+              final result = buyAssetUseCase(state, listing, investAmount);
+              result.fold((l) => fail('Failed to buy asset: ${l.message}'), (r) {
+                if (r is TurnLost) {
+                  isGameOver = true;
+                  state = r.state;
+                } else {
+                  state = r.state;
+                }
+              });
           }
 
         // 3. Handle Events
@@ -410,6 +457,100 @@ void main() {
 
       final updatedLoan = state.loans.first;
       expect(updatedLoan.principalAmount.round(), 87317497, reason: 'Compound interest calculation failed');
+    });
+
+    test('Integration Test: Bot LIFO Selling Valve triggers and deducts 3% fee', () {
+      setUpDependencies(42);
+      final asset1 = const Asset(id: 'a1', name: 'Asset 1', type: AssetType.stock, baseValue: 10000, monthlyPassiveIncome: 100);
+      final asset2 = const Asset(id: 'a2', name: 'Asset 2', type: AssetType.stock, baseValue: 5000, monthlyPassiveIncome: 50);
+      
+      GameState state = GameState(
+        scenarioId: 'test',
+        country: Country.vietnam,
+        currency: Currency.vnd,
+        cash: -3000, // Negative cash triggers selling
+        assetSellFeeRate: 0.03, // 3% fee
+        assets: [asset1, asset2],
+        monthlyExpenses: 0,
+        monthlyRent: 0,
+        baseSalary: 0,
+      );
+
+      bool isGameOver = false;
+      int timesSold = 0;
+
+      while (state.cash < 0 && state.assets.isNotEmpty) {
+        final assetToSell = state.assets.last;
+        final netWorthBefore = calculateNetWorth(state);
+        
+        // Assert it sells LIFO (asset2 first, then asset1 if needed)
+        if (timesSold == 0) expect(assetToSell.id, 'a2');
+        if (timesSold == 1) expect(assetToSell.id, 'a1');
+
+        final result = sellAssetUseCase(state, assetToSell.id);
+        result.fold(
+          (l) => fail('Failed to sell asset: ${l.message}'),
+          (r) {
+            if (r is TurnLost) isGameOver = true;
+            state = r.state;
+          }
+        );
+
+        final expectedFee = assetToSell.baseValue * state.assetSellFeeRate;
+        final netWorthAfter = calculateNetWorth(state);
+        expect((netWorthBefore - expectedFee - netWorthAfter).abs(), lessThan(0.01));
+        
+        timesSold++;
+        if (isGameOver) break;
+      }
+
+      // Cash became positive after 1 sell (5000 * 0.97 = 4850. -3000 + 4850 = 1850)
+      expect(timesSold, 1);
+      expect(state.cash, 1850);
+      expect(state.assets.length, 1);
+      expect(state.assets.first.id, 'a1');
+    });
+
+    test('Integration Test: Bot WorkSideJob Valve triggers when cash < outflow and stress <= 60', () {
+      setUpDependencies(42);
+      GameState state = const GameState(
+        scenarioId: 'test',
+        country: Country.vietnam,
+        currency: Currency.vnd,
+        cash: 1000, // Less than outflow
+        monthlyExpenses: 1500,
+        monthlyRent: 500,
+        baseSalary: 0,
+        stress: 50,
+        sideJobsWorkedThisMonth: 0,
+        maxSideJobsPerMonth: 2,
+        sideJobIncome: 2500,
+        sideJobStress: 8,
+      );
+      
+      expect(state.totalMonthlyOutflow, 2000);
+
+      bool isGameOver = false;
+      int jobsWorked = 0;
+
+      while (state.cash < state.totalMonthlyOutflow && state.stress <= 60 && state.sideJobsWorkedThisMonth < state.maxSideJobsPerMonth) {
+        final result = workSideJobUseCase(state);
+        result.fold(
+          (l) => fail('Failed to work side job: ${l.message}'),
+          (r) {
+            if (r is TurnLost) isGameOver = true;
+            state = r.state;
+          }
+        );
+        jobsWorked++;
+        if (isGameOver) break;
+      }
+
+      // Cash becomes 1000 + 2500 = 3500 >= 2000 (outflow), stops after 1 job
+      expect(jobsWorked, 1);
+      expect(state.cash, 3500);
+      expect(state.stress, 58); // 50 + 8
+      expect(state.sideJobsWorkedThisMonth, 1);
     });
   });
 }

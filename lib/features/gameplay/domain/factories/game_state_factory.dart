@@ -23,6 +23,10 @@ class GameStateFactory {
       maxLeisureStressReliefPerMonth: config.maxLeisureStressReliefPerMonth,
       assets: List.from(config.initialAssets),
       loans: List.from(config.initialLoans),
+      sideJobIncome: config.sideJobIncome,
+      sideJobStress: config.sideJobStress,
+      maxSideJobsPerMonth: config.maxSideJobsPerMonth,
+      assetSellFeeRate: config.assetSellFeeRate,
     );
   }
 

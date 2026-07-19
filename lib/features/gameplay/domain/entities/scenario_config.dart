@@ -27,6 +27,10 @@ abstract class ScenarioConfig with _$ScenarioConfig {
     @Default(100000) double leisureCostPerStressPoint,
     @Default(20) int maxLeisureStressReliefPerMonth,
     @Default(0.2) double baseEventChance,
+    @Default(2500000.0) double sideJobIncome,
+    @Default(8) int sideJobStress,
+    @Default(2) int maxSideJobsPerMonth,
+    @Default(0.03) double assetSellFeeRate,
   }) = _ScenarioConfig;
 
   factory ScenarioConfig.fromJson(Map<String, dynamic> json) => _$ScenarioConfigFromJson(json);

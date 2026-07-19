@@ -60,37 +60,29 @@ void main() {
       monthlyExpenses: 0,
       monthlyRent: 0,
       baseSalary: 0,
-      currentMonth: 1,
-      ageInMonths: 240,
-      cash: 1000,
-      leisureReliefUsedThisMonth: 20, // Maxed out
+      cash: 0,
+      leisureReliefUsedThisMonth: 15, // Some used value
+      sideJobsWorkedThisMonth: 2, // Some used value
     );
-    final stateWithMonthAdvanced = initialState.copyWith(
-      currentMonth: 2,
-      ageInMonths: 241,
-      currentEventId: null,
-      leisureReliefUsedThisMonth: 0, // Reset!
-    );
-    final stateAfterPipeline = stateWithMonthAdvanced.copyWith(cash: 2000);
 
-    when(() => mockCalculateCashflowUseCase(stateWithMonthAdvanced)).thenReturn(stateWithMonthAdvanced);
-    when(() => mockProcessLoansUseCase(stateWithMonthAdvanced)).thenReturn(stateWithMonthAdvanced);
-    when(() => mockCheckBehavioralInsightsUseCase(stateWithMonthAdvanced)).thenReturn(stateWithMonthAdvanced);
-    when(() => mockUpdateMetricsUseCase(stateWithMonthAdvanced)).thenReturn(stateWithMonthAdvanced);
-    when(() => mockGenerateEventUseCase(stateWithMonthAdvanced)).thenAnswer((_) async => stateAfterPipeline);
-    when(() => mockCheckGameStatusUseCase(stateAfterPipeline)).thenReturn(TurnResult.continued(stateAfterPipeline));
+    // Setup mocks to just return the state they receive
+    when(() => mockCalculateCashflowUseCase(any())).thenAnswer((inv) => inv.positionalArguments[0] as GameState);
+    when(() => mockProcessLoansUseCase(any())).thenAnswer((inv) => inv.positionalArguments[0] as GameState);
+    when(() => mockUpdateMetricsUseCase(any())).thenAnswer((inv) => inv.positionalArguments[0] as GameState);
+    when(() => mockGenerateEventUseCase(any())).thenAnswer((inv) async => inv.positionalArguments[0] as GameState);
+    when(() => mockCheckBehavioralInsightsUseCase(any())).thenAnswer((inv) => inv.positionalArguments[0] as GameState);
+    // Finally, mockCheckGameStatusUseCase returns TurnContinued so we can inspect the state
+    when(() => mockCheckGameStatusUseCase(any())).thenAnswer((inv) => TurnResult.continued(inv.positionalArguments[0] as GameState));
 
     // Act
     final result = await usecase(initialState);
 
     // Assert
     expect(result.isRight(), true);
-    result.fold(
-      (l) => fail('Should be right'),
-      (r) {
-        expect(r, isA<TurnContinued>());
-        expect((r as TurnContinued).state.leisureReliefUsedThisMonth, 0);
-      },
-    );
+    final turnResult = result.fold((l) => null, (r) => r);
+    expect(turnResult, isA<TurnContinued>());
+    final finalState = (turnResult as TurnContinued).state;
+    expect(finalState.leisureReliefUsedThisMonth, 0);
+    expect(finalState.sideJobsWorkedThisMonth, 0);
   });
 }

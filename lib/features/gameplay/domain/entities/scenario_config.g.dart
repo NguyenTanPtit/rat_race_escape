@@ -38,6 +38,10 @@ _ScenarioConfig _$ScenarioConfigFromJson(Map<String, dynamic> json) =>
       maxLeisureStressReliefPerMonth:
           (json['maxLeisureStressReliefPerMonth'] as num?)?.toInt() ?? 20,
       baseEventChance: (json['baseEventChance'] as num?)?.toDouble() ?? 0.2,
+      sideJobIncome: (json['sideJobIncome'] as num?)?.toDouble() ?? 2500000.0,
+      sideJobStress: (json['sideJobStress'] as num?)?.toInt() ?? 8,
+      maxSideJobsPerMonth: (json['maxSideJobsPerMonth'] as num?)?.toInt() ?? 2,
+      assetSellFeeRate: (json['assetSellFeeRate'] as num?)?.toDouble() ?? 0.03,
     );
 
 Map<String, dynamic> _$ScenarioConfigToJson(_ScenarioConfig instance) =>
@@ -60,6 +64,10 @@ Map<String, dynamic> _$ScenarioConfigToJson(_ScenarioConfig instance) =>
       'leisureCostPerStressPoint': instance.leisureCostPerStressPoint,
       'maxLeisureStressReliefPerMonth': instance.maxLeisureStressReliefPerMonth,
       'baseEventChance': instance.baseEventChance,
+      'sideJobIncome': instance.sideJobIncome,
+      'sideJobStress': instance.sideJobStress,
+      'maxSideJobsPerMonth': instance.maxSideJobsPerMonth,
+      'assetSellFeeRate': instance.assetSellFeeRate,
     };
 
 const _$HousingLevelEnumMap = {

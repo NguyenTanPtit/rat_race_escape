@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ScenarioConfig {
 
- String get id; double get initialCash; double get baseSalary; double get monthlyRent; double get monthlyExpenses; List<Asset> get initialAssets; List<Loan> get initialLoans; double get familySupportExpense; int get startAgeInMonths; int get startCalendarMonth; int get initialCreditScore; HousingLevel get housingLevel; Country get country; String get currency; int get bankruptcyMonthsThreshold; double get leisureCostPerStressPoint; int get maxLeisureStressReliefPerMonth; double get baseEventChance;
+ String get id; double get initialCash; double get baseSalary; double get monthlyRent; double get monthlyExpenses; List<Asset> get initialAssets; List<Loan> get initialLoans; double get familySupportExpense; int get startAgeInMonths; int get startCalendarMonth; int get initialCreditScore; HousingLevel get housingLevel; Country get country; String get currency; int get bankruptcyMonthsThreshold; double get leisureCostPerStressPoint; int get maxLeisureStressReliefPerMonth; double get baseEventChance; double get sideJobIncome; int get sideJobStress; int get maxSideJobsPerMonth; double get assetSellFeeRate;
 /// Create a copy of ScenarioConfig
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ScenarioConfigCopyWith<ScenarioConfig> get copyWith => _$ScenarioConfigCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ScenarioConfig&&(identical(other.id, id) || other.id == id)&&(identical(other.initialCash, initialCash) || other.initialCash == initialCash)&&(identical(other.baseSalary, baseSalary) || other.baseSalary == baseSalary)&&(identical(other.monthlyRent, monthlyRent) || other.monthlyRent == monthlyRent)&&(identical(other.monthlyExpenses, monthlyExpenses) || other.monthlyExpenses == monthlyExpenses)&&const DeepCollectionEquality().equals(other.initialAssets, initialAssets)&&const DeepCollectionEquality().equals(other.initialLoans, initialLoans)&&(identical(other.familySupportExpense, familySupportExpense) || other.familySupportExpense == familySupportExpense)&&(identical(other.startAgeInMonths, startAgeInMonths) || other.startAgeInMonths == startAgeInMonths)&&(identical(other.startCalendarMonth, startCalendarMonth) || other.startCalendarMonth == startCalendarMonth)&&(identical(other.initialCreditScore, initialCreditScore) || other.initialCreditScore == initialCreditScore)&&(identical(other.housingLevel, housingLevel) || other.housingLevel == housingLevel)&&(identical(other.country, country) || other.country == country)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.bankruptcyMonthsThreshold, bankruptcyMonthsThreshold) || other.bankruptcyMonthsThreshold == bankruptcyMonthsThreshold)&&(identical(other.leisureCostPerStressPoint, leisureCostPerStressPoint) || other.leisureCostPerStressPoint == leisureCostPerStressPoint)&&(identical(other.maxLeisureStressReliefPerMonth, maxLeisureStressReliefPerMonth) || other.maxLeisureStressReliefPerMonth == maxLeisureStressReliefPerMonth)&&(identical(other.baseEventChance, baseEventChance) || other.baseEventChance == baseEventChance));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ScenarioConfig&&(identical(other.id, id) || other.id == id)&&(identical(other.initialCash, initialCash) || other.initialCash == initialCash)&&(identical(other.baseSalary, baseSalary) || other.baseSalary == baseSalary)&&(identical(other.monthlyRent, monthlyRent) || other.monthlyRent == monthlyRent)&&(identical(other.monthlyExpenses, monthlyExpenses) || other.monthlyExpenses == monthlyExpenses)&&const DeepCollectionEquality().equals(other.initialAssets, initialAssets)&&const DeepCollectionEquality().equals(other.initialLoans, initialLoans)&&(identical(other.familySupportExpense, familySupportExpense) || other.familySupportExpense == familySupportExpense)&&(identical(other.startAgeInMonths, startAgeInMonths) || other.startAgeInMonths == startAgeInMonths)&&(identical(other.startCalendarMonth, startCalendarMonth) || other.startCalendarMonth == startCalendarMonth)&&(identical(other.initialCreditScore, initialCreditScore) || other.initialCreditScore == initialCreditScore)&&(identical(other.housingLevel, housingLevel) || other.housingLevel == housingLevel)&&(identical(other.country, country) || other.country == country)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.bankruptcyMonthsThreshold, bankruptcyMonthsThreshold) || other.bankruptcyMonthsThreshold == bankruptcyMonthsThreshold)&&(identical(other.leisureCostPerStressPoint, leisureCostPerStressPoint) || other.leisureCostPerStressPoint == leisureCostPerStressPoint)&&(identical(other.maxLeisureStressReliefPerMonth, maxLeisureStressReliefPerMonth) || other.maxLeisureStressReliefPerMonth == maxLeisureStressReliefPerMonth)&&(identical(other.baseEventChance, baseEventChance) || other.baseEventChance == baseEventChance)&&(identical(other.sideJobIncome, sideJobIncome) || other.sideJobIncome == sideJobIncome)&&(identical(other.sideJobStress, sideJobStress) || other.sideJobStress == sideJobStress)&&(identical(other.maxSideJobsPerMonth, maxSideJobsPerMonth) || other.maxSideJobsPerMonth == maxSideJobsPerMonth)&&(identical(other.assetSellFeeRate, assetSellFeeRate) || other.assetSellFeeRate == assetSellFeeRate));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,initialCash,baseSalary,monthlyRent,monthlyExpenses,const DeepCollectionEquality().hash(initialAssets),const DeepCollectionEquality().hash(initialLoans),familySupportExpense,startAgeInMonths,startCalendarMonth,initialCreditScore,housingLevel,country,currency,bankruptcyMonthsThreshold,leisureCostPerStressPoint,maxLeisureStressReliefPerMonth,baseEventChance);
+int get hashCode => Object.hashAll([runtimeType,id,initialCash,baseSalary,monthlyRent,monthlyExpenses,const DeepCollectionEquality().hash(initialAssets),const DeepCollectionEquality().hash(initialLoans),familySupportExpense,startAgeInMonths,startCalendarMonth,initialCreditScore,housingLevel,country,currency,bankruptcyMonthsThreshold,leisureCostPerStressPoint,maxLeisureStressReliefPerMonth,baseEventChance,sideJobIncome,sideJobStress,maxSideJobsPerMonth,assetSellFeeRate]);
 
 @override
 String toString() {
-  return 'ScenarioConfig(id: $id, initialCash: $initialCash, baseSalary: $baseSalary, monthlyRent: $monthlyRent, monthlyExpenses: $monthlyExpenses, initialAssets: $initialAssets, initialLoans: $initialLoans, familySupportExpense: $familySupportExpense, startAgeInMonths: $startAgeInMonths, startCalendarMonth: $startCalendarMonth, initialCreditScore: $initialCreditScore, housingLevel: $housingLevel, country: $country, currency: $currency, bankruptcyMonthsThreshold: $bankruptcyMonthsThreshold, leisureCostPerStressPoint: $leisureCostPerStressPoint, maxLeisureStressReliefPerMonth: $maxLeisureStressReliefPerMonth, baseEventChance: $baseEventChance)';
+  return 'ScenarioConfig(id: $id, initialCash: $initialCash, baseSalary: $baseSalary, monthlyRent: $monthlyRent, monthlyExpenses: $monthlyExpenses, initialAssets: $initialAssets, initialLoans: $initialLoans, familySupportExpense: $familySupportExpense, startAgeInMonths: $startAgeInMonths, startCalendarMonth: $startCalendarMonth, initialCreditScore: $initialCreditScore, housingLevel: $housingLevel, country: $country, currency: $currency, bankruptcyMonthsThreshold: $bankruptcyMonthsThreshold, leisureCostPerStressPoint: $leisureCostPerStressPoint, maxLeisureStressReliefPerMonth: $maxLeisureStressReliefPerMonth, baseEventChance: $baseEventChance, sideJobIncome: $sideJobIncome, sideJobStress: $sideJobStress, maxSideJobsPerMonth: $maxSideJobsPerMonth, assetSellFeeRate: $assetSellFeeRate)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ScenarioConfigCopyWith<$Res>  {
   factory $ScenarioConfigCopyWith(ScenarioConfig value, $Res Function(ScenarioConfig) _then) = _$ScenarioConfigCopyWithImpl;
 @useResult
 $Res call({
- String id, double initialCash, double baseSalary, double monthlyRent, double monthlyExpenses, List<Asset> initialAssets, List<Loan> initialLoans, double familySupportExpense, int startAgeInMonths, int startCalendarMonth, int initialCreditScore, HousingLevel housingLevel, Country country, String currency, int bankruptcyMonthsThreshold, double leisureCostPerStressPoint, int maxLeisureStressReliefPerMonth, double baseEventChance
+ String id, double initialCash, double baseSalary, double monthlyRent, double monthlyExpenses, List<Asset> initialAssets, List<Loan> initialLoans, double familySupportExpense, int startAgeInMonths, int startCalendarMonth, int initialCreditScore, HousingLevel housingLevel, Country country, String currency, int bankruptcyMonthsThreshold, double leisureCostPerStressPoint, int maxLeisureStressReliefPerMonth, double baseEventChance, double sideJobIncome, int sideJobStress, int maxSideJobsPerMonth, double assetSellFeeRate
 });
 
 
@@ -65,7 +65,7 @@ class _$ScenarioConfigCopyWithImpl<$Res>
 
 /// Create a copy of ScenarioConfig
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? initialCash = null,Object? baseSalary = null,Object? monthlyRent = null,Object? monthlyExpenses = null,Object? initialAssets = null,Object? initialLoans = null,Object? familySupportExpense = null,Object? startAgeInMonths = null,Object? startCalendarMonth = null,Object? initialCreditScore = null,Object? housingLevel = null,Object? country = null,Object? currency = null,Object? bankruptcyMonthsThreshold = null,Object? leisureCostPerStressPoint = null,Object? maxLeisureStressReliefPerMonth = null,Object? baseEventChance = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? initialCash = null,Object? baseSalary = null,Object? monthlyRent = null,Object? monthlyExpenses = null,Object? initialAssets = null,Object? initialLoans = null,Object? familySupportExpense = null,Object? startAgeInMonths = null,Object? startCalendarMonth = null,Object? initialCreditScore = null,Object? housingLevel = null,Object? country = null,Object? currency = null,Object? bankruptcyMonthsThreshold = null,Object? leisureCostPerStressPoint = null,Object? maxLeisureStressReliefPerMonth = null,Object? baseEventChance = null,Object? sideJobIncome = null,Object? sideJobStress = null,Object? maxSideJobsPerMonth = null,Object? assetSellFeeRate = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,initialCash: null == initialCash ? _self.initialCash : initialCash // ignore: cast_nullable_to_non_nullable
@@ -85,6 +85,10 @@ as String,bankruptcyMonthsThreshold: null == bankruptcyMonthsThreshold ? _self.b
 as int,leisureCostPerStressPoint: null == leisureCostPerStressPoint ? _self.leisureCostPerStressPoint : leisureCostPerStressPoint // ignore: cast_nullable_to_non_nullable
 as double,maxLeisureStressReliefPerMonth: null == maxLeisureStressReliefPerMonth ? _self.maxLeisureStressReliefPerMonth : maxLeisureStressReliefPerMonth // ignore: cast_nullable_to_non_nullable
 as int,baseEventChance: null == baseEventChance ? _self.baseEventChance : baseEventChance // ignore: cast_nullable_to_non_nullable
+as double,sideJobIncome: null == sideJobIncome ? _self.sideJobIncome : sideJobIncome // ignore: cast_nullable_to_non_nullable
+as double,sideJobStress: null == sideJobStress ? _self.sideJobStress : sideJobStress // ignore: cast_nullable_to_non_nullable
+as int,maxSideJobsPerMonth: null == maxSideJobsPerMonth ? _self.maxSideJobsPerMonth : maxSideJobsPerMonth // ignore: cast_nullable_to_non_nullable
+as int,assetSellFeeRate: null == assetSellFeeRate ? _self.assetSellFeeRate : assetSellFeeRate // ignore: cast_nullable_to_non_nullable
 as double,
   ));
 }
@@ -170,10 +174,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  double initialCash,  double baseSalary,  double monthlyRent,  double monthlyExpenses,  List<Asset> initialAssets,  List<Loan> initialLoans,  double familySupportExpense,  int startAgeInMonths,  int startCalendarMonth,  int initialCreditScore,  HousingLevel housingLevel,  Country country,  String currency,  int bankruptcyMonthsThreshold,  double leisureCostPerStressPoint,  int maxLeisureStressReliefPerMonth,  double baseEventChance)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  double initialCash,  double baseSalary,  double monthlyRent,  double monthlyExpenses,  List<Asset> initialAssets,  List<Loan> initialLoans,  double familySupportExpense,  int startAgeInMonths,  int startCalendarMonth,  int initialCreditScore,  HousingLevel housingLevel,  Country country,  String currency,  int bankruptcyMonthsThreshold,  double leisureCostPerStressPoint,  int maxLeisureStressReliefPerMonth,  double baseEventChance,  double sideJobIncome,  int sideJobStress,  int maxSideJobsPerMonth,  double assetSellFeeRate)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ScenarioConfig() when $default != null:
-return $default(_that.id,_that.initialCash,_that.baseSalary,_that.monthlyRent,_that.monthlyExpenses,_that.initialAssets,_that.initialLoans,_that.familySupportExpense,_that.startAgeInMonths,_that.startCalendarMonth,_that.initialCreditScore,_that.housingLevel,_that.country,_that.currency,_that.bankruptcyMonthsThreshold,_that.leisureCostPerStressPoint,_that.maxLeisureStressReliefPerMonth,_that.baseEventChance);case _:
+return $default(_that.id,_that.initialCash,_that.baseSalary,_that.monthlyRent,_that.monthlyExpenses,_that.initialAssets,_that.initialLoans,_that.familySupportExpense,_that.startAgeInMonths,_that.startCalendarMonth,_that.initialCreditScore,_that.housingLevel,_that.country,_that.currency,_that.bankruptcyMonthsThreshold,_that.leisureCostPerStressPoint,_that.maxLeisureStressReliefPerMonth,_that.baseEventChance,_that.sideJobIncome,_that.sideJobStress,_that.maxSideJobsPerMonth,_that.assetSellFeeRate);case _:
   return orElse();
 
 }
@@ -191,10 +195,10 @@ return $default(_that.id,_that.initialCash,_that.baseSalary,_that.monthlyRent,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  double initialCash,  double baseSalary,  double monthlyRent,  double monthlyExpenses,  List<Asset> initialAssets,  List<Loan> initialLoans,  double familySupportExpense,  int startAgeInMonths,  int startCalendarMonth,  int initialCreditScore,  HousingLevel housingLevel,  Country country,  String currency,  int bankruptcyMonthsThreshold,  double leisureCostPerStressPoint,  int maxLeisureStressReliefPerMonth,  double baseEventChance)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  double initialCash,  double baseSalary,  double monthlyRent,  double monthlyExpenses,  List<Asset> initialAssets,  List<Loan> initialLoans,  double familySupportExpense,  int startAgeInMonths,  int startCalendarMonth,  int initialCreditScore,  HousingLevel housingLevel,  Country country,  String currency,  int bankruptcyMonthsThreshold,  double leisureCostPerStressPoint,  int maxLeisureStressReliefPerMonth,  double baseEventChance,  double sideJobIncome,  int sideJobStress,  int maxSideJobsPerMonth,  double assetSellFeeRate)  $default,) {final _that = this;
 switch (_that) {
 case _ScenarioConfig():
-return $default(_that.id,_that.initialCash,_that.baseSalary,_that.monthlyRent,_that.monthlyExpenses,_that.initialAssets,_that.initialLoans,_that.familySupportExpense,_that.startAgeInMonths,_that.startCalendarMonth,_that.initialCreditScore,_that.housingLevel,_that.country,_that.currency,_that.bankruptcyMonthsThreshold,_that.leisureCostPerStressPoint,_that.maxLeisureStressReliefPerMonth,_that.baseEventChance);case _:
+return $default(_that.id,_that.initialCash,_that.baseSalary,_that.monthlyRent,_that.monthlyExpenses,_that.initialAssets,_that.initialLoans,_that.familySupportExpense,_that.startAgeInMonths,_that.startCalendarMonth,_that.initialCreditScore,_that.housingLevel,_that.country,_that.currency,_that.bankruptcyMonthsThreshold,_that.leisureCostPerStressPoint,_that.maxLeisureStressReliefPerMonth,_that.baseEventChance,_that.sideJobIncome,_that.sideJobStress,_that.maxSideJobsPerMonth,_that.assetSellFeeRate);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -211,10 +215,10 @@ return $default(_that.id,_that.initialCash,_that.baseSalary,_that.monthlyRent,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  double initialCash,  double baseSalary,  double monthlyRent,  double monthlyExpenses,  List<Asset> initialAssets,  List<Loan> initialLoans,  double familySupportExpense,  int startAgeInMonths,  int startCalendarMonth,  int initialCreditScore,  HousingLevel housingLevel,  Country country,  String currency,  int bankruptcyMonthsThreshold,  double leisureCostPerStressPoint,  int maxLeisureStressReliefPerMonth,  double baseEventChance)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  double initialCash,  double baseSalary,  double monthlyRent,  double monthlyExpenses,  List<Asset> initialAssets,  List<Loan> initialLoans,  double familySupportExpense,  int startAgeInMonths,  int startCalendarMonth,  int initialCreditScore,  HousingLevel housingLevel,  Country country,  String currency,  int bankruptcyMonthsThreshold,  double leisureCostPerStressPoint,  int maxLeisureStressReliefPerMonth,  double baseEventChance,  double sideJobIncome,  int sideJobStress,  int maxSideJobsPerMonth,  double assetSellFeeRate)?  $default,) {final _that = this;
 switch (_that) {
 case _ScenarioConfig() when $default != null:
-return $default(_that.id,_that.initialCash,_that.baseSalary,_that.monthlyRent,_that.monthlyExpenses,_that.initialAssets,_that.initialLoans,_that.familySupportExpense,_that.startAgeInMonths,_that.startCalendarMonth,_that.initialCreditScore,_that.housingLevel,_that.country,_that.currency,_that.bankruptcyMonthsThreshold,_that.leisureCostPerStressPoint,_that.maxLeisureStressReliefPerMonth,_that.baseEventChance);case _:
+return $default(_that.id,_that.initialCash,_that.baseSalary,_that.monthlyRent,_that.monthlyExpenses,_that.initialAssets,_that.initialLoans,_that.familySupportExpense,_that.startAgeInMonths,_that.startCalendarMonth,_that.initialCreditScore,_that.housingLevel,_that.country,_that.currency,_that.bankruptcyMonthsThreshold,_that.leisureCostPerStressPoint,_that.maxLeisureStressReliefPerMonth,_that.baseEventChance,_that.sideJobIncome,_that.sideJobStress,_that.maxSideJobsPerMonth,_that.assetSellFeeRate);case _:
   return null;
 
 }
@@ -226,7 +230,7 @@ return $default(_that.id,_that.initialCash,_that.baseSalary,_that.monthlyRent,_t
 @JsonSerializable()
 
 class _ScenarioConfig implements ScenarioConfig {
-  const _ScenarioConfig({required this.id, required this.initialCash, required this.baseSalary, required this.monthlyRent, required this.monthlyExpenses, final  List<Asset> initialAssets = const [], final  List<Loan> initialLoans = const [], this.familySupportExpense = 0.0, required this.startAgeInMonths, required this.startCalendarMonth, required this.initialCreditScore, required this.housingLevel, required this.country, required this.currency, this.bankruptcyMonthsThreshold = 3, this.leisureCostPerStressPoint = 100000, this.maxLeisureStressReliefPerMonth = 20, this.baseEventChance = 0.2}): _initialAssets = initialAssets,_initialLoans = initialLoans;
+  const _ScenarioConfig({required this.id, required this.initialCash, required this.baseSalary, required this.monthlyRent, required this.monthlyExpenses, final  List<Asset> initialAssets = const [], final  List<Loan> initialLoans = const [], this.familySupportExpense = 0.0, required this.startAgeInMonths, required this.startCalendarMonth, required this.initialCreditScore, required this.housingLevel, required this.country, required this.currency, this.bankruptcyMonthsThreshold = 3, this.leisureCostPerStressPoint = 100000, this.maxLeisureStressReliefPerMonth = 20, this.baseEventChance = 0.2, this.sideJobIncome = 2500000.0, this.sideJobStress = 8, this.maxSideJobsPerMonth = 2, this.assetSellFeeRate = 0.03}): _initialAssets = initialAssets,_initialLoans = initialLoans;
   factory _ScenarioConfig.fromJson(Map<String, dynamic> json) => _$ScenarioConfigFromJson(json);
 
 @override final  String id;
@@ -259,6 +263,10 @@ class _ScenarioConfig implements ScenarioConfig {
 @override@JsonKey() final  double leisureCostPerStressPoint;
 @override@JsonKey() final  int maxLeisureStressReliefPerMonth;
 @override@JsonKey() final  double baseEventChance;
+@override@JsonKey() final  double sideJobIncome;
+@override@JsonKey() final  int sideJobStress;
+@override@JsonKey() final  int maxSideJobsPerMonth;
+@override@JsonKey() final  double assetSellFeeRate;
 
 /// Create a copy of ScenarioConfig
 /// with the given fields replaced by the non-null parameter values.
@@ -273,16 +281,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ScenarioConfig&&(identical(other.id, id) || other.id == id)&&(identical(other.initialCash, initialCash) || other.initialCash == initialCash)&&(identical(other.baseSalary, baseSalary) || other.baseSalary == baseSalary)&&(identical(other.monthlyRent, monthlyRent) || other.monthlyRent == monthlyRent)&&(identical(other.monthlyExpenses, monthlyExpenses) || other.monthlyExpenses == monthlyExpenses)&&const DeepCollectionEquality().equals(other._initialAssets, _initialAssets)&&const DeepCollectionEquality().equals(other._initialLoans, _initialLoans)&&(identical(other.familySupportExpense, familySupportExpense) || other.familySupportExpense == familySupportExpense)&&(identical(other.startAgeInMonths, startAgeInMonths) || other.startAgeInMonths == startAgeInMonths)&&(identical(other.startCalendarMonth, startCalendarMonth) || other.startCalendarMonth == startCalendarMonth)&&(identical(other.initialCreditScore, initialCreditScore) || other.initialCreditScore == initialCreditScore)&&(identical(other.housingLevel, housingLevel) || other.housingLevel == housingLevel)&&(identical(other.country, country) || other.country == country)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.bankruptcyMonthsThreshold, bankruptcyMonthsThreshold) || other.bankruptcyMonthsThreshold == bankruptcyMonthsThreshold)&&(identical(other.leisureCostPerStressPoint, leisureCostPerStressPoint) || other.leisureCostPerStressPoint == leisureCostPerStressPoint)&&(identical(other.maxLeisureStressReliefPerMonth, maxLeisureStressReliefPerMonth) || other.maxLeisureStressReliefPerMonth == maxLeisureStressReliefPerMonth)&&(identical(other.baseEventChance, baseEventChance) || other.baseEventChance == baseEventChance));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ScenarioConfig&&(identical(other.id, id) || other.id == id)&&(identical(other.initialCash, initialCash) || other.initialCash == initialCash)&&(identical(other.baseSalary, baseSalary) || other.baseSalary == baseSalary)&&(identical(other.monthlyRent, monthlyRent) || other.monthlyRent == monthlyRent)&&(identical(other.monthlyExpenses, monthlyExpenses) || other.monthlyExpenses == monthlyExpenses)&&const DeepCollectionEquality().equals(other._initialAssets, _initialAssets)&&const DeepCollectionEquality().equals(other._initialLoans, _initialLoans)&&(identical(other.familySupportExpense, familySupportExpense) || other.familySupportExpense == familySupportExpense)&&(identical(other.startAgeInMonths, startAgeInMonths) || other.startAgeInMonths == startAgeInMonths)&&(identical(other.startCalendarMonth, startCalendarMonth) || other.startCalendarMonth == startCalendarMonth)&&(identical(other.initialCreditScore, initialCreditScore) || other.initialCreditScore == initialCreditScore)&&(identical(other.housingLevel, housingLevel) || other.housingLevel == housingLevel)&&(identical(other.country, country) || other.country == country)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.bankruptcyMonthsThreshold, bankruptcyMonthsThreshold) || other.bankruptcyMonthsThreshold == bankruptcyMonthsThreshold)&&(identical(other.leisureCostPerStressPoint, leisureCostPerStressPoint) || other.leisureCostPerStressPoint == leisureCostPerStressPoint)&&(identical(other.maxLeisureStressReliefPerMonth, maxLeisureStressReliefPerMonth) || other.maxLeisureStressReliefPerMonth == maxLeisureStressReliefPerMonth)&&(identical(other.baseEventChance, baseEventChance) || other.baseEventChance == baseEventChance)&&(identical(other.sideJobIncome, sideJobIncome) || other.sideJobIncome == sideJobIncome)&&(identical(other.sideJobStress, sideJobStress) || other.sideJobStress == sideJobStress)&&(identical(other.maxSideJobsPerMonth, maxSideJobsPerMonth) || other.maxSideJobsPerMonth == maxSideJobsPerMonth)&&(identical(other.assetSellFeeRate, assetSellFeeRate) || other.assetSellFeeRate == assetSellFeeRate));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,initialCash,baseSalary,monthlyRent,monthlyExpenses,const DeepCollectionEquality().hash(_initialAssets),const DeepCollectionEquality().hash(_initialLoans),familySupportExpense,startAgeInMonths,startCalendarMonth,initialCreditScore,housingLevel,country,currency,bankruptcyMonthsThreshold,leisureCostPerStressPoint,maxLeisureStressReliefPerMonth,baseEventChance);
+int get hashCode => Object.hashAll([runtimeType,id,initialCash,baseSalary,monthlyRent,monthlyExpenses,const DeepCollectionEquality().hash(_initialAssets),const DeepCollectionEquality().hash(_initialLoans),familySupportExpense,startAgeInMonths,startCalendarMonth,initialCreditScore,housingLevel,country,currency,bankruptcyMonthsThreshold,leisureCostPerStressPoint,maxLeisureStressReliefPerMonth,baseEventChance,sideJobIncome,sideJobStress,maxSideJobsPerMonth,assetSellFeeRate]);
 
 @override
 String toString() {
-  return 'ScenarioConfig(id: $id, initialCash: $initialCash, baseSalary: $baseSalary, monthlyRent: $monthlyRent, monthlyExpenses: $monthlyExpenses, initialAssets: $initialAssets, initialLoans: $initialLoans, familySupportExpense: $familySupportExpense, startAgeInMonths: $startAgeInMonths, startCalendarMonth: $startCalendarMonth, initialCreditScore: $initialCreditScore, housingLevel: $housingLevel, country: $country, currency: $currency, bankruptcyMonthsThreshold: $bankruptcyMonthsThreshold, leisureCostPerStressPoint: $leisureCostPerStressPoint, maxLeisureStressReliefPerMonth: $maxLeisureStressReliefPerMonth, baseEventChance: $baseEventChance)';
+  return 'ScenarioConfig(id: $id, initialCash: $initialCash, baseSalary: $baseSalary, monthlyRent: $monthlyRent, monthlyExpenses: $monthlyExpenses, initialAssets: $initialAssets, initialLoans: $initialLoans, familySupportExpense: $familySupportExpense, startAgeInMonths: $startAgeInMonths, startCalendarMonth: $startCalendarMonth, initialCreditScore: $initialCreditScore, housingLevel: $housingLevel, country: $country, currency: $currency, bankruptcyMonthsThreshold: $bankruptcyMonthsThreshold, leisureCostPerStressPoint: $leisureCostPerStressPoint, maxLeisureStressReliefPerMonth: $maxLeisureStressReliefPerMonth, baseEventChance: $baseEventChance, sideJobIncome: $sideJobIncome, sideJobStress: $sideJobStress, maxSideJobsPerMonth: $maxSideJobsPerMonth, assetSellFeeRate: $assetSellFeeRate)';
 }
 
 
@@ -293,7 +301,7 @@ abstract mixin class _$ScenarioConfigCopyWith<$Res> implements $ScenarioConfigCo
   factory _$ScenarioConfigCopyWith(_ScenarioConfig value, $Res Function(_ScenarioConfig) _then) = __$ScenarioConfigCopyWithImpl;
 @override @useResult
 $Res call({
- String id, double initialCash, double baseSalary, double monthlyRent, double monthlyExpenses, List<Asset> initialAssets, List<Loan> initialLoans, double familySupportExpense, int startAgeInMonths, int startCalendarMonth, int initialCreditScore, HousingLevel housingLevel, Country country, String currency, int bankruptcyMonthsThreshold, double leisureCostPerStressPoint, int maxLeisureStressReliefPerMonth, double baseEventChance
+ String id, double initialCash, double baseSalary, double monthlyRent, double monthlyExpenses, List<Asset> initialAssets, List<Loan> initialLoans, double familySupportExpense, int startAgeInMonths, int startCalendarMonth, int initialCreditScore, HousingLevel housingLevel, Country country, String currency, int bankruptcyMonthsThreshold, double leisureCostPerStressPoint, int maxLeisureStressReliefPerMonth, double baseEventChance, double sideJobIncome, int sideJobStress, int maxSideJobsPerMonth, double assetSellFeeRate
 });
 
 
@@ -310,7 +318,7 @@ class __$ScenarioConfigCopyWithImpl<$Res>
 
 /// Create a copy of ScenarioConfig
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? initialCash = null,Object? baseSalary = null,Object? monthlyRent = null,Object? monthlyExpenses = null,Object? initialAssets = null,Object? initialLoans = null,Object? familySupportExpense = null,Object? startAgeInMonths = null,Object? startCalendarMonth = null,Object? initialCreditScore = null,Object? housingLevel = null,Object? country = null,Object? currency = null,Object? bankruptcyMonthsThreshold = null,Object? leisureCostPerStressPoint = null,Object? maxLeisureStressReliefPerMonth = null,Object? baseEventChance = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? initialCash = null,Object? baseSalary = null,Object? monthlyRent = null,Object? monthlyExpenses = null,Object? initialAssets = null,Object? initialLoans = null,Object? familySupportExpense = null,Object? startAgeInMonths = null,Object? startCalendarMonth = null,Object? initialCreditScore = null,Object? housingLevel = null,Object? country = null,Object? currency = null,Object? bankruptcyMonthsThreshold = null,Object? leisureCostPerStressPoint = null,Object? maxLeisureStressReliefPerMonth = null,Object? baseEventChance = null,Object? sideJobIncome = null,Object? sideJobStress = null,Object? maxSideJobsPerMonth = null,Object? assetSellFeeRate = null,}) {
   return _then(_ScenarioConfig(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,initialCash: null == initialCash ? _self.initialCash : initialCash // ignore: cast_nullable_to_non_nullable
@@ -330,6 +338,10 @@ as String,bankruptcyMonthsThreshold: null == bankruptcyMonthsThreshold ? _self.b
 as int,leisureCostPerStressPoint: null == leisureCostPerStressPoint ? _self.leisureCostPerStressPoint : leisureCostPerStressPoint // ignore: cast_nullable_to_non_nullable
 as double,maxLeisureStressReliefPerMonth: null == maxLeisureStressReliefPerMonth ? _self.maxLeisureStressReliefPerMonth : maxLeisureStressReliefPerMonth // ignore: cast_nullable_to_non_nullable
 as int,baseEventChance: null == baseEventChance ? _self.baseEventChance : baseEventChance // ignore: cast_nullable_to_non_nullable
+as double,sideJobIncome: null == sideJobIncome ? _self.sideJobIncome : sideJobIncome // ignore: cast_nullable_to_non_nullable
+as double,sideJobStress: null == sideJobStress ? _self.sideJobStress : sideJobStress // ignore: cast_nullable_to_non_nullable
+as int,maxSideJobsPerMonth: null == maxSideJobsPerMonth ? _self.maxSideJobsPerMonth : maxSideJobsPerMonth // ignore: cast_nullable_to_non_nullable
+as int,assetSellFeeRate: null == assetSellFeeRate ? _self.assetSellFeeRate : assetSellFeeRate // ignore: cast_nullable_to_non_nullable
 as double,
   ));
 }

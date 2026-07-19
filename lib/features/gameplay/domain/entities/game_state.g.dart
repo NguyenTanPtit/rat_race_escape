@@ -50,6 +50,12 @@ _GameState _$GameStateFromJson(Map<String, dynamic> json) => _GameState(
       (json['leisureReliefUsedThisMonth'] as num?)?.toInt() ?? 0,
   consecutiveMinimumCreditCardPayments:
       (json['consecutiveMinimumCreditCardPayments'] as num?)?.toInt() ?? 0,
+  sideJobsWorkedThisMonth:
+      (json['sideJobsWorkedThisMonth'] as num?)?.toInt() ?? 0,
+  sideJobIncome: (json['sideJobIncome'] as num?)?.toDouble() ?? 2500000.0,
+  sideJobStress: (json['sideJobStress'] as num?)?.toInt() ?? 8,
+  maxSideJobsPerMonth: (json['maxSideJobsPerMonth'] as num?)?.toInt() ?? 2,
+  assetSellFeeRate: (json['assetSellFeeRate'] as num?)?.toDouble() ?? 0.03,
   assets:
       (json['assets'] as List<dynamic>?)
           ?.map((e) => Asset.fromJson(e as Map<String, dynamic>))
@@ -90,6 +96,11 @@ Map<String, dynamic> _$GameStateToJson(_GameState instance) =>
       'leisureReliefUsedThisMonth': instance.leisureReliefUsedThisMonth,
       'consecutiveMinimumCreditCardPayments':
           instance.consecutiveMinimumCreditCardPayments,
+      'sideJobsWorkedThisMonth': instance.sideJobsWorkedThisMonth,
+      'sideJobIncome': instance.sideJobIncome,
+      'sideJobStress': instance.sideJobStress,
+      'maxSideJobsPerMonth': instance.maxSideJobsPerMonth,
+      'assetSellFeeRate': instance.assetSellFeeRate,
       'assets': instance.assets.map((e) => e.toJson()).toList(),
       'loans': instance.loans.map((e) => e.toJson()).toList(),
     };
