@@ -32,6 +32,8 @@ import '../../features/gameplay/domain/repositories/scenario_config_repository.d
     as _i96;
 import '../../features/gameplay/domain/usecases/apply_event_option_usecase.dart'
     as _i742;
+import '../../features/gameplay/domain/usecases/buy_asset_usecase.dart'
+    as _i652;
 import '../../features/gameplay/domain/usecases/calculate_cashflow_usecase.dart'
     as _i521;
 import '../../features/gameplay/domain/usecases/check_behavioral_insights_usecase.dart'
@@ -40,14 +42,19 @@ import '../../features/gameplay/domain/usecases/check_game_status_usecase.dart'
     as _i669;
 import '../../features/gameplay/domain/usecases/generate_event_usecase.dart'
     as _i588;
+import '../../features/gameplay/domain/usecases/pay_debt_usecase.dart' as _i734;
 import '../../features/gameplay/domain/usecases/process_loans_usecase.dart'
     as _i709;
 import '../../features/gameplay/domain/usecases/process_next_month_usecase.dart'
     as _i541;
+import '../../features/gameplay/domain/usecases/sell_asset_usecase.dart'
+    as _i183;
 import '../../features/gameplay/domain/usecases/spend_on_leisure_usecase.dart'
     as _i102;
 import '../../features/gameplay/domain/usecases/update_metrics_usecase.dart'
     as _i454;
+import '../../features/gameplay/domain/usecases/work_side_job_usecase.dart'
+    as _i740;
 import '../../features/gameplay/presentation/cubit/game_engine_cubit.dart'
     as _i910;
 import 'injection.dart' as _i464;
@@ -94,8 +101,20 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i96.ScenarioConfigRepository>(
       () => _i248.JsonScenarioConfigRepository(),
     );
+    gh.lazySingleton<_i652.BuyAssetUseCase>(
+      () => _i652.BuyAssetUseCase(gh<_i669.CheckGameStatusUseCase>()),
+    );
+    gh.lazySingleton<_i734.PayDebtUseCase>(
+      () => _i734.PayDebtUseCase(gh<_i669.CheckGameStatusUseCase>()),
+    );
+    gh.lazySingleton<_i183.SellAssetUseCase>(
+      () => _i183.SellAssetUseCase(gh<_i669.CheckGameStatusUseCase>()),
+    );
     gh.lazySingleton<_i102.SpendOnLeisureUseCase>(
       () => _i102.SpendOnLeisureUseCase(gh<_i669.CheckGameStatusUseCase>()),
+    );
+    gh.lazySingleton<_i740.WorkSideJobUseCase>(
+      () => _i740.WorkSideJobUseCase(gh<_i669.CheckGameStatusUseCase>()),
     );
     gh.lazySingleton<_i588.GenerateEventUseCase>(
       () => _i588.GenerateEventUseCase(

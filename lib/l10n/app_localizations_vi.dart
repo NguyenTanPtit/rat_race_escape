@@ -164,4 +164,24 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get insightCardsLibrary => 'Góc nhìn Chuyên gia';
+
+  @override
+  String eventOptionBonus(String amount) {
+    return 'Thưởng $amount';
+  }
+
+  @override
+  String eventOptionExpense(String amount) {
+    return 'Chi $amount';
+  }
+
+  @override
+  String eventOptionNet(String amount) {
+    return 'ròng $amount';
+  }
+
+  @override
+  String eventOptionStatic(String amount) {
+    return 'Tiền: $amount';
+  }
 }

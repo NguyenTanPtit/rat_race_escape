@@ -220,8 +220,8 @@ return $default(_that.cash,_that.stress,_that.network,_that.credit,_that.addedLo
 /// @nodoc
 @JsonSerializable()
 
-class _EventEffect implements EventEffect {
-  const _EventEffect({this.cash = 0.0, this.stress = 0, this.network = 0, this.credit = 0, final  List<Loan> addedLoans = const [], final  List<Asset> addedAssets = const [], final  List<String> addedFlags = const [], final  List<String> removedFlags = const [], this.insightCardId, this.salaryDelta = 0.0, this.monthlyExpensesDelta = 0.0, this.cashBySalaryMultiplier = 0.0, this.cashByOutflowMultiplier = 0.0}): _addedLoans = addedLoans,_addedAssets = addedAssets,_addedFlags = addedFlags,_removedFlags = removedFlags;
+class _EventEffect extends EventEffect {
+  const _EventEffect({this.cash = 0.0, this.stress = 0, this.network = 0, this.credit = 0, final  List<Loan> addedLoans = const [], final  List<Asset> addedAssets = const [], final  List<String> addedFlags = const [], final  List<String> removedFlags = const [], this.insightCardId, this.salaryDelta = 0.0, this.monthlyExpensesDelta = 0.0, this.cashBySalaryMultiplier = 0.0, this.cashByOutflowMultiplier = 0.0}): _addedLoans = addedLoans,_addedAssets = addedAssets,_addedFlags = addedFlags,_removedFlags = removedFlags,super._();
   factory _EventEffect.fromJson(Map<String, dynamic> json) => _$EventEffectFromJson(json);
 
 @override@JsonKey() final  double cash;

@@ -375,6 +375,30 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Góc nhìn Chuyên gia'**
   String get insightCardsLibrary;
+
+  /// No description provided for @eventOptionBonus.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thưởng {amount}'**
+  String eventOptionBonus(String amount);
+
+  /// No description provided for @eventOptionExpense.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chi {amount}'**
+  String eventOptionExpense(String amount);
+
+  /// No description provided for @eventOptionNet.
+  ///
+  /// In vi, this message translates to:
+  /// **'ròng {amount}'**
+  String eventOptionNet(String amount);
+
+  /// No description provided for @eventOptionStatic.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiền: {amount}'**
+  String eventOptionStatic(String amount);
 }
 
 class _AppLocalizationsDelegate

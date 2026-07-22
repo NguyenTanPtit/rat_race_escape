@@ -25,6 +25,10 @@ class GameEngineCubit extends Cubit<GameEngineState> {
   final ScenarioConfigRepository _scenarioConfigRepository;
   final EventPoolRepository _eventPoolRepository;
   bool _isProcessing = false;
+  
+  final List<MonthlyHistoryRecord> _historyBuffer = [];
+  bool _stopAdvanceRequested = false;
+  double _prevMonthCashDelta = 0.0;
 
   GameEngineCubit(
     this._processNextMonthUseCase,
@@ -35,13 +39,14 @@ class GameEngineCubit extends Cubit<GameEngineState> {
     this._eventPoolRepository,
   ) : super(const GameEngineState.initial());
 
-  /// Starts a new game by loading scenario config and building initial state.
   Future<void> startNewGame(Country country, String scenarioId) async {
     if (_isProcessing) return;
     _isProcessing = true;
     try {
+      _prevMonthCashDelta = 0.0;
       final config = await _scenarioConfigRepository.loadScenarioConfig(country, scenarioId);
       final initialState = GameStateFactory.fromConfig(config);
+      _historyBuffer.clear();
       emit(GameEngineState.playing(initialState));
       _gameStateRepository.saveGame(initialState);
     } catch (e) {
@@ -63,8 +68,10 @@ class GameEngineCubit extends Cubit<GameEngineState> {
     if (_isProcessing) return;
     _isProcessing = true;
     try {
+      _prevMonthCashDelta = 0.0;
       final state = await _gameStateRepository.loadGame();
       if (state != null) {
+        _historyBuffer.clear();
         final activeEvent = await _resolveActiveEvent(state);
         emit(GameEngineState.playing(state, const {}, null, activeEvent));
       }
@@ -108,6 +115,88 @@ class GameEngineCubit extends Cubit<GameEngineState> {
       emit(GameEngineState.error('Lỗi hệ thống: $e'));
     } finally {
       _isProcessing = false;
+    }
+  }
+
+  void clearNewlyUnlockedCards() {
+    if (state is GameEnginePlaying) {
+      emit((state as GameEnginePlaying).copyWith(newlyUnlockedInsightCardIds: {}));
+    }
+  }
+
+  void stopAutoAdvance() {
+    _stopAdvanceRequested = true;
+    if (_isProcessing) return;
+    
+    if (state is GameEnginePlaying) {
+      final playingState = state as GameEnginePlaying;
+      if (playingState.isAutoAdvancing) {
+        emit(playingState.copyWith(isAutoAdvancing: false));
+      }
+    }
+  }
+
+  Future<void> autoAdvance({
+    Duration tick = const Duration(milliseconds: 250),
+    double? targetCash,
+    double? targetNetWorth,
+    int? targetAge,
+  }) async {
+    if (state is! GameEnginePlaying) return;
+    if ((state as GameEnginePlaying).isAutoAdvancing) return;
+
+    _stopAdvanceRequested = false;
+    
+    // Set advancing flag and clear any left-over stop condition UI data (like Tet recap)
+    emit((state as GameEnginePlaying).copyWith(
+      isAutoAdvancing: true,
+      yearlyRecap: null,
+      newlyUnlockedInsightCardIds: {},
+    ));
+
+    while (!_stopAdvanceRequested && state is GameEnginePlaying) {
+      final playingState = state as GameEnginePlaying;
+      
+      // Stop conditions evaluated BEFORE next tick
+      if (playingState.gameState.currentEventId != null) {
+        stopAutoAdvance();
+        break;
+      }
+      if (playingState.newlyUnlockedInsightCardIds.isNotEmpty) {
+        stopAutoAdvance();
+        break;
+      }
+      if (playingState.yearlyRecap != null) {
+        stopAutoAdvance();
+        break;
+      }
+      if (targetCash != null && playingState.gameState.cash >= targetCash) {
+        stopAutoAdvance();
+        break;
+      }
+      if (targetNetWorth != null && playingState.gameState.netWorth >= targetNetWorth) {
+        stopAutoAdvance();
+        break;
+      }
+      if (targetAge != null && playingState.gameState.ageInMonths >= targetAge) {
+        stopAutoAdvance();
+        break;
+      }
+
+      await Future.delayed(tick);
+      if (_stopAdvanceRequested) break; // Check again after delay
+      
+      await nextMonth();
+    }
+
+    if (state is GameEnginePlaying) {
+      final finalState = (state as GameEnginePlaying).gameState;
+      // Note: isAutoAdvancing is already set to false by stopAutoAdvance if it was called.
+      // But if loop naturally ended, we ensure it's false.
+      if ((state as GameEnginePlaying).isAutoAdvancing) {
+        emit((state as GameEnginePlaying).copyWith(isAutoAdvancing: false));
+      }
+      _gameStateRepository.saveGame(finalState);
     }
   }
 
@@ -186,17 +275,85 @@ class GameEngineCubit extends Cubit<GameEngineState> {
   Future<void> _emitTurnResult(TurnResult turnResult, {bool isFromNextMonth = false}) async {
     Set<String> oldUnlockedCards = {};
     MonthlySummaryDelta? monthlySummary;
-    
+    bool isAutoAdvancing = false;
+    YearlyRecap? currentYearlyRecap;
     if (state is GameEnginePlaying) {
-      final oldState = (state as GameEnginePlaying).gameState;
+      final playingState = state as GameEnginePlaying;
+      final oldState = playingState.gameState;
       oldUnlockedCards = oldState.unlockedInsightCardIds;
+      isAutoAdvancing = playingState.isAutoAdvancing;
+      currentYearlyRecap = playingState.yearlyRecap;
       
       if (isFromNextMonth) {
-        monthlySummary = MonthlySummaryDelta(
-          cashDelta: turnResult.state.cash - oldState.cash,
-          stressDelta: turnResult.state.stress - oldState.stress,
-          netWorthDelta: turnResult.state.netWorth - oldState.netWorth,
-        );
+        // Calculate cashIn and cashOut based on oldState as requested
+        // Tiền event/Phase-3 KHÔNG tách vào in/out.
+        final cashIn = oldState.baseSalary + oldState.passiveIncome;
+        final minPayments = oldState.loans.fold(0.0, (sum, loan) => sum + loan.minimumMonthlyPayment);
+        final cashOut = oldState.totalMonthlyOutflow + minPayments;
+        
+        final currentCashDelta = turnResult.state.cash - oldState.cash;
+        
+        // Accumulate if advancing, else overwrite
+        if (isAutoAdvancing && playingState.monthlySummary != null) {
+           monthlySummary = MonthlySummaryDelta(
+             cashDelta: playingState.monthlySummary!.cashDelta + currentCashDelta,
+             stressDelta: playingState.monthlySummary!.stressDelta + (turnResult.state.stress - oldState.stress),
+             netWorthDelta: playingState.monthlySummary!.netWorthDelta + (turnResult.state.netWorth - oldState.netWorth),
+             cashIn: playingState.monthlySummary!.cashIn + cashIn,
+             cashOut: playingState.monthlySummary!.cashOut + cashOut,
+           );
+        } else {
+           monthlySummary = MonthlySummaryDelta(
+             cashDelta: currentCashDelta,
+             stressDelta: turnResult.state.stress - oldState.stress,
+             netWorthDelta: turnResult.state.netWorth - oldState.netWorth,
+             cashIn: cashIn,
+             cashOut: cashOut,
+           );
+        }
+
+        // Add to history buffer
+        _historyBuffer.add((
+          ageInMonths: oldState.ageInMonths,
+          netWorth: oldState.netWorth,
+          cashIn: cashIn,
+          cashOut: cashOut,
+          cashDelta: currentCashDelta,
+          eventId: turnResult.state.currentEventId,
+        ));
+        
+        // Check dynamic stop conditions
+        if (isAutoAdvancing) {
+          if (oldState.stress < 75 && turnResult.state.stress >= 75) {
+            stopAutoAdvance(); // Stress crossed 75
+          } else if (oldState.stress < 90 && turnResult.state.stress >= 90) {
+            stopAutoAdvance(); // Stress crossed 90
+          } else if ((currentCashDelta - _prevMonthCashDelta).abs() > 0.3 * oldState.totalMonthlyOutflow) {
+            stopAutoAdvance(); // Cashflow jump
+          }
+        }
+        
+        _prevMonthCashDelta = currentCashDelta;
+        
+        // Tet Yearly Recap
+        if (turnResult.state.calendarMonth == 1) {
+          if (isAutoAdvancing) stopAutoAdvance();
+          
+          final last12 = _historyBuffer.length > 12 ? _historyBuffer.sublist(_historyBuffer.length - 12) : _historyBuffer.toList();
+          final topEvents = last12.where((e) => e.eventId != null).toList()
+            ..sort((a, b) {
+              final impactA = (a.cashDelta - (a.cashIn - a.cashOut)).abs();
+              final impactB = (b.cashDelta - (b.cashIn - b.cashOut)).abs();
+              return impactB.compareTo(impactA);
+            });
+          
+          currentYearlyRecap = YearlyRecap(
+            totalCashIn: last12.fold(0.0, (sum, e) => sum + e.cashIn),
+            totalCashOut: last12.fold(0.0, (sum, e) => sum + e.cashOut),
+            topEvents: topEvents.take(3).toList(),
+            fullHistory: last12,
+          );
+        }
       }
     } else if (state is GameEngineWon) {
       oldUnlockedCards = (state as GameEngineWon).finalState.unlockedInsightCardIds;
@@ -205,18 +362,23 @@ class GameEngineCubit extends Cubit<GameEngineState> {
     }
 
     final newState = turnResult.state;
-    final newlyUnlockedInsightCardIds = newState.unlockedInsightCardIds.difference(oldUnlockedCards);
+    var newlyUnlockedInsightCardIds = newState.unlockedInsightCardIds.difference(oldUnlockedCards);
+    if (state is GameEnginePlaying && isAutoAdvancing) {
+      newlyUnlockedInsightCardIds = newlyUnlockedInsightCardIds.union((state as GameEnginePlaying).newlyUnlockedInsightCardIds);
+    }
 
     final activeEvent = await _resolveActiveEvent(newState);
 
     switch (turnResult) {
       case TurnContinued():
-        emit(GameEngineState.playing(newState, newlyUnlockedInsightCardIds, monthlySummary, activeEvent));
-        _gameStateRepository.saveGame(newState);
+        emit(GameEngineState.playing(newState, newlyUnlockedInsightCardIds, monthlySummary, activeEvent, isAutoAdvancing, currentYearlyRecap));
+        if (!isAutoAdvancing) _gameStateRepository.saveGame(newState);
       case TurnWon():
+        stopAutoAdvance();
         emit(GameEngineState.won(newState, newlyUnlockedInsightCardIds));
         _gameStateRepository.deleteSave();
       case TurnLost():
+        stopAutoAdvance();
         emit(GameEngineState.gameOver(turnResult.reason, newState, newlyUnlockedInsightCardIds));
         _gameStateRepository.deleteSave();
     }

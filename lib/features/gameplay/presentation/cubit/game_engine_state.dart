@@ -11,6 +11,8 @@ abstract class MonthlySummaryDelta with _$MonthlySummaryDelta {
     required double cashDelta,
     required int stressDelta,
     required double netWorthDelta,
+    @Default(0.0) double cashIn,
+    @Default(0.0) double cashOut,
   }) = _MonthlySummaryDelta;
 }
 
@@ -22,8 +24,29 @@ sealed class GameEngineState with _$GameEngineState {
     @Default({}) Set<String> newlyUnlockedInsightCardIds,
     MonthlySummaryDelta? monthlySummary,
     GameEvent? currentEvent,
+    @Default(false) bool isAutoAdvancing,
+    YearlyRecap? yearlyRecap,
   ]) = GameEnginePlaying;
   const factory GameEngineState.gameOver(GameOverReason reason, GameState finalState, [@Default({}) Set<String> newlyUnlockedInsightCardIds]) = GameEngineGameOver;
   const factory GameEngineState.won(GameState finalState, [@Default({}) Set<String> newlyUnlockedInsightCardIds]) = GameEngineWon;
   const factory GameEngineState.error(String message) = GameEngineError;
+}
+
+typedef MonthlyHistoryRecord = ({
+  int ageInMonths,
+  double netWorth,
+  double cashIn,
+  double cashOut,
+  double cashDelta,
+  String? eventId,
+});
+
+@freezed
+abstract class YearlyRecap with _$YearlyRecap {
+  const factory YearlyRecap({
+    required double totalCashIn,
+    required double totalCashOut,
+    required List<MonthlyHistoryRecord> topEvents, // Sorted by absolute cash impact
+    required List<MonthlyHistoryRecord> fullHistory, // Last 12 months for chart
+  }) = _YearlyRecap;
 }

@@ -48,12 +48,11 @@ class ApplyEventOptionUseCase {
 
     final effect = option.effect;
 
-    // 5. Apply proportional effects first
-    final proportionalCash = (effect.cashBySalaryMultiplier * currentState.baseSalary) +
-        (effect.cashByOutflowMultiplier * currentState.totalMonthlyOutflow);
+    // 5. Calculate total cash impact using shared formula
+    final cashBreakdown = effect.calculateCashBreakdown(currentState.baseSalary, currentState.totalMonthlyOutflow);
 
     // 6. Apply all effects
-    final newCash = currentState.cash + proportionalCash + effect.cash;
+    final newCash = currentState.cash + cashBreakdown.totalCash;
     final newStress = (currentState.stress + effect.stress).clamp(0, 100).toInt();
     final newCreditScore = (currentState.creditScore + effect.credit).clamp(300, 850).toInt();
     final newNetworkScore = max(0, currentState.networkScore + effect.network);

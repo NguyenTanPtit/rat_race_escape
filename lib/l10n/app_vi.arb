@@ -106,5 +106,30 @@
       }
     }
   },
-  "insightCardsLibrary": "Góc nhìn Chuyên gia"
+  "insightCardsLibrary": "Góc nhìn Chuyên gia",
+  
+  "eventOptionBonus": "Thưởng {amount}",
+  "@eventOptionBonus": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "eventOptionExpense": "Chi {amount}",
+  "@eventOptionExpense": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "eventOptionNet": "ròng {amount}",
+  "@eventOptionNet": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "eventOptionStatic": "Tiền: {amount}",
+  "@eventOptionStatic": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  }
 }

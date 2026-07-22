@@ -13,9 +13,36 @@ import 'package:rat_race_escape/features/gameplay/presentation/widgets/money_dis
 import 'package:rat_race_escape/features/gameplay/presentation/widgets/stat_bar.dart';
 import 'package:rat_race_escape/core/format/money_format.dart';
 import 'package:rat_race_escape/l10n/app_localizations.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/yearly_recap_dialog.dart';
+import 'package:flutter/services.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/insight_card_popup.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/leisure_dialog.dart';
 
-class MainGameScreen extends StatelessWidget {
+class MainGameScreen extends StatefulWidget {
   const MainGameScreen({super.key});
+
+  @override
+  State<MainGameScreen> createState() => _MainGameScreenState();
+}
+
+class _MainGameScreenState extends State<MainGameScreen> {
+  YearlyRecap? _lastShownRecap;
+  int _lastStressBannerLevel = 0; // To track 75 or 90
+  bool _wasAutoAdvancing = false;
+
+  void _showWarningBanner(String message) {
+    HapticFeedback.mediumImpact();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, style: const TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: AppColors.stressHigh,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        duration: const Duration(seconds: 4),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +55,39 @@ class MainGameScreen extends StatelessWidget {
         }
 
         if (state is GameEnginePlaying) {
-          if (state.monthlySummary != null) {
-            // Show monthly summary dialog
+          final justStoppedAutoAdvance = _wasAutoAdvancing && !state.isAutoAdvancing;
+          final manualAction = !_wasAutoAdvancing && !state.isAutoAdvancing;
+          if ((justStoppedAutoAdvance || manualAction) && state.newlyUnlockedInsightCardIds.isNotEmpty) {
+            InsightCardPopup.showIfAny(context, state.newlyUnlockedInsightCardIds);
+            context.read<GameEngineCubit>().clearNewlyUnlockedCards();
+          }
+          _wasAutoAdvancing = state.isAutoAdvancing;
+
+          if (!state.isAutoAdvancing && state.monthlySummary != null) {
+            // Only show monthly summary dialog if NOT auto advancing
             _showMonthlySummary(context, state.monthlySummary!);
+          }
+          
+          if (state.yearlyRecap != null && state.yearlyRecap != _lastShownRecap) {
+            _lastShownRecap = state.yearlyRecap;
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (_) => YearlyRecapDialog(
+                recap: state.yearlyRecap!,
+              ),
+            );
+          }
+          
+          // Stress Warning Banner logic
+          if (state.gameState.stress >= 90 && _lastStressBannerLevel < 90) {
+            _lastStressBannerLevel = 90;
+            _showWarningBanner("Cơ thể bạn đang cạn kiệt năng lượng (Stress ≥ 90)!");
+          } else if (state.gameState.stress >= 75 && _lastStressBannerLevel < 75) {
+            _lastStressBannerLevel = 75;
+            _showWarningBanner("Cơ thể bạn đang lên tiếng (Stress ≥ 75)!");
+          } else if (state.gameState.stress < 75) {
+            _lastStressBannerLevel = 0; // Reset
           }
         }
       },
@@ -100,30 +157,40 @@ class MainGameScreen extends StatelessWidget {
 
                 // Event Area
                 if (hasEvent && state.currentEvent != null)
-                  EventCard(event: state.currentEvent!),
-                if (hasEvent) const SizedBox(height: AppSpacing.l),
+                  EventCard(event: state.currentEvent!, gameState: state.gameState)
+                else if (state.isAutoAdvancing)
+                  _buildAutoAdvancePlaceholder(state.monthlySummary?.cashDelta ?? 0.0),
+                if (hasEvent || state.isAutoAdvancing) const SizedBox(height: AppSpacing.l),
 
                 // Cashflows
-                Text('Chi tiết dòng tiền:', style: AppTextStyles.h3),
-                const SizedBox(height: AppSpacing.s),
-                _CashflowItem(label: AppLocalizations.of(context)!.expenseSalary, value: gameState.baseSalary),
-                _CashflowItem(label: AppLocalizations.of(context)!.expenseLiving, value: -gameState.monthlyExpenses),
-                _CashflowItem(label: AppLocalizations.of(context)!.expenseRent, value: -gameState.monthlyRent),
-                _CashflowItem(label: AppLocalizations.of(context)!.expenseFamily, value: -gameState.familySupportExpense),
-                if (gameState.loans.isNotEmpty)
-                  _CashflowItem(
-                    label: AppLocalizations.of(context)!.expenseLoan(
-                      MoneyFormat.format(gameState.totalLoanPayment),
-                      MoneyFormat.format(gameState.totalLoanInterest),
+                if (!state.isAutoAdvancing) ...[
+                  Text('Chi tiết dòng tiền:', style: AppTextStyles.h3),
+                  const SizedBox(height: AppSpacing.s),
+                  _CashflowItem(label: AppLocalizations.of(context)!.expenseSalary, value: gameState.baseSalary),
+                  _CashflowItem(label: AppLocalizations.of(context)!.expenseLiving, value: -gameState.monthlyExpenses),
+                  _CashflowItem(label: AppLocalizations.of(context)!.expenseRent, value: -gameState.monthlyRent),
+                  _CashflowItem(label: AppLocalizations.of(context)!.expenseFamily, value: -gameState.familySupportExpense),
+                  if (gameState.loans.isNotEmpty)
+                    _CashflowItem(
+                      label: AppLocalizations.of(context)!.expenseLoan(
+                        MoneyFormat.format(gameState.totalLoanPayment),
+                        MoneyFormat.format(gameState.totalLoanInterest),
+                      ),
+                      value: -gameState.totalLoanPayment,
                     ),
-                    value: -gameState.totalLoanPayment,
-                  ),
-                const SizedBox(height: AppSpacing.xl),
+                  const SizedBox(height: AppSpacing.xl),
+                ],
 
                 // Leisure Button
                 ElevatedButton(
-                  onPressed: () {
-                    // Show leisure dialog
+                  onPressed: state.isAutoAdvancing ? null : () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => LeisureDialog(
+                        leisureReliefUsedThisMonth: gameState.leisureReliefUsedThisMonth,
+                        currentCash: gameState.cash,
+                      ),
+                    );
                   },
                   child: Text(AppLocalizations.of(context)!.btnRelieveStress),
                 ),
@@ -135,13 +202,58 @@ class MainGameScreen extends StatelessWidget {
             width: 80,
             height: 80,
             child: EndTurnButton(
+              isAutoAdvancing: state.isAutoAdvancing,
               onPressed: hasEvent ? null : () => context.read<GameEngineCubit>().nextMonth(),
+              onLongPress: hasEvent ? null : () => context.read<GameEngineCubit>().autoAdvance(),
+              onLongPressUp: () => context.read<GameEngineCubit>().stopAutoAdvance(),
             ),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
           bottomNavigationBar: const BottomNav(),
         );
       },
+    );
+  }
+  
+  Widget _buildAutoAdvancePlaceholder(double cashDelta) {
+    return Container(
+      height: 120,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: AppColors.ink.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.ink.withValues(alpha: 0.2), width: 2, style: BorderStyle.solid),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            'Mọi thứ đang bình yên...',
+            style: TextStyle(fontStyle: FontStyle.italic, color: Colors.grey),
+          ),
+          const SizedBox(height: 16),
+          // Simple floating text simulation
+          TweenAnimationBuilder<double>(
+            key: ValueKey(cashDelta),
+            duration: const Duration(milliseconds: 200),
+            tween: Tween(begin: 10.0, end: 0.0),
+            builder: (context, value, child) {
+              return Transform.translate(
+                offset: Offset(0, value),
+                child: Opacity(
+                  opacity: 1.0 - (value / 10),
+                  child: Text(
+                    '${cashDelta >= 0 ? "+" : ""}${MoneyFormat.format(cashDelta)}',
+                    style: AppTextStyles.h2.copyWith(
+                      color: cashDelta >= 0 ? AppColors.primary : Colors.red,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 
