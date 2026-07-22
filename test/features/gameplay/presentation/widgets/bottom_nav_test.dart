@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rat_race_escape/core/theme/app_colors.dart';
 import 'package:rat_race_escape/core/theme/app_tokens.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/bottom_nav.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/common/bottom_nav.dart';
 
 void main() {
   testWidgets('BottomNav renders according to spec', (WidgetTester tester) async {

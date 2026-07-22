@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/yearly_recap_dialog.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/dialogs/yearly_recap_dialog.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/cubit/game_engine_state.dart';
 import 'package:rat_race_escape/core/theme/app_theme.dart';
 

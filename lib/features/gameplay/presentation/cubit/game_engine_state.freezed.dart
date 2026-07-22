@@ -281,6 +281,272 @@ as double,
 }
 
 /// @nodoc
+mixin _$MarketStopInfo {
+
+ String get classId; String get className; MarketStopKind get kind; double get changePercent;
+/// Create a copy of MarketStopInfo
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$MarketStopInfoCopyWith<MarketStopInfo> get copyWith => _$MarketStopInfoCopyWithImpl<MarketStopInfo>(this as MarketStopInfo, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MarketStopInfo&&(identical(other.classId, classId) || other.classId == classId)&&(identical(other.className, className) || other.className == className)&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.changePercent, changePercent) || other.changePercent == changePercent));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,classId,className,kind,changePercent);
+
+@override
+String toString() {
+  return 'MarketStopInfo(classId: $classId, className: $className, kind: $kind, changePercent: $changePercent)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $MarketStopInfoCopyWith<$Res>  {
+  factory $MarketStopInfoCopyWith(MarketStopInfo value, $Res Function(MarketStopInfo) _then) = _$MarketStopInfoCopyWithImpl;
+@useResult
+$Res call({
+ String classId, String className, MarketStopKind kind, double changePercent
+});
+
+
+
+
+}
+/// @nodoc
+class _$MarketStopInfoCopyWithImpl<$Res>
+    implements $MarketStopInfoCopyWith<$Res> {
+  _$MarketStopInfoCopyWithImpl(this._self, this._then);
+
+  final MarketStopInfo _self;
+  final $Res Function(MarketStopInfo) _then;
+
+/// Create a copy of MarketStopInfo
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? classId = null,Object? className = null,Object? kind = null,Object? changePercent = null,}) {
+  return _then(_self.copyWith(
+classId: null == classId ? _self.classId : classId // ignore: cast_nullable_to_non_nullable
+as String,className: null == className ? _self.className : className // ignore: cast_nullable_to_non_nullable
+as String,kind: null == kind ? _self.kind : kind // ignore: cast_nullable_to_non_nullable
+as MarketStopKind,changePercent: null == changePercent ? _self.changePercent : changePercent // ignore: cast_nullable_to_non_nullable
+as double,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [MarketStopInfo].
+extension MarketStopInfoPatterns on MarketStopInfo {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _MarketStopInfo value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _MarketStopInfo() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _MarketStopInfo value)  $default,){
+final _that = this;
+switch (_that) {
+case _MarketStopInfo():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _MarketStopInfo value)?  $default,){
+final _that = this;
+switch (_that) {
+case _MarketStopInfo() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String classId,  String className,  MarketStopKind kind,  double changePercent)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _MarketStopInfo() when $default != null:
+return $default(_that.classId,_that.className,_that.kind,_that.changePercent);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String classId,  String className,  MarketStopKind kind,  double changePercent)  $default,) {final _that = this;
+switch (_that) {
+case _MarketStopInfo():
+return $default(_that.classId,_that.className,_that.kind,_that.changePercent);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String classId,  String className,  MarketStopKind kind,  double changePercent)?  $default,) {final _that = this;
+switch (_that) {
+case _MarketStopInfo() when $default != null:
+return $default(_that.classId,_that.className,_that.kind,_that.changePercent);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _MarketStopInfo implements MarketStopInfo {
+  const _MarketStopInfo({required this.classId, required this.className, required this.kind, required this.changePercent});
+  
+
+@override final  String classId;
+@override final  String className;
+@override final  MarketStopKind kind;
+@override final  double changePercent;
+
+/// Create a copy of MarketStopInfo
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$MarketStopInfoCopyWith<_MarketStopInfo> get copyWith => __$MarketStopInfoCopyWithImpl<_MarketStopInfo>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MarketStopInfo&&(identical(other.classId, classId) || other.classId == classId)&&(identical(other.className, className) || other.className == className)&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.changePercent, changePercent) || other.changePercent == changePercent));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,classId,className,kind,changePercent);
+
+@override
+String toString() {
+  return 'MarketStopInfo(classId: $classId, className: $className, kind: $kind, changePercent: $changePercent)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$MarketStopInfoCopyWith<$Res> implements $MarketStopInfoCopyWith<$Res> {
+  factory _$MarketStopInfoCopyWith(_MarketStopInfo value, $Res Function(_MarketStopInfo) _then) = __$MarketStopInfoCopyWithImpl;
+@override @useResult
+$Res call({
+ String classId, String className, MarketStopKind kind, double changePercent
+});
+
+
+
+
+}
+/// @nodoc
+class __$MarketStopInfoCopyWithImpl<$Res>
+    implements _$MarketStopInfoCopyWith<$Res> {
+  __$MarketStopInfoCopyWithImpl(this._self, this._then);
+
+  final _MarketStopInfo _self;
+  final $Res Function(_MarketStopInfo) _then;
+
+/// Create a copy of MarketStopInfo
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? classId = null,Object? className = null,Object? kind = null,Object? changePercent = null,}) {
+  return _then(_MarketStopInfo(
+classId: null == classId ? _self.classId : classId // ignore: cast_nullable_to_non_nullable
+as String,className: null == className ? _self.className : className // ignore: cast_nullable_to_non_nullable
+as String,kind: null == kind ? _self.kind : kind // ignore: cast_nullable_to_non_nullable
+as MarketStopKind,changePercent: null == changePercent ? _self.changePercent : changePercent // ignore: cast_nullable_to_non_nullable
+as double,
+  ));
+}
+
+
+}
+
+/// @nodoc
 mixin _$GameEngineState {
 
 
@@ -397,11 +663,11 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function( GameState gameState,  Set<String> newlyUnlockedInsightCardIds,  MonthlySummaryDelta? monthlySummary,  GameEvent? currentEvent,  bool isAutoAdvancing,  YearlyRecap? yearlyRecap)?  playing,TResult Function( GameOverReason reason,  GameState finalState,  Set<String> newlyUnlockedInsightCardIds)?  gameOver,TResult Function( GameState finalState,  Set<String> newlyUnlockedInsightCardIds)?  won,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function( GameState gameState,  Set<String> newlyUnlockedInsightCardIds,  MonthlySummaryDelta? monthlySummary,  GameEvent? currentEvent,  bool isAutoAdvancing,  YearlyRecap? yearlyRecap,  MarketStopInfo? marketStopInfo)?  playing,TResult Function( GameOverReason reason,  GameState finalState,  Set<String> newlyUnlockedInsightCardIds)?  gameOver,TResult Function( GameState finalState,  Set<String> newlyUnlockedInsightCardIds)?  won,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case GameEngineInitial() when initial != null:
 return initial();case GameEnginePlaying() when playing != null:
-return playing(_that.gameState,_that.newlyUnlockedInsightCardIds,_that.monthlySummary,_that.currentEvent,_that.isAutoAdvancing,_that.yearlyRecap);case GameEngineGameOver() when gameOver != null:
+return playing(_that.gameState,_that.newlyUnlockedInsightCardIds,_that.monthlySummary,_that.currentEvent,_that.isAutoAdvancing,_that.yearlyRecap,_that.marketStopInfo);case GameEngineGameOver() when gameOver != null:
 return gameOver(_that.reason,_that.finalState,_that.newlyUnlockedInsightCardIds);case GameEngineWon() when won != null:
 return won(_that.finalState,_that.newlyUnlockedInsightCardIds);case GameEngineError() when error != null:
 return error(_that.message);case _:
@@ -422,11 +688,11 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function( GameState gameState,  Set<String> newlyUnlockedInsightCardIds,  MonthlySummaryDelta? monthlySummary,  GameEvent? currentEvent,  bool isAutoAdvancing,  YearlyRecap? yearlyRecap)  playing,required TResult Function( GameOverReason reason,  GameState finalState,  Set<String> newlyUnlockedInsightCardIds)  gameOver,required TResult Function( GameState finalState,  Set<String> newlyUnlockedInsightCardIds)  won,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function( GameState gameState,  Set<String> newlyUnlockedInsightCardIds,  MonthlySummaryDelta? monthlySummary,  GameEvent? currentEvent,  bool isAutoAdvancing,  YearlyRecap? yearlyRecap,  MarketStopInfo? marketStopInfo)  playing,required TResult Function( GameOverReason reason,  GameState finalState,  Set<String> newlyUnlockedInsightCardIds)  gameOver,required TResult Function( GameState finalState,  Set<String> newlyUnlockedInsightCardIds)  won,required TResult Function( String message)  error,}) {final _that = this;
 switch (_that) {
 case GameEngineInitial():
 return initial();case GameEnginePlaying():
-return playing(_that.gameState,_that.newlyUnlockedInsightCardIds,_that.monthlySummary,_that.currentEvent,_that.isAutoAdvancing,_that.yearlyRecap);case GameEngineGameOver():
+return playing(_that.gameState,_that.newlyUnlockedInsightCardIds,_that.monthlySummary,_that.currentEvent,_that.isAutoAdvancing,_that.yearlyRecap,_that.marketStopInfo);case GameEngineGameOver():
 return gameOver(_that.reason,_that.finalState,_that.newlyUnlockedInsightCardIds);case GameEngineWon():
 return won(_that.finalState,_that.newlyUnlockedInsightCardIds);case GameEngineError():
 return error(_that.message);}
@@ -443,11 +709,11 @@ return error(_that.message);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function( GameState gameState,  Set<String> newlyUnlockedInsightCardIds,  MonthlySummaryDelta? monthlySummary,  GameEvent? currentEvent,  bool isAutoAdvancing,  YearlyRecap? yearlyRecap)?  playing,TResult? Function( GameOverReason reason,  GameState finalState,  Set<String> newlyUnlockedInsightCardIds)?  gameOver,TResult? Function( GameState finalState,  Set<String> newlyUnlockedInsightCardIds)?  won,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function( GameState gameState,  Set<String> newlyUnlockedInsightCardIds,  MonthlySummaryDelta? monthlySummary,  GameEvent? currentEvent,  bool isAutoAdvancing,  YearlyRecap? yearlyRecap,  MarketStopInfo? marketStopInfo)?  playing,TResult? Function( GameOverReason reason,  GameState finalState,  Set<String> newlyUnlockedInsightCardIds)?  gameOver,TResult? Function( GameState finalState,  Set<String> newlyUnlockedInsightCardIds)?  won,TResult? Function( String message)?  error,}) {final _that = this;
 switch (_that) {
 case GameEngineInitial() when initial != null:
 return initial();case GameEnginePlaying() when playing != null:
-return playing(_that.gameState,_that.newlyUnlockedInsightCardIds,_that.monthlySummary,_that.currentEvent,_that.isAutoAdvancing,_that.yearlyRecap);case GameEngineGameOver() when gameOver != null:
+return playing(_that.gameState,_that.newlyUnlockedInsightCardIds,_that.monthlySummary,_that.currentEvent,_that.isAutoAdvancing,_that.yearlyRecap,_that.marketStopInfo);case GameEngineGameOver() when gameOver != null:
 return gameOver(_that.reason,_that.finalState,_that.newlyUnlockedInsightCardIds);case GameEngineWon() when won != null:
 return won(_that.finalState,_that.newlyUnlockedInsightCardIds);case GameEngineError() when error != null:
 return error(_that.message);case _:
@@ -494,7 +760,7 @@ String toString() {
 
 
 class GameEnginePlaying implements GameEngineState {
-  const GameEnginePlaying(this.gameState, [final  Set<String> newlyUnlockedInsightCardIds = const {}, this.monthlySummary, this.currentEvent, this.isAutoAdvancing = false, this.yearlyRecap]): _newlyUnlockedInsightCardIds = newlyUnlockedInsightCardIds;
+  const GameEnginePlaying(this.gameState, [final  Set<String> newlyUnlockedInsightCardIds = const {}, this.monthlySummary, this.currentEvent, this.isAutoAdvancing = false, this.yearlyRecap, this.marketStopInfo]): _newlyUnlockedInsightCardIds = newlyUnlockedInsightCardIds;
   
 
  final  GameState gameState;
@@ -509,6 +775,7 @@ class GameEnginePlaying implements GameEngineState {
  final  GameEvent? currentEvent;
 @JsonKey() final  bool isAutoAdvancing;
  final  YearlyRecap? yearlyRecap;
+ final  MarketStopInfo? marketStopInfo;
 
 /// Create a copy of GameEngineState
 /// with the given fields replaced by the non-null parameter values.
@@ -520,16 +787,16 @@ $GameEnginePlayingCopyWith<GameEnginePlaying> get copyWith => _$GameEnginePlayin
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GameEnginePlaying&&(identical(other.gameState, gameState) || other.gameState == gameState)&&const DeepCollectionEquality().equals(other._newlyUnlockedInsightCardIds, _newlyUnlockedInsightCardIds)&&(identical(other.monthlySummary, monthlySummary) || other.monthlySummary == monthlySummary)&&(identical(other.currentEvent, currentEvent) || other.currentEvent == currentEvent)&&(identical(other.isAutoAdvancing, isAutoAdvancing) || other.isAutoAdvancing == isAutoAdvancing)&&(identical(other.yearlyRecap, yearlyRecap) || other.yearlyRecap == yearlyRecap));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GameEnginePlaying&&(identical(other.gameState, gameState) || other.gameState == gameState)&&const DeepCollectionEquality().equals(other._newlyUnlockedInsightCardIds, _newlyUnlockedInsightCardIds)&&(identical(other.monthlySummary, monthlySummary) || other.monthlySummary == monthlySummary)&&(identical(other.currentEvent, currentEvent) || other.currentEvent == currentEvent)&&(identical(other.isAutoAdvancing, isAutoAdvancing) || other.isAutoAdvancing == isAutoAdvancing)&&(identical(other.yearlyRecap, yearlyRecap) || other.yearlyRecap == yearlyRecap)&&(identical(other.marketStopInfo, marketStopInfo) || other.marketStopInfo == marketStopInfo));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,gameState,const DeepCollectionEquality().hash(_newlyUnlockedInsightCardIds),monthlySummary,currentEvent,isAutoAdvancing,yearlyRecap);
+int get hashCode => Object.hash(runtimeType,gameState,const DeepCollectionEquality().hash(_newlyUnlockedInsightCardIds),monthlySummary,currentEvent,isAutoAdvancing,yearlyRecap,marketStopInfo);
 
 @override
 String toString() {
-  return 'GameEngineState.playing(gameState: $gameState, newlyUnlockedInsightCardIds: $newlyUnlockedInsightCardIds, monthlySummary: $monthlySummary, currentEvent: $currentEvent, isAutoAdvancing: $isAutoAdvancing, yearlyRecap: $yearlyRecap)';
+  return 'GameEngineState.playing(gameState: $gameState, newlyUnlockedInsightCardIds: $newlyUnlockedInsightCardIds, monthlySummary: $monthlySummary, currentEvent: $currentEvent, isAutoAdvancing: $isAutoAdvancing, yearlyRecap: $yearlyRecap, marketStopInfo: $marketStopInfo)';
 }
 
 
@@ -540,11 +807,11 @@ abstract mixin class $GameEnginePlayingCopyWith<$Res> implements $GameEngineStat
   factory $GameEnginePlayingCopyWith(GameEnginePlaying value, $Res Function(GameEnginePlaying) _then) = _$GameEnginePlayingCopyWithImpl;
 @useResult
 $Res call({
- GameState gameState, Set<String> newlyUnlockedInsightCardIds, MonthlySummaryDelta? monthlySummary, GameEvent? currentEvent, bool isAutoAdvancing, YearlyRecap? yearlyRecap
+ GameState gameState, Set<String> newlyUnlockedInsightCardIds, MonthlySummaryDelta? monthlySummary, GameEvent? currentEvent, bool isAutoAdvancing, YearlyRecap? yearlyRecap, MarketStopInfo? marketStopInfo
 });
 
 
-$GameStateCopyWith<$Res> get gameState;$MonthlySummaryDeltaCopyWith<$Res>? get monthlySummary;$GameEventCopyWith<$Res>? get currentEvent;$YearlyRecapCopyWith<$Res>? get yearlyRecap;
+$GameStateCopyWith<$Res> get gameState;$MonthlySummaryDeltaCopyWith<$Res>? get monthlySummary;$GameEventCopyWith<$Res>? get currentEvent;$YearlyRecapCopyWith<$Res>? get yearlyRecap;$MarketStopInfoCopyWith<$Res>? get marketStopInfo;
 
 }
 /// @nodoc
@@ -557,7 +824,7 @@ class _$GameEnginePlayingCopyWithImpl<$Res>
 
 /// Create a copy of GameEngineState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? gameState = null,Object? newlyUnlockedInsightCardIds = null,Object? monthlySummary = freezed,Object? currentEvent = freezed,Object? isAutoAdvancing = null,Object? yearlyRecap = freezed,}) {
+@pragma('vm:prefer-inline') $Res call({Object? gameState = null,Object? newlyUnlockedInsightCardIds = null,Object? monthlySummary = freezed,Object? currentEvent = freezed,Object? isAutoAdvancing = null,Object? yearlyRecap = freezed,Object? marketStopInfo = freezed,}) {
   return _then(GameEnginePlaying(
 null == gameState ? _self.gameState : gameState // ignore: cast_nullable_to_non_nullable
 as GameState,null == newlyUnlockedInsightCardIds ? _self._newlyUnlockedInsightCardIds : newlyUnlockedInsightCardIds // ignore: cast_nullable_to_non_nullable
@@ -565,7 +832,8 @@ as Set<String>,freezed == monthlySummary ? _self.monthlySummary : monthlySummary
 as MonthlySummaryDelta?,freezed == currentEvent ? _self.currentEvent : currentEvent // ignore: cast_nullable_to_non_nullable
 as GameEvent?,null == isAutoAdvancing ? _self.isAutoAdvancing : isAutoAdvancing // ignore: cast_nullable_to_non_nullable
 as bool,freezed == yearlyRecap ? _self.yearlyRecap : yearlyRecap // ignore: cast_nullable_to_non_nullable
-as YearlyRecap?,
+as YearlyRecap?,freezed == marketStopInfo ? _self.marketStopInfo : marketStopInfo // ignore: cast_nullable_to_non_nullable
+as MarketStopInfo?,
   ));
 }
 
@@ -613,6 +881,18 @@ $YearlyRecapCopyWith<$Res>? get yearlyRecap {
 
   return $YearlyRecapCopyWith<$Res>(_self.yearlyRecap!, (value) {
     return _then(_self.copyWith(yearlyRecap: value));
+  });
+}/// Create a copy of GameEngineState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$MarketStopInfoCopyWith<$Res>? get marketStopInfo {
+    if (_self.marketStopInfo == null) {
+    return null;
+  }
+
+  return $MarketStopInfoCopyWith<$Res>(_self.marketStopInfo!, (value) {
+    return _then(_self.copyWith(marketStopInfo: value));
   });
 }
 }

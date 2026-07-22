@@ -4,7 +4,7 @@ import 'package:rat_race_escape/core/theme/app_colors.dart';
 import 'package:rat_race_escape/core/theme/app_spacing.dart';
 import 'package:rat_race_escape/core/theme/app_text_styles.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_state.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/insight_card_popup.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/dialogs/insight_card_popup.dart';
 import 'package:rat_race_escape/features/gameplay/domain/repositories/insight_card_repository.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/insight_card.dart';
 import 'package:get_it/get_it.dart';

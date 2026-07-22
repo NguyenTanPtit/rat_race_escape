@@ -7,8 +7,8 @@ import 'package:rat_race_escape/features/gameplay/domain/repositories/game_state
 import 'package:rat_race_escape/main.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/pages/main_game_screen.dart';
 
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/end_turn_button.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/event_card.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/common/end_turn_button.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/events/event_card.dart';
 import 'dart:math';
 
 class _MockRandom implements Random {

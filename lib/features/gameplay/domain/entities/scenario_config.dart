@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'asset.dart';
 import 'loan.dart';
 import 'game_state.dart';
+import 'market_class_config.dart';
 
 part 'scenario_config.freezed.dart';
 part 'scenario_config.g.dart';
@@ -31,6 +32,7 @@ abstract class ScenarioConfig with _$ScenarioConfig {
     @Default(8) int sideJobStress,
     @Default(2) int maxSideJobsPerMonth,
     @Default(0.03) double assetSellFeeRate,
+    @Default([]) List<MarketClassConfig> marketClasses,
   }) = _ScenarioConfig;
 
   factory ScenarioConfig.fromJson(Map<String, dynamic> json) => _$ScenarioConfigFromJson(json);

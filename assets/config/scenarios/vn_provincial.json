@@ -13,12 +13,50 @@
   "currency": "vnd",
   "bankruptcyMonthsThreshold": 3,
   "baseEventChance": 0.2,
+  "marketClasses": [
+    {
+      "id": "index_fund",
+      "name": "Quỹ Index",
+      "type": "stock",
+      "annualYieldRate": 11.0,
+      "monthlyDrift": 0.0,
+      "monthlyVolatility": 2.0,
+      "crashChance": 0.008,
+      "crashMonthlyDrift": -8.0,
+      "crashMinMonths": 5,
+      "crashMaxMonths": 10,
+      "boomChance": 0.016,
+      "boomMonthlyDrift": 3.0,
+      "boomMinMonths": 6,
+      "boomMaxMonths": 12,
+      "meanReversion": 0.03
+    },
+    {
+      "id": "land",
+      "name": "Đất nền",
+      "type": "realEstate",
+      "annualYieldRate": 2.5,
+      "monthlyDrift": 0.55,
+      "monthlyVolatility": 4.5,
+      "crashChance": 0.011,
+      "crashMonthlyDrift": -7.5,
+      "crashMinMonths": 6,
+      "crashMaxMonths": 12,
+      "boomChance": 0.014,
+      "boomMonthlyDrift": 5.5,
+      "boomMinMonths": 6,
+      "boomMaxMonths": 12,
+      "meanReversion": 0.02
+    }
+  ],
   "events": [
     {
       "id": "e_tet",
       "textKey": "tet_holiday",
       "trigger": {
-        "targetCalendarMonths": [1]
+        "targetCalendarMonths": [
+          1
+        ]
       },
       "absoluteChance": 1.0,
       "options": [
@@ -89,7 +127,9 @@
       "textKey": "over_saving",
       "trigger": {
         "minStress": 60,
-        "excludedFlags": ["extreme_frugality"]
+        "excludedFlags": [
+          "extreme_frugality"
+        ]
       },
       "weight": 1.5,
       "options": [
@@ -100,7 +140,9 @@
             "monthlyExpensesDelta": -1000000,
             "stress": 10,
             "network": -30,
-            "addedFlags": ["extreme_frugality"]
+            "addedFlags": [
+              "extreme_frugality"
+            ]
           }
         },
         {
@@ -117,7 +159,9 @@
       "id": "e_stomachache",
       "textKey": "stomachache",
       "trigger": {
-        "requiredFlags": ["extreme_frugality"]
+        "requiredFlags": [
+          "extreme_frugality"
+        ]
       },
       "absoluteChance": 0.2,
       "options": [
@@ -136,7 +180,9 @@
           "effect": {
             "cash": -10000000,
             "monthlyExpensesDelta": 1000000,
-            "removedFlags": ["extreme_frugality"],
+            "removedFlags": [
+              "extreme_frugality"
+            ],
             "insightCardId": "paradox_of_thrift"
           }
         }
@@ -155,7 +201,9 @@
           "labelKey": "buc_opt1",
           "effect": {
             "cash": -20000000,
-            "addedFlags": ["owns_used_car"],
+            "addedFlags": [
+              "owns_used_car"
+            ],
             "monthlyExpensesDelta": 500000,
             "stress": -5,
             "insightCardId": "total_cost_of_ownership"
@@ -191,7 +239,9 @@
       "id": "e_car_broken",
       "textKey": "used_car_broken",
       "trigger": {
-        "requiredFlags": ["owns_used_car"]
+        "requiredFlags": [
+          "owns_used_car"
+        ]
       },
       "absoluteChance": 0.3,
       "options": [

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/stat_bar.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/common/stat_bar.dart';
 import 'package:rat_race_escape/core/theme/app_colors.dart';
 
 void main() {

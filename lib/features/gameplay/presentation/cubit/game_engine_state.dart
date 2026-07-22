@@ -16,6 +16,21 @@ abstract class MonthlySummaryDelta with _$MonthlySummaryDelta {
   }) = _MonthlySummaryDelta;
 }
 
+enum MarketStopKind { crash, boom }
+
+/// Session-only info about why auto-advance stopped on a market move.
+/// [changePercent] is the drawdown from peak (crash) or the gain over the
+/// trailing 12-month average (boom), as a positive percentage.
+@freezed
+abstract class MarketStopInfo with _$MarketStopInfo {
+  const factory MarketStopInfo({
+    required String classId,
+    required String className,
+    required MarketStopKind kind,
+    required double changePercent,
+  }) = _MarketStopInfo;
+}
+
 @freezed
 sealed class GameEngineState with _$GameEngineState {
   const factory GameEngineState.initial() = GameEngineInitial;
@@ -26,6 +41,7 @@ sealed class GameEngineState with _$GameEngineState {
     GameEvent? currentEvent,
     @Default(false) bool isAutoAdvancing,
     YearlyRecap? yearlyRecap,
+    MarketStopInfo? marketStopInfo,
   ]) = GameEnginePlaying;
   const factory GameEngineState.gameOver(GameOverReason reason, GameState finalState, [@Default({}) Set<String> newlyUnlockedInsightCardIds]) = GameEngineGameOver;
   const factory GameEngineState.won(GameState finalState, [@Default({}) Set<String> newlyUnlockedInsightCardIds]) = GameEngineWon;

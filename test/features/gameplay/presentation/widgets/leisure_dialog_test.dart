@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/cubit/game_engine_cubit.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/leisure_dialog.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/game_button.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/dialogs/leisure_dialog.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/common/game_button.dart';
 
 class MockGameEngineCubit extends Mock implements GameEngineCubit {}
 

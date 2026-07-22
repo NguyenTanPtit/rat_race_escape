@@ -7,7 +7,7 @@ import 'package:rat_race_escape/features/gameplay/domain/entities/game_event.dar
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_state.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/cubit/game_engine_cubit.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/cubit/game_engine_state.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/event_card.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/events/event_card.dart';
 import 'package:rat_race_escape/l10n/app_localizations.dart';
 
 class MockGameEngineCubit extends Mock implements GameEngineCubit {}

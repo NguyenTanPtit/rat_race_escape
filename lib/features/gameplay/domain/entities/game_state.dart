@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'asset.dart';
 import 'loan.dart';
+import 'market_class_state.dart';
 
 part 'game_state.freezed.dart';
 part 'game_state.g.dart';
@@ -57,6 +58,9 @@ abstract class GameState with _$GameState {
     // 6. Inventories
     @Default([]) List<Asset> assets,
     @Default([]) List<Loan> loans,
+
+    // 7. Market (per asset class; empty for pre-market saves)
+    @Default({}) Map<String, MarketClassState> market,
   }) = _GameState;
 
   // Custom getters can be added through private constructor
@@ -66,8 +70,16 @@ abstract class GameState with _$GameState {
 
   int get age => ageInMonths ~/ 12;
 
+  /// Market value of a single asset: units × current price for market holdings,
+  /// baseValue for legacy assets. Single source of truth — UI must use this too.
+  double assetMarketValue(Asset asset) {
+    final classState = asset.marketClassId == null ? null : market[asset.marketClassId];
+    if (classState == null) return asset.baseValue;
+    return asset.units * classState.price;
+  }
+
   double get netWorth {
-    double totalAssets = assets.fold(0, (sum, asset) => sum + asset.baseValue);
+    double totalAssets = assets.fold(0, (sum, asset) => sum + assetMarketValue(asset));
     double totalLoans = loans.fold(0, (sum, loan) => sum + loan.principalAmount);
     return cash + totalAssets - totalLoans;
   }

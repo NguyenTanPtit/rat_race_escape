@@ -4,8 +4,8 @@ import 'package:fpdart/fpdart.dart';
 import 'package:rat_race_escape/core/error/failure.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_state.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/turn_result.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/apply_event_option_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/process_next_month_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/events/apply_event_option_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/process_next_month_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/cubit/game_engine_cubit.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/cubit/game_engine_state.dart';
 import 'package:rat_race_escape/features/gameplay/domain/repositories/game_state_repository.dart';
@@ -15,7 +15,11 @@ import 'package:rat_race_escape/features/gameplay/domain/entities/event_definiti
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_event.dart';
 
 import 'package:rat_race_escape/features/gameplay/domain/entities/scenario_config.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/spend_on_leisure_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/spend_on_leisure_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/market/buy_market_asset_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/market/sell_market_asset_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/entities/market_class_config.dart';
+import 'package:rat_race_escape/features/gameplay/domain/entities/market_class_state.dart';
 
 class MockProcessNextMonthUseCase implements ProcessNextMonthUseCase {
   Either<Failure, TurnResult> resultToReturn = Right(const TurnContinued(GameState(
@@ -74,6 +78,50 @@ class MockSpendOnLeisureUseCase implements SpendOnLeisureUseCase {
 
   @override
   Either<Failure, TurnResult> call(GameState state, double amount) {
+    return resultToReturn;
+  }
+}
+
+class MockBuyMarketAssetUseCase implements BuyMarketAssetUseCase {
+  Either<Failure, TurnResult> resultToReturn = Right(const TurnContinued(GameState(
+    country: Country.vietnam,
+    currency: Currency.vnd,
+    scenarioId: 'test',
+    cash: 0,
+    monthlyExpenses: 0,
+    monthlyRent: 0,
+    baseSalary: 0,
+  )));
+
+  String? lastClassId;
+  double? lastAmount;
+
+  @override
+  Either<Failure, TurnResult> call(GameState state, String classId, double amount) {
+    lastClassId = classId;
+    lastAmount = amount;
+    return resultToReturn;
+  }
+}
+
+class MockSellMarketAssetUseCase implements SellMarketAssetUseCase {
+  Either<Failure, TurnResult> resultToReturn = Right(const TurnContinued(GameState(
+    country: Country.vietnam,
+    currency: Currency.vnd,
+    scenarioId: 'test',
+    cash: 0,
+    monthlyExpenses: 0,
+    monthlyRent: 0,
+    baseSalary: 0,
+  )));
+
+  String? lastClassId;
+  double? lastAmount;
+
+  @override
+  Either<Failure, TurnResult> call(GameState state, String classId, double amount) {
+    lastClassId = classId;
+    lastAmount = amount;
     return resultToReturn;
   }
 }
@@ -173,6 +221,8 @@ void main() {
   late MockGameStateRepository mockGameStateRepository;
   late MockScenarioConfigRepository mockScenarioConfigRepository;
   late MockEventPoolRepository mockEventPoolRepository;
+  late MockBuyMarketAssetUseCase mockBuyMarketAssetUseCase;
+  late MockSellMarketAssetUseCase mockSellMarketAssetUseCase;
 
   setUp(() {
     mockProcessNextMonthUseCase = MockProcessNextMonthUseCase();
@@ -181,6 +231,8 @@ void main() {
     mockGameStateRepository = MockGameStateRepository();
     mockScenarioConfigRepository = MockScenarioConfigRepository();
     mockEventPoolRepository = MockEventPoolRepository();
+    mockBuyMarketAssetUseCase = MockBuyMarketAssetUseCase();
+    mockSellMarketAssetUseCase = MockSellMarketAssetUseCase();
     cubit = GameEngineCubit(
       mockProcessNextMonthUseCase,
       mockApplyEventOptionUseCase,
@@ -188,6 +240,8 @@ void main() {
       mockGameStateRepository,
       mockScenarioConfigRepository,
       mockEventPoolRepository,
+      mockBuyMarketAssetUseCase,
+      mockSellMarketAssetUseCase,
     );
   });
 
@@ -363,6 +417,8 @@ void main() {
         mockGameStateRepository,
         mockScenarioConfigRepository,
         mockEventPoolRepository,
+        mockBuyMarketAssetUseCase,
+        mockSellMarketAssetUseCase,
       );
       
       cubit2.startGame(baseState);
@@ -390,6 +446,8 @@ void main() {
         mockGameStateRepository,
         mockScenarioConfigRepository,
         mockEventPoolRepository,
+        mockBuyMarketAssetUseCase,
+        mockSellMarketAssetUseCase,
       );
       
       cubit2.startGame(baseState.copyWith(currentEventId: 'event_1'));
@@ -942,6 +1000,175 @@ void main() {
       final finalState = cubit.state as GameEnginePlaying;
       expect(finalState.gameState.currentMonth, 3);
       expect(finalState.gameState.currentEventId, 'stop');
+    });
+  });
+
+  group('market actions & stop conditions', () {
+    const marketConfig = MarketClassConfig(
+      id: 'land',
+      name: 'Đất nền',
+      annualYieldRate: 2.5,
+      monthlyDrift: 0.55,
+      monthlyVolatility: 4.5,
+      crashChance: 0.011,
+      crashMonthlyDrift: -7.5,
+      crashMinMonths: 6,
+      crashMaxMonths: 12,
+      boomChance: 0.014,
+      boomMonthlyDrift: 5.5,
+      boomMinMonths: 6,
+      boomMaxMonths: 12,
+    );
+
+    GameState marketState({double price = 1.0, double peak = 1.0, List<double>? recent}) {
+      return baseState.copyWith(market: {
+        'land': MarketClassState(
+          config: marketConfig,
+          price: price,
+          peakPrice: peak,
+          // Drawdown is measured against the rolling window, so the peak
+          // must be present there for crash crossings to register.
+          recentPrices: recent ?? [peak],
+        ),
+      });
+    }
+
+    test('buyMarketAsset delegates to usecase and emits + saves resulting state', () async {
+      cubit.startGame(baseState);
+      final bought = baseState.copyWith(cash: 1234567);
+      mockBuyMarketAssetUseCase.resultToReturn = Right(TurnContinued(bought));
+
+      await cubit.buyMarketAsset('land', 2000000);
+
+      expect(mockBuyMarketAssetUseCase.lastClassId, 'land');
+      expect(mockBuyMarketAssetUseCase.lastAmount, 2000000);
+      expect((cubit.state as GameEnginePlaying).gameState.cash, 1234567);
+      expect(mockGameStateRepository.savedState?.cash, 1234567);
+    });
+
+    test('sellMarketAsset delegates to usecase and emits + saves resulting state', () async {
+      cubit.startGame(baseState);
+      final sold = baseState.copyWith(cash: 7654321);
+      mockSellMarketAssetUseCase.resultToReturn = Right(TurnContinued(sold));
+
+      await cubit.sellMarketAsset('land', 500000);
+
+      expect(mockSellMarketAssetUseCase.lastClassId, 'land');
+      expect(mockSellMarketAssetUseCase.lastAmount, 500000);
+      expect((cubit.state as GameEnginePlaying).gameState.cash, 7654321);
+      expect(mockGameStateRepository.savedState?.cash, 7654321);
+    });
+
+    test('buyMarketAsset failure is swallowed silently and state stays unchanged', () async {
+      cubit.startGame(baseState);
+      mockBuyMarketAssetUseCase.resultToReturn = Left(Failure('Not enough cash'));
+
+      await cubit.buyMarketAsset('land', 999999999);
+
+      expect(cubit.state, isA<GameEnginePlaying>());
+      expect((cubit.state as GameEnginePlaying).gameState.cash, baseState.cash);
+    });
+
+    test('autoAdvance stops with crash info when drawdown crosses 20 percent', () async {
+      cubit.startGame(marketState());
+
+      final month1 = marketState(price: 0.9, peak: 1.0)
+          .copyWith(currentMonth: 2, ageInMonths: 265); // drawdown 10%
+      final month2 = marketState(price: 0.75, peak: 1.0)
+          .copyWith(currentMonth: 3, ageInMonths: 266); // drawdown 25% -> crossing
+      final month3 = marketState(price: 0.74, peak: 1.0)
+          .copyWith(currentMonth: 4, ageInMonths: 267, currentEventId: 'safety_stop');
+
+      mockProcessNextMonthUseCase.resultsQueue = [
+        Right(TurnContinued(month1)),
+        Right(TurnContinued(month2)),
+        Right(TurnContinued(month3)),
+      ];
+
+      await cubit.autoAdvance(tick: Duration.zero);
+
+      final finalState = cubit.state as GameEnginePlaying;
+      expect(finalState.gameState.currentMonth, 3, reason: 'must stop ON the crossing month');
+      expect(finalState.isAutoAdvancing, isFalse);
+      expect(finalState.marketStopInfo, isNotNull);
+      expect(finalState.marketStopInfo!.kind, MarketStopKind.crash);
+      expect(finalState.marketStopInfo!.classId, 'land');
+      expect(finalState.marketStopInfo!.changePercent, closeTo(25.0, 0.01));
+    });
+
+    test('autoAdvance does NOT re-stop while drawdown stays above 20 percent (no re-crossing)', () async {
+      // Start already 25% down: resuming the advance must not brake again at 26%.
+      cubit.startGame(marketState(price: 0.75, peak: 1.0));
+
+      final month1 = marketState(price: 0.74, peak: 1.0)
+          .copyWith(currentMonth: 2, ageInMonths: 265);
+      final month2 = marketState(price: 0.73, peak: 1.0)
+          .copyWith(currentMonth: 3, ageInMonths: 266, currentEventId: 'stop');
+
+      mockProcessNextMonthUseCase.resultsQueue = [
+        Right(TurnContinued(month1)),
+        Right(TurnContinued(month2)),
+      ];
+
+      await cubit.autoAdvance(tick: Duration.zero);
+
+      final finalState = cubit.state as GameEnginePlaying;
+      expect(finalState.gameState.currentMonth, 3, reason: 'must run through to the event');
+      expect(finalState.marketStopInfo, isNull);
+    });
+
+    test('autoAdvance stops with boom info when price crosses 25 percent above trailing average', () async {
+      cubit.startGame(marketState(recent: List.filled(12, 1.0)));
+
+      final month1 = marketState(price: 1.1, peak: 1.1, recent: List.filled(12, 1.0))
+          .copyWith(currentMonth: 2, ageInMonths: 265); // ratio 1.1
+      final month2 = marketState(price: 1.3, peak: 1.3, recent: List.filled(12, 1.0))
+          .copyWith(currentMonth: 3, ageInMonths: 266); // ratio 1.3 -> crossing
+      final month3 = marketState(price: 1.31, peak: 1.31, recent: List.filled(12, 1.0))
+          .copyWith(currentMonth: 4, ageInMonths: 267, currentEventId: 'safety_stop');
+
+      mockProcessNextMonthUseCase.resultsQueue = [
+        Right(TurnContinued(month1)),
+        Right(TurnContinued(month2)),
+        Right(TurnContinued(month3)),
+      ];
+
+      await cubit.autoAdvance(tick: Duration.zero);
+
+      final finalState = cubit.state as GameEnginePlaying;
+      expect(finalState.gameState.currentMonth, 3);
+      expect(finalState.marketStopInfo, isNotNull);
+      expect(finalState.marketStopInfo!.kind, MarketStopKind.boom);
+      expect(finalState.marketStopInfo!.changePercent, closeTo(30.0, 0.01));
+    });
+
+    test('clearMarketStop removes the stop info from state', () async {
+      cubit.startGame(marketState());
+      final crossed = marketState(price: 0.75, peak: 1.0).copyWith(currentMonth: 2, ageInMonths: 265);
+      mockProcessNextMonthUseCase.resultsQueue = [Right(TurnContinued(crossed))];
+
+      await cubit.autoAdvance(tick: Duration.zero);
+      expect((cubit.state as GameEnginePlaying).marketStopInfo, isNotNull);
+
+      cubit.clearMarketStop();
+      expect((cubit.state as GameEnginePlaying).marketStopInfo, isNull);
+    });
+
+    test('resuming autoAdvance after a market stop clears marketStopInfo', () async {
+      cubit.startGame(marketState());
+      final crossed = marketState(price: 0.75, peak: 1.0).copyWith(currentMonth: 2, ageInMonths: 265);
+      mockProcessNextMonthUseCase.resultsQueue = [Right(TurnContinued(crossed))];
+      await cubit.autoAdvance(tick: Duration.zero);
+      expect((cubit.state as GameEnginePlaying).marketStopInfo, isNotNull);
+
+      final next = marketState(price: 0.74, peak: 1.0)
+          .copyWith(currentMonth: 3, ageInMonths: 266, currentEventId: 'stop');
+      mockProcessNextMonthUseCase.resultsQueue = [Right(TurnContinued(next))];
+      await cubit.autoAdvance(tick: Duration.zero);
+
+      final finalState = cubit.state as GameEnginePlaying;
+      expect(finalState.gameState.currentMonth, 3);
+      expect(finalState.marketStopInfo, isNull);
     });
   });
 }

@@ -6,17 +6,18 @@ import 'package:rat_race_escape/core/theme/app_spacing.dart';
 import 'package:rat_race_escape/core/theme/app_text_styles.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/cubit/game_engine_cubit.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/cubit/game_engine_state.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/bottom_nav.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/end_turn_button.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/event_card.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/money_display.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/stat_bar.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/common/bottom_nav.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/common/end_turn_button.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/events/event_card.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/common/money_display.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/common/stat_bar.dart';
 import 'package:rat_race_escape/core/format/money_format.dart';
 import 'package:rat_race_escape/l10n/app_localizations.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/yearly_recap_dialog.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/dialogs/yearly_recap_dialog.dart';
 import 'package:flutter/services.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/insight_card_popup.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/leisure_dialog.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/dialogs/insight_card_popup.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/dialogs/leisure_dialog.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/market/market_decision_dialog.dart';
 
 class MainGameScreen extends StatefulWidget {
   const MainGameScreen({super.key});
@@ -75,6 +76,20 @@ class _MainGameScreenState extends State<MainGameScreen> {
               barrierDismissible: false,
               builder: (_) => YearlyRecapDialog(
                 recap: state.yearlyRecap!,
+              ),
+            );
+          }
+
+          // Market stop dialog: clear FIRST so re-emits can't re-trigger it.
+          if (!state.isAutoAdvancing && state.marketStopInfo != null) {
+            final info = state.marketStopInfo!;
+            final cubit = context.read<GameEngineCubit>();
+            cubit.clearMarketStop();
+            showDialog(
+              context: context,
+              builder: (_) => BlocProvider.value(
+                value: cubit,
+                child: MarketDecisionDialog(info: info),
               ),
             );
           }

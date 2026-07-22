@@ -66,6 +66,12 @@ _GameState _$GameStateFromJson(Map<String, dynamic> json) => _GameState(
           ?.map((e) => Loan.fromJson(e as Map<String, dynamic>))
           .toList() ??
       const [],
+  market:
+      (json['market'] as Map<String, dynamic>?)?.map(
+        (k, e) =>
+            MapEntry(k, MarketClassState.fromJson(e as Map<String, dynamic>)),
+      ) ??
+      const {},
 );
 
 Map<String, dynamic> _$GameStateToJson(_GameState instance) =>
@@ -103,6 +109,7 @@ Map<String, dynamic> _$GameStateToJson(_GameState instance) =>
       'assetSellFeeRate': instance.assetSellFeeRate,
       'assets': instance.assets.map((e) => e.toJson()).toList(),
       'loans': instance.loans.map((e) => e.toJson()).toList(),
+      'market': instance.market.map((k, e) => MapEntry(k, e.toJson())),
     };
 
 const _$CountryEnumMap = {

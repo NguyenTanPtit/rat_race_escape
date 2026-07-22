@@ -8,23 +8,24 @@ import 'package:rat_race_escape/features/gameplay/domain/entities/game_state.dar
 import 'package:rat_race_escape/features/gameplay/domain/entities/turn_result.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/asset.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/loan.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/apply_event_option_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/calculate_cashflow_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/check_game_status_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/generate_event_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/process_loans_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/process_next_month_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/spend_on_leisure_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/update_metrics_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/check_behavioral_insights_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/events/apply_event_option_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/calculate_cashflow_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/check_game_status_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/events/generate_event_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/process_loans_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/process_next_month_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/spend_on_leisure_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/market/update_market_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/update_metrics_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/check_behavioral_insights_usecase.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rat_race_escape/features/gameplay/domain/factories/game_state_factory.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_event.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/asset_listing.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/buy_asset_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/pay_debt_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/sell_asset_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/work_side_job_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/buy_asset_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/pay_debt_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/sell_asset_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/work_side_job_usecase.dart';
 
 const stressToCashWeight = 500000.0;
 
@@ -71,14 +72,16 @@ void main() {
     updateMetricsUseCase = UpdateMetricsUseCase();
     
     final random = Random(randomSeed);
+    final updateMarketUseCase = UpdateMarketUseCase(random);
     generateEventUseCase = GenerateEventUseCase(eventPoolRepository, random);
-    
+
     checkGameStatusUseCase = CheckGameStatusUseCase();
     final checkBehavioralInsightsUseCase = CheckBehavioralInsightsUseCase();
-    
+
     processNextMonthUseCase = ProcessNextMonthUseCase(
       calculateCashflowUseCase,
       processLoansUseCase,
+      updateMarketUseCase,
       updateMetricsUseCase,
       generateEventUseCase,
       checkGameStatusUseCase,

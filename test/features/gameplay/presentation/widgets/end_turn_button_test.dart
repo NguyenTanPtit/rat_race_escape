@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rat_race_escape/core/theme/app_colors.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/end_turn_button.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/common/end_turn_button.dart';
 
 void main() {
   testWidgets('EndTurnButton renders and handles tap correctly', (WidgetTester tester) async {

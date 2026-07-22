@@ -1,4 +1,5 @@
 import '../entities/game_state.dart';
+import '../entities/market_class_state.dart';
 import '../entities/scenario_config.dart';
 
 class GameStateFactory {
@@ -27,6 +28,9 @@ class GameStateFactory {
       sideJobStress: config.sideJobStress,
       maxSideJobsPerMonth: config.maxSideJobsPerMonth,
       assetSellFeeRate: config.assetSellFeeRate,
+      market: {
+        for (final c in config.marketClasses) c.id: MarketClassState(config: c),
+      },
     );
   }
 

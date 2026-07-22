@@ -7,9 +7,11 @@ import '../../../../core/error/failure.dart';
 import '../../domain/entities/game_event.dart';
 import '../../domain/entities/game_state.dart';
 import '../../domain/entities/turn_result.dart';
-import '../../domain/usecases/apply_event_option_usecase.dart';
-import '../../domain/usecases/process_next_month_usecase.dart';
-import '../../domain/usecases/spend_on_leisure_usecase.dart';
+import '../../domain/usecases/events/apply_event_option_usecase.dart';
+import '../../domain/usecases/market/buy_market_asset_usecase.dart';
+import '../../domain/usecases/engine/process_next_month_usecase.dart';
+import '../../domain/usecases/market/sell_market_asset_usecase.dart';
+import '../../domain/usecases/actions/spend_on_leisure_usecase.dart';
 import '../../domain/repositories/game_state_repository.dart';
 import '../../domain/repositories/scenario_config_repository.dart';
 import '../../domain/repositories/event_pool_repository.dart';
@@ -24,6 +26,8 @@ class GameEngineCubit extends Cubit<GameEngineState> {
   final GameStateRepository _gameStateRepository;
   final ScenarioConfigRepository _scenarioConfigRepository;
   final EventPoolRepository _eventPoolRepository;
+  final BuyMarketAssetUseCase _buyMarketAssetUseCase;
+  final SellMarketAssetUseCase _sellMarketAssetUseCase;
   bool _isProcessing = false;
   
   final List<MonthlyHistoryRecord> _historyBuffer = [];
@@ -37,6 +41,8 @@ class GameEngineCubit extends Cubit<GameEngineState> {
     this._gameStateRepository,
     this._scenarioConfigRepository,
     this._eventPoolRepository,
+    this._buyMarketAssetUseCase,
+    this._sellMarketAssetUseCase,
   ) : super(const GameEngineState.initial());
 
   Future<void> startNewGame(Country country, String scenarioId) async {
@@ -80,6 +86,42 @@ class GameEngineCubit extends Cubit<GameEngineState> {
     } finally {
       _isProcessing = false;
     }
+  }
+
+  // Crossing thresholds for market stop conditions (same pattern as stress 75/90).
+  static const double _crashStop1 = 0.20;
+  static const double _crashStop2 = 0.40;
+  static const double _boomStopRatio = 1.25;
+
+  /// Detects a market move worth stopping for: drawdown crossing 20%/40%
+  /// from peak, or price crossing 25% above the trailing 12-month average.
+  MarketStopInfo? _detectMarketStop(GameState oldState, GameState newState) {
+    for (final entry in newState.market.entries) {
+      final oldCls = oldState.market[entry.key];
+      if (oldCls == null) continue;
+      final newCls = entry.value;
+
+      final crossedCrash = (oldCls.drawdown < _crashStop1 && newCls.drawdown >= _crashStop1) ||
+          (oldCls.drawdown < _crashStop2 && newCls.drawdown >= _crashStop2);
+      if (crossedCrash) {
+        return MarketStopInfo(
+          classId: newCls.classId,
+          className: newCls.name,
+          kind: MarketStopKind.crash,
+          changePercent: newCls.drawdown * 100,
+        );
+      }
+
+      if (oldCls.trailingRatio < _boomStopRatio && newCls.trailingRatio >= _boomStopRatio) {
+        return MarketStopInfo(
+          classId: newCls.classId,
+          className: newCls.name,
+          kind: MarketStopKind.boom,
+          changePercent: (newCls.trailingRatio - 1) * 100,
+        );
+      }
+    }
+    return null;
   }
 
   Future<GameEvent?> _resolveActiveEvent(GameState gameState) async {
@@ -152,6 +194,7 @@ class GameEngineCubit extends Cubit<GameEngineState> {
       isAutoAdvancing: true,
       yearlyRecap: null,
       newlyUnlockedInsightCardIds: {},
+      marketStopInfo: null,
     ));
 
     while (!_stopAdvanceRequested && state is GameEnginePlaying) {
@@ -167,6 +210,10 @@ class GameEngineCubit extends Cubit<GameEngineState> {
         break;
       }
       if (playingState.yearlyRecap != null) {
+        stopAutoAdvance();
+        break;
+      }
+      if (playingState.marketStopInfo != null) {
         stopAutoAdvance();
         break;
       }
@@ -233,6 +280,67 @@ class GameEngineCubit extends Cubit<GameEngineState> {
     }
   }
 
+  /// Buys [amount] worth of the market asset class at the current price.
+  Future<void> buyMarketAsset(String classId, double amount) async {
+    if (state is! GameEnginePlaying) return;
+    if (_isProcessing) {
+      debugPrint('[GameEngineCubit] buyMarketAsset early return: already processing');
+      return;
+    }
+    final currentState = (state as GameEnginePlaying).gameState;
+
+    _isProcessing = true;
+    try {
+      final result = _buyMarketAssetUseCase(currentState, classId, amount);
+      await result.fold(
+        (failure) async {
+          debugPrint('[GameEngineCubit] buyMarketAsset swallowed: ${failure.message}');
+        },
+        (turnResult) async {
+          await _emitTurnResult(turnResult, isFromNextMonth: false);
+        },
+      );
+    } catch (e) {
+      emit(GameEngineState.error('Lỗi hệ thống: $e'));
+    } finally {
+      _isProcessing = false;
+    }
+  }
+
+  /// Sells up to [amount] (market value) of the market holding.
+  Future<void> sellMarketAsset(String classId, double amount) async {
+    if (state is! GameEnginePlaying) return;
+    if (_isProcessing) {
+      debugPrint('[GameEngineCubit] sellMarketAsset early return: already processing');
+      return;
+    }
+    final currentState = (state as GameEnginePlaying).gameState;
+
+    _isProcessing = true;
+    try {
+      final result = _sellMarketAssetUseCase(currentState, classId, amount);
+      await result.fold(
+        (failure) async {
+          debugPrint('[GameEngineCubit] sellMarketAsset swallowed: ${failure.message}');
+        },
+        (turnResult) async {
+          await _emitTurnResult(turnResult, isFromNextMonth: false);
+        },
+      );
+    } catch (e) {
+      emit(GameEngineState.error('Lỗi hệ thống: $e'));
+    } finally {
+      _isProcessing = false;
+    }
+  }
+
+  /// Clears the market stop dialog data after the UI has shown it.
+  void clearMarketStop() {
+    if (state is GameEnginePlaying) {
+      emit((state as GameEnginePlaying).copyWith(marketStopInfo: null));
+    }
+  }
+
   /// Spend cash on leisure to reduce stress
   Future<void> spendOnLeisure(double amount) async {
     if (state is! GameEnginePlaying) return;
@@ -277,12 +385,14 @@ class GameEngineCubit extends Cubit<GameEngineState> {
     MonthlySummaryDelta? monthlySummary;
     bool isAutoAdvancing = false;
     YearlyRecap? currentYearlyRecap;
+    MarketStopInfo? currentMarketStop;
     if (state is GameEnginePlaying) {
       final playingState = state as GameEnginePlaying;
       final oldState = playingState.gameState;
       oldUnlockedCards = oldState.unlockedInsightCardIds;
       isAutoAdvancing = playingState.isAutoAdvancing;
       currentYearlyRecap = playingState.yearlyRecap;
+      currentMarketStop = playingState.marketStopInfo;
       
       if (isFromNextMonth) {
         // Calculate cashIn and cashOut based on oldState as requested
@@ -332,6 +442,15 @@ class GameEngineCubit extends Cubit<GameEngineState> {
             stopAutoAdvance(); // Cashflow jump
           }
         }
+
+        // Market stop conditions (crossing-based, like stress).
+        // Evaluated regardless of monthlySummary so the dialog also shows on
+        // a manual end-turn that lands exactly on the crossing month.
+        final marketStop = _detectMarketStop(oldState, turnResult.state);
+        if (marketStop != null) {
+          currentMarketStop = marketStop;
+          if (isAutoAdvancing) stopAutoAdvance();
+        }
         
         _prevMonthCashDelta = currentCashDelta;
         
@@ -371,7 +490,7 @@ class GameEngineCubit extends Cubit<GameEngineState> {
 
     switch (turnResult) {
       case TurnContinued():
-        emit(GameEngineState.playing(newState, newlyUnlockedInsightCardIds, monthlySummary, activeEvent, isAutoAdvancing, currentYearlyRecap));
+        emit(GameEngineState.playing(newState, newlyUnlockedInsightCardIds, monthlySummary, activeEvent, isAutoAdvancing, currentYearlyRecap, currentMarketStop));
         if (!isAutoAdvancing) _gameStateRepository.saveGame(newState);
       case TurnWon():
         stopAutoAdvance();

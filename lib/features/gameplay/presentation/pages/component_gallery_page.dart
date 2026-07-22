@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:rat_race_escape/core/theme/app_colors.dart';
 import 'package:rat_race_escape/core/theme/app_spacing.dart';
 import 'package:rat_race_escape/core/theme/app_text_styles.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/bottom_nav.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/end_turn_button.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/game_button.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/game_card.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/money_display.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/sketchy_game_card.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/stat_bar.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/common/bottom_nav.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/common/end_turn_button.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/common/game_button.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/common/game_card.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/common/money_display.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/common/sketchy_game_card.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/common/stat_bar.dart';
 
 class ComponentGalleryPage extends StatelessWidget {
   const ComponentGalleryPage({super.key});

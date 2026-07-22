@@ -15,9 +15,10 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Asset {
 
- String get id; String get name; double get baseValue;// Current value of the asset
+ String get id; String get name; double get baseValue;// Cost basis for market assets; fixed value for legacy assets
  double get monthlyPassiveIncome;// Passive income generated each month
- AssetType get type;
+ AssetType get type;// Market-traded holdings only; legacy assets keep both at defaults
+ double get units; String? get marketClassId;
 /// Create a copy of Asset
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,16 +31,16 @@ $AssetCopyWith<Asset> get copyWith => _$AssetCopyWithImpl<Asset>(this as Asset, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Asset&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.baseValue, baseValue) || other.baseValue == baseValue)&&(identical(other.monthlyPassiveIncome, monthlyPassiveIncome) || other.monthlyPassiveIncome == monthlyPassiveIncome)&&(identical(other.type, type) || other.type == type));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Asset&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.baseValue, baseValue) || other.baseValue == baseValue)&&(identical(other.monthlyPassiveIncome, monthlyPassiveIncome) || other.monthlyPassiveIncome == monthlyPassiveIncome)&&(identical(other.type, type) || other.type == type)&&(identical(other.units, units) || other.units == units)&&(identical(other.marketClassId, marketClassId) || other.marketClassId == marketClassId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,baseValue,monthlyPassiveIncome,type);
+int get hashCode => Object.hash(runtimeType,id,name,baseValue,monthlyPassiveIncome,type,units,marketClassId);
 
 @override
 String toString() {
-  return 'Asset(id: $id, name: $name, baseValue: $baseValue, monthlyPassiveIncome: $monthlyPassiveIncome, type: $type)';
+  return 'Asset(id: $id, name: $name, baseValue: $baseValue, monthlyPassiveIncome: $monthlyPassiveIncome, type: $type, units: $units, marketClassId: $marketClassId)';
 }
 
 
@@ -50,7 +51,7 @@ abstract mixin class $AssetCopyWith<$Res>  {
   factory $AssetCopyWith(Asset value, $Res Function(Asset) _then) = _$AssetCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, double baseValue, double monthlyPassiveIncome, AssetType type
+ String id, String name, double baseValue, double monthlyPassiveIncome, AssetType type, double units, String? marketClassId
 });
 
 
@@ -67,14 +68,16 @@ class _$AssetCopyWithImpl<$Res>
 
 /// Create a copy of Asset
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? baseValue = null,Object? monthlyPassiveIncome = null,Object? type = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? baseValue = null,Object? monthlyPassiveIncome = null,Object? type = null,Object? units = null,Object? marketClassId = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,baseValue: null == baseValue ? _self.baseValue : baseValue // ignore: cast_nullable_to_non_nullable
 as double,monthlyPassiveIncome: null == monthlyPassiveIncome ? _self.monthlyPassiveIncome : monthlyPassiveIncome // ignore: cast_nullable_to_non_nullable
 as double,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
-as AssetType,
+as AssetType,units: null == units ? _self.units : units // ignore: cast_nullable_to_non_nullable
+as double,marketClassId: freezed == marketClassId ? _self.marketClassId : marketClassId // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -159,10 +162,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  double baseValue,  double monthlyPassiveIncome,  AssetType type)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  double baseValue,  double monthlyPassiveIncome,  AssetType type,  double units,  String? marketClassId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Asset() when $default != null:
-return $default(_that.id,_that.name,_that.baseValue,_that.monthlyPassiveIncome,_that.type);case _:
+return $default(_that.id,_that.name,_that.baseValue,_that.monthlyPassiveIncome,_that.type,_that.units,_that.marketClassId);case _:
   return orElse();
 
 }
@@ -180,10 +183,10 @@ return $default(_that.id,_that.name,_that.baseValue,_that.monthlyPassiveIncome,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  double baseValue,  double monthlyPassiveIncome,  AssetType type)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  double baseValue,  double monthlyPassiveIncome,  AssetType type,  double units,  String? marketClassId)  $default,) {final _that = this;
 switch (_that) {
 case _Asset():
-return $default(_that.id,_that.name,_that.baseValue,_that.monthlyPassiveIncome,_that.type);case _:
+return $default(_that.id,_that.name,_that.baseValue,_that.monthlyPassiveIncome,_that.type,_that.units,_that.marketClassId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +203,10 @@ return $default(_that.id,_that.name,_that.baseValue,_that.monthlyPassiveIncome,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  double baseValue,  double monthlyPassiveIncome,  AssetType type)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  double baseValue,  double monthlyPassiveIncome,  AssetType type,  double units,  String? marketClassId)?  $default,) {final _that = this;
 switch (_that) {
 case _Asset() when $default != null:
-return $default(_that.id,_that.name,_that.baseValue,_that.monthlyPassiveIncome,_that.type);case _:
+return $default(_that.id,_that.name,_that.baseValue,_that.monthlyPassiveIncome,_that.type,_that.units,_that.marketClassId);case _:
   return null;
 
 }
@@ -215,16 +218,19 @@ return $default(_that.id,_that.name,_that.baseValue,_that.monthlyPassiveIncome,_
 @JsonSerializable()
 
 class _Asset implements Asset {
-  const _Asset({required this.id, required this.name, required this.baseValue, this.monthlyPassiveIncome = 0.0, this.type = AssetType.stock});
+  const _Asset({required this.id, required this.name, required this.baseValue, this.monthlyPassiveIncome = 0.0, this.type = AssetType.stock, this.units = 0.0, this.marketClassId});
   factory _Asset.fromJson(Map<String, dynamic> json) => _$AssetFromJson(json);
 
 @override final  String id;
 @override final  String name;
 @override final  double baseValue;
-// Current value of the asset
+// Cost basis for market assets; fixed value for legacy assets
 @override@JsonKey() final  double monthlyPassiveIncome;
 // Passive income generated each month
 @override@JsonKey() final  AssetType type;
+// Market-traded holdings only; legacy assets keep both at defaults
+@override@JsonKey() final  double units;
+@override final  String? marketClassId;
 
 /// Create a copy of Asset
 /// with the given fields replaced by the non-null parameter values.
@@ -239,16 +245,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Asset&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.baseValue, baseValue) || other.baseValue == baseValue)&&(identical(other.monthlyPassiveIncome, monthlyPassiveIncome) || other.monthlyPassiveIncome == monthlyPassiveIncome)&&(identical(other.type, type) || other.type == type));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Asset&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.baseValue, baseValue) || other.baseValue == baseValue)&&(identical(other.monthlyPassiveIncome, monthlyPassiveIncome) || other.monthlyPassiveIncome == monthlyPassiveIncome)&&(identical(other.type, type) || other.type == type)&&(identical(other.units, units) || other.units == units)&&(identical(other.marketClassId, marketClassId) || other.marketClassId == marketClassId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,baseValue,monthlyPassiveIncome,type);
+int get hashCode => Object.hash(runtimeType,id,name,baseValue,monthlyPassiveIncome,type,units,marketClassId);
 
 @override
 String toString() {
-  return 'Asset(id: $id, name: $name, baseValue: $baseValue, monthlyPassiveIncome: $monthlyPassiveIncome, type: $type)';
+  return 'Asset(id: $id, name: $name, baseValue: $baseValue, monthlyPassiveIncome: $monthlyPassiveIncome, type: $type, units: $units, marketClassId: $marketClassId)';
 }
 
 
@@ -259,7 +265,7 @@ abstract mixin class _$AssetCopyWith<$Res> implements $AssetCopyWith<$Res> {
   factory _$AssetCopyWith(_Asset value, $Res Function(_Asset) _then) = __$AssetCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, double baseValue, double monthlyPassiveIncome, AssetType type
+ String id, String name, double baseValue, double monthlyPassiveIncome, AssetType type, double units, String? marketClassId
 });
 
 
@@ -276,14 +282,16 @@ class __$AssetCopyWithImpl<$Res>
 
 /// Create a copy of Asset
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? baseValue = null,Object? monthlyPassiveIncome = null,Object? type = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? baseValue = null,Object? monthlyPassiveIncome = null,Object? type = null,Object? units = null,Object? marketClassId = freezed,}) {
   return _then(_Asset(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,baseValue: null == baseValue ? _self.baseValue : baseValue // ignore: cast_nullable_to_non_nullable
 as double,monthlyPassiveIncome: null == monthlyPassiveIncome ? _self.monthlyPassiveIncome : monthlyPassiveIncome // ignore: cast_nullable_to_non_nullable
 as double,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
-as AssetType,
+as AssetType,units: null == units ? _self.units : units // ignore: cast_nullable_to_non_nullable
+as double,marketClassId: freezed == marketClassId ? _self.marketClassId : marketClassId // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

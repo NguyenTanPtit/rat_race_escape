@@ -30,31 +30,38 @@ import '../../features/gameplay/domain/repositories/insight_card_repository.dart
     as _i107;
 import '../../features/gameplay/domain/repositories/scenario_config_repository.dart'
     as _i96;
-import '../../features/gameplay/domain/usecases/apply_event_option_usecase.dart'
-    as _i742;
-import '../../features/gameplay/domain/usecases/buy_asset_usecase.dart'
-    as _i652;
-import '../../features/gameplay/domain/usecases/calculate_cashflow_usecase.dart'
-    as _i521;
-import '../../features/gameplay/domain/usecases/check_behavioral_insights_usecase.dart'
-    as _i737;
-import '../../features/gameplay/domain/usecases/check_game_status_usecase.dart'
-    as _i669;
-import '../../features/gameplay/domain/usecases/generate_event_usecase.dart'
-    as _i588;
-import '../../features/gameplay/domain/usecases/pay_debt_usecase.dart' as _i734;
-import '../../features/gameplay/domain/usecases/process_loans_usecase.dart'
-    as _i709;
-import '../../features/gameplay/domain/usecases/process_next_month_usecase.dart'
-    as _i541;
-import '../../features/gameplay/domain/usecases/sell_asset_usecase.dart'
-    as _i183;
-import '../../features/gameplay/domain/usecases/spend_on_leisure_usecase.dart'
-    as _i102;
-import '../../features/gameplay/domain/usecases/update_metrics_usecase.dart'
-    as _i454;
-import '../../features/gameplay/domain/usecases/work_side_job_usecase.dart'
-    as _i740;
+import '../../features/gameplay/domain/usecases/actions/buy_asset_usecase.dart'
+    as _i78;
+import '../../features/gameplay/domain/usecases/actions/pay_debt_usecase.dart'
+    as _i22;
+import '../../features/gameplay/domain/usecases/actions/sell_asset_usecase.dart'
+    as _i635;
+import '../../features/gameplay/domain/usecases/actions/spend_on_leisure_usecase.dart'
+    as _i298;
+import '../../features/gameplay/domain/usecases/actions/work_side_job_usecase.dart'
+    as _i453;
+import '../../features/gameplay/domain/usecases/engine/calculate_cashflow_usecase.dart'
+    as _i37;
+import '../../features/gameplay/domain/usecases/engine/check_behavioral_insights_usecase.dart'
+    as _i951;
+import '../../features/gameplay/domain/usecases/engine/check_game_status_usecase.dart'
+    as _i782;
+import '../../features/gameplay/domain/usecases/engine/process_loans_usecase.dart'
+    as _i417;
+import '../../features/gameplay/domain/usecases/engine/process_next_month_usecase.dart'
+    as _i881;
+import '../../features/gameplay/domain/usecases/engine/update_metrics_usecase.dart'
+    as _i680;
+import '../../features/gameplay/domain/usecases/events/apply_event_option_usecase.dart'
+    as _i608;
+import '../../features/gameplay/domain/usecases/events/generate_event_usecase.dart'
+    as _i319;
+import '../../features/gameplay/domain/usecases/market/buy_market_asset_usecase.dart'
+    as _i1072;
+import '../../features/gameplay/domain/usecases/market/sell_market_asset_usecase.dart'
+    as _i359;
+import '../../features/gameplay/domain/usecases/market/update_market_usecase.dart'
+    as _i893;
 import '../../features/gameplay/presentation/cubit/game_engine_cubit.dart'
     as _i910;
 import 'injection.dart' as _i464;
@@ -68,20 +75,44 @@ extension GetItInjectableX on _i174.GetIt {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final registerModule = _$RegisterModule();
     gh.lazySingleton<_i407.Random>(() => registerModule.random);
-    gh.lazySingleton<_i521.CalculateCashflowUseCase>(
-      () => _i521.CalculateCashflowUseCase(),
+    gh.lazySingleton<_i37.CalculateCashflowUseCase>(
+      () => _i37.CalculateCashflowUseCase(),
     );
-    gh.lazySingleton<_i737.CheckBehavioralInsightsUseCase>(
-      () => _i737.CheckBehavioralInsightsUseCase(),
+    gh.lazySingleton<_i951.CheckBehavioralInsightsUseCase>(
+      () => _i951.CheckBehavioralInsightsUseCase(),
     );
-    gh.lazySingleton<_i669.CheckGameStatusUseCase>(
-      () => _i669.CheckGameStatusUseCase(),
+    gh.lazySingleton<_i782.CheckGameStatusUseCase>(
+      () => _i782.CheckGameStatusUseCase(),
     );
-    gh.lazySingleton<_i709.ProcessLoansUseCase>(
-      () => _i709.ProcessLoansUseCase(),
+    gh.lazySingleton<_i417.ProcessLoansUseCase>(
+      () => _i417.ProcessLoansUseCase(),
     );
-    gh.lazySingleton<_i454.UpdateMetricsUseCase>(
-      () => _i454.UpdateMetricsUseCase(),
+    gh.lazySingleton<_i680.UpdateMetricsUseCase>(
+      () => _i680.UpdateMetricsUseCase(),
+    );
+    gh.lazySingleton<_i893.UpdateMarketUseCase>(
+      () => _i893.UpdateMarketUseCase(gh<_i407.Random>()),
+    );
+    gh.lazySingleton<_i78.BuyAssetUseCase>(
+      () => _i78.BuyAssetUseCase(gh<_i782.CheckGameStatusUseCase>()),
+    );
+    gh.lazySingleton<_i22.PayDebtUseCase>(
+      () => _i22.PayDebtUseCase(gh<_i782.CheckGameStatusUseCase>()),
+    );
+    gh.lazySingleton<_i635.SellAssetUseCase>(
+      () => _i635.SellAssetUseCase(gh<_i782.CheckGameStatusUseCase>()),
+    );
+    gh.lazySingleton<_i298.SpendOnLeisureUseCase>(
+      () => _i298.SpendOnLeisureUseCase(gh<_i782.CheckGameStatusUseCase>()),
+    );
+    gh.lazySingleton<_i453.WorkSideJobUseCase>(
+      () => _i453.WorkSideJobUseCase(gh<_i782.CheckGameStatusUseCase>()),
+    );
+    gh.lazySingleton<_i1072.BuyMarketAssetUseCase>(
+      () => _i1072.BuyMarketAssetUseCase(gh<_i782.CheckGameStatusUseCase>()),
+    );
+    gh.lazySingleton<_i359.SellMarketAssetUseCase>(
+      () => _i359.SellMarketAssetUseCase(gh<_i782.CheckGameStatusUseCase>()),
     );
     gh.lazySingleton<_i688.GameStateRepository>(
       () => _i1051.HiveGameStateRepository(),
@@ -92,54 +123,42 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i690.EventPoolRepository>(
       () => _i831.JsonEventPoolRepository(),
     );
-    gh.lazySingleton<_i742.ApplyEventOptionUseCase>(
-      () => _i742.ApplyEventOptionUseCase(
-        gh<_i690.EventPoolRepository>(),
-        gh<_i669.CheckGameStatusUseCase>(),
-      ),
-    );
     gh.lazySingleton<_i96.ScenarioConfigRepository>(
       () => _i248.JsonScenarioConfigRepository(),
     );
-    gh.lazySingleton<_i652.BuyAssetUseCase>(
-      () => _i652.BuyAssetUseCase(gh<_i669.CheckGameStatusUseCase>()),
+    gh.lazySingleton<_i608.ApplyEventOptionUseCase>(
+      () => _i608.ApplyEventOptionUseCase(
+        gh<_i690.EventPoolRepository>(),
+        gh<_i782.CheckGameStatusUseCase>(),
+      ),
     );
-    gh.lazySingleton<_i734.PayDebtUseCase>(
-      () => _i734.PayDebtUseCase(gh<_i669.CheckGameStatusUseCase>()),
-    );
-    gh.lazySingleton<_i183.SellAssetUseCase>(
-      () => _i183.SellAssetUseCase(gh<_i669.CheckGameStatusUseCase>()),
-    );
-    gh.lazySingleton<_i102.SpendOnLeisureUseCase>(
-      () => _i102.SpendOnLeisureUseCase(gh<_i669.CheckGameStatusUseCase>()),
-    );
-    gh.lazySingleton<_i740.WorkSideJobUseCase>(
-      () => _i740.WorkSideJobUseCase(gh<_i669.CheckGameStatusUseCase>()),
-    );
-    gh.lazySingleton<_i588.GenerateEventUseCase>(
-      () => _i588.GenerateEventUseCase(
+    gh.lazySingleton<_i319.GenerateEventUseCase>(
+      () => _i319.GenerateEventUseCase(
         gh<_i690.EventPoolRepository>(),
         gh<_i407.Random>(),
       ),
     );
-    gh.lazySingleton<_i541.ProcessNextMonthUseCase>(
-      () => _i541.ProcessNextMonthUseCase(
-        gh<_i521.CalculateCashflowUseCase>(),
-        gh<_i709.ProcessLoansUseCase>(),
-        gh<_i454.UpdateMetricsUseCase>(),
-        gh<_i588.GenerateEventUseCase>(),
-        gh<_i669.CheckGameStatusUseCase>(),
-        gh<_i737.CheckBehavioralInsightsUseCase>(),
+    gh.lazySingleton<_i881.ProcessNextMonthUseCase>(
+      () => _i881.ProcessNextMonthUseCase(
+        gh<_i37.CalculateCashflowUseCase>(),
+        gh<_i417.ProcessLoansUseCase>(),
+        gh<_i893.UpdateMarketUseCase>(),
+        gh<_i680.UpdateMetricsUseCase>(),
+        gh<_i319.GenerateEventUseCase>(),
+        gh<_i782.CheckGameStatusUseCase>(),
+        gh<_i951.CheckBehavioralInsightsUseCase>(),
       ),
     );
     gh.factory<_i910.GameEngineCubit>(
       () => _i910.GameEngineCubit(
-        gh<_i541.ProcessNextMonthUseCase>(),
-        gh<_i742.ApplyEventOptionUseCase>(),
-        gh<_i102.SpendOnLeisureUseCase>(),
+        gh<_i881.ProcessNextMonthUseCase>(),
+        gh<_i608.ApplyEventOptionUseCase>(),
+        gh<_i298.SpendOnLeisureUseCase>(),
         gh<_i688.GameStateRepository>(),
         gh<_i96.ScenarioConfigRepository>(),
         gh<_i690.EventPoolRepository>(),
+        gh<_i1072.BuyMarketAssetUseCase>(),
+        gh<_i359.SellMarketAssetUseCase>(),
       ),
     );
     return this;

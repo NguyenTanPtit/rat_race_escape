@@ -4,9 +4,9 @@ import 'package:rat_race_escape/features/gameplay/presentation/cubit/game_engine
 import 'package:rat_race_escape/features/gameplay/presentation/cubit/game_engine_state.dart';
 import 'package:rat_race_escape/features/gameplay/data/repositories/json_event_pool_repository.dart';
 import 'package:rat_race_escape/features/gameplay/data/repositories/hive_game_state_repository.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/apply_event_option_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/process_next_month_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/spend_on_leisure_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/events/apply_event_option_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/process_next_month_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/spend_on_leisure_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/factories/game_state_factory.dart';
 import 'package:rat_race_escape/features/gameplay/domain/repositories/scenario_config_repository.dart';
 import 'package:fpdart/fpdart.dart';
@@ -16,12 +16,15 @@ import 'dart:convert';
 import 'package:mocktail/mocktail.dart';
 
 import 'dart:math';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/calculate_cashflow_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/process_loans_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/update_metrics_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/generate_event_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/check_game_status_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/check_behavioral_insights_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/calculate_cashflow_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/process_loans_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/market/update_market_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/update_metrics_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/events/generate_event_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/check_game_status_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/market/buy_market_asset_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/market/sell_market_asset_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/check_behavioral_insights_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/data/repositories/json_scenario_config_repository.dart';
 
 class MockHiveGameStateRepository extends Mock implements HiveGameStateRepository {}
@@ -46,14 +49,17 @@ void main() {
     
     final calculateCashflowUseCase = CalculateCashflowUseCase();
     final processLoansUseCase = ProcessLoansUseCase();
+    final random = Random(42);
+    final updateMarketUseCase = UpdateMarketUseCase(random);
     final updateMetricsUseCase = UpdateMetricsUseCase();
-    final generateEventUseCase = GenerateEventUseCase(eventPoolRepo, Random(42));
+    final generateEventUseCase = GenerateEventUseCase(eventPoolRepo, random);
     final checkGameStatusUseCase = CheckGameStatusUseCase();
     final checkBehavioralInsightsUseCase = CheckBehavioralInsightsUseCase();
 
     final processNextMonthUseCase = ProcessNextMonthUseCase(
       calculateCashflowUseCase,
       processLoansUseCase,
+      updateMarketUseCase,
       updateMetricsUseCase,
       generateEventUseCase,
       checkGameStatusUseCase,
@@ -74,6 +80,8 @@ void main() {
       mockGameStateRepo,
       mockScenarioConfigRepo,
       eventPoolRepo,
+      BuyMarketAssetUseCase(checkGameStatusUseCase),
+      SellMarketAssetUseCase(checkGameStatusUseCase),
     );
 
     // Bypassing root bundle for json loads in test environment

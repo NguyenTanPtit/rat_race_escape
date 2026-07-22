@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/money_display.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/common/money_display.dart';
 
 void main() {
   group('MoneyDisplay Widget Test', () {

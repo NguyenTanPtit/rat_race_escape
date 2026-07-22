@@ -42,6 +42,13 @@ _ScenarioConfig _$ScenarioConfigFromJson(Map<String, dynamic> json) =>
       sideJobStress: (json['sideJobStress'] as num?)?.toInt() ?? 8,
       maxSideJobsPerMonth: (json['maxSideJobsPerMonth'] as num?)?.toInt() ?? 2,
       assetSellFeeRate: (json['assetSellFeeRate'] as num?)?.toDouble() ?? 0.03,
+      marketClasses:
+          (json['marketClasses'] as List<dynamic>?)
+              ?.map(
+                (e) => MarketClassConfig.fromJson(e as Map<String, dynamic>),
+              )
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$ScenarioConfigToJson(_ScenarioConfig instance) =>
@@ -68,6 +75,7 @@ Map<String, dynamic> _$ScenarioConfigToJson(_ScenarioConfig instance) =>
       'sideJobStress': instance.sideJobStress,
       'maxSideJobsPerMonth': instance.maxSideJobsPerMonth,
       'assetSellFeeRate': instance.assetSellFeeRate,
+      'marketClasses': instance.marketClasses.map((e) => e.toJson()).toList(),
     };
 
 const _$HousingLevelEnumMap = {

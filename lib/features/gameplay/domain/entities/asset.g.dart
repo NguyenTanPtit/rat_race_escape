@@ -14,6 +14,8 @@ _Asset _$AssetFromJson(Map<String, dynamic> json) => _Asset(
       (json['monthlyPassiveIncome'] as num?)?.toDouble() ?? 0.0,
   type:
       $enumDecodeNullable(_$AssetTypeEnumMap, json['type']) ?? AssetType.stock,
+  units: (json['units'] as num?)?.toDouble() ?? 0.0,
+  marketClassId: json['marketClassId'] as String?,
 );
 
 Map<String, dynamic> _$AssetToJson(_Asset instance) => <String, dynamic>{
@@ -22,6 +24,8 @@ Map<String, dynamic> _$AssetToJson(_Asset instance) => <String, dynamic>{
   'baseValue': instance.baseValue,
   'monthlyPassiveIncome': instance.monthlyPassiveIncome,
   'type': _$AssetTypeEnumMap[instance.type]!,
+  'units': instance.units,
+  'marketClassId': instance.marketClassId,
 };
 
 const _$AssetTypeEnumMap = {
