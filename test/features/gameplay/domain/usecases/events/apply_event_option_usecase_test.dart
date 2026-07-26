@@ -9,7 +9,10 @@ import 'package:rat_race_escape/features/gameplay/domain/entities/loan.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/turn_result.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/events/apply_event_option_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/check_game_status_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/market/buy_market_asset_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/market/sell_market_asset_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/repositories/event_pool_repository.dart';
+import 'dart:math';
 void main() {
   late ApplyEventOptionUseCase applyEventOptionUseCase;
   late MockEventPoolRepository mockEventPoolRepository;
@@ -21,6 +24,9 @@ void main() {
     applyEventOptionUseCase = ApplyEventOptionUseCase(
       mockEventPoolRepository,
       checkGameStatusUseCase,
+      BuyMarketAssetUseCase(checkGameStatusUseCase),
+      SellMarketAssetUseCase(checkGameStatusUseCase),
+      Random(42),
     );
   });
 

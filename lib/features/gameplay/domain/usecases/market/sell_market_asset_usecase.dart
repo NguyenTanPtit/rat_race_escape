@@ -3,12 +3,18 @@ import 'package:injectable/injectable.dart';
 import 'package:rat_race_escape/core/error/failure.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/asset.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_state.dart';
+import 'package:rat_race_escape/features/gameplay/domain/entities/pending_proceed.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/turn_result.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/check_game_status_usecase.dart';
 
 /// Sells up to [amountValue] (market value) of a market holding at the
 /// current price, minus the sell fee. Cost basis and passive income shrink
 /// proportionally to the units sold; selling everything removes the Asset.
+///
+/// LIQUIDITY: proceeds arrive as cash only after the class's
+/// settlementMonths (0 = instant). Until then they sit in
+/// [GameState.pendingProceeds] — your money, but not spendable. Selling
+/// land is NOT an emergency fund.
 @lazySingleton
 class SellMarketAssetUseCase {
   final CheckGameStatusUseCase _checkGameStatus;
@@ -47,10 +53,22 @@ class SellMarketAssetUseCase {
       );
     }
 
-    final updatedState = state.copyWith(
-      cash: state.cash + receivedCash,
-      assets: updatedAssets,
-    );
+    final settlementMonths = classState.config.settlementMonths;
+    final GameState updatedState;
+    if (settlementMonths <= 0) {
+      updatedState = state.copyWith(
+        cash: state.cash + receivedCash,
+        assets: updatedAssets,
+      );
+    } else {
+      updatedState = state.copyWith(
+        assets: updatedAssets,
+        pendingProceeds: [
+          ...state.pendingProceeds,
+          PendingProceed(amount: receivedCash, monthsLeft: settlementMonths),
+        ],
+      );
+    }
 
     return Right(_checkGameStatus(updatedState));
   }

@@ -16,6 +16,19 @@ abstract class EventDefinition with _$EventDefinition {
   factory EventDefinition.fromJson(Map<String, dynamic> json) => _$EventDefinitionFromJson(json);
 }
 
+/// A market-state condition for event triggers: the class [classId] must have
+/// drawdown / trailing ratio at or above [value].
+@freezed
+abstract class MarketCondition with _$MarketCondition {
+  const factory MarketCondition({
+    required String classId,
+    required double value,
+  }) = _MarketCondition;
+
+  factory MarketCondition.fromJson(Map<String, dynamic> json) =>
+      _$MarketConditionFromJson(json);
+}
+
 @freezed
 abstract class EventTrigger with _$EventTrigger {
   const factory EventTrigger({
@@ -26,6 +39,10 @@ abstract class EventTrigger with _$EventTrigger {
     @Default([]) List<int> targetCalendarMonths,
     @Default({}) Set<String> requiredFlags,
     @Default({}) Set<String> excludedFlags,
+    // 6.2b: shock & market-aware triggers
+    double? maxCash, // fires while state.cash < maxCash (e.g. 0 = broke)
+    MarketCondition? minMarketDrawdown, // class drawdown >= value
+    MarketCondition? minMarketTrailingRatio, // class trailingRatio >= value
   }) = _EventTrigger;
 
   factory EventTrigger.fromJson(Map<String, dynamic> json) => _$EventTriggerFromJson(json);

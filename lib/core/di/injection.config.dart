@@ -38,6 +38,8 @@ import '../../features/gameplay/domain/usecases/actions/sell_asset_usecase.dart'
     as _i635;
 import '../../features/gameplay/domain/usecases/actions/spend_on_leisure_usecase.dart'
     as _i298;
+import '../../features/gameplay/domain/usecases/actions/toggle_health_insurance_usecase.dart'
+    as _i649;
 import '../../features/gameplay/domain/usecases/actions/work_side_job_usecase.dart'
     as _i453;
 import '../../features/gameplay/domain/usecases/engine/calculate_cashflow_usecase.dart'
@@ -105,6 +107,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i298.SpendOnLeisureUseCase>(
       () => _i298.SpendOnLeisureUseCase(gh<_i782.CheckGameStatusUseCase>()),
     );
+    gh.lazySingleton<_i649.ToggleHealthInsuranceUseCase>(
+      () => _i649.ToggleHealthInsuranceUseCase(
+        gh<_i782.CheckGameStatusUseCase>(),
+      ),
+    );
     gh.lazySingleton<_i453.WorkSideJobUseCase>(
       () => _i453.WorkSideJobUseCase(gh<_i782.CheckGameStatusUseCase>()),
     );
@@ -130,6 +137,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i608.ApplyEventOptionUseCase(
         gh<_i690.EventPoolRepository>(),
         gh<_i782.CheckGameStatusUseCase>(),
+        gh<_i1072.BuyMarketAssetUseCase>(),
+        gh<_i359.SellMarketAssetUseCase>(),
+        gh<_i407.Random>(),
       ),
     );
     gh.lazySingleton<_i319.GenerateEventUseCase>(
@@ -159,6 +169,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i690.EventPoolRepository>(),
         gh<_i1072.BuyMarketAssetUseCase>(),
         gh<_i359.SellMarketAssetUseCase>(),
+        gh<_i649.ToggleHealthInsuranceUseCase>(),
       ),
     );
     return this;

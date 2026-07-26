@@ -18,6 +18,7 @@ import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/process
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/process_next_month_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/market/sell_market_asset_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/spend_on_leisure_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/toggle_health_insurance_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/market/update_market_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/update_metrics_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/work_side_job_usecase.dart';
@@ -41,7 +42,11 @@ const seeds = [42, 7, 2026];
 
 double calculateOptionScore(EventOption option, GameState state) {
   final effect = option.effect;
-  final cashScore = effect.cash +
+  // Insurance-aware base cash — same rule the engine applies.
+  final baseCash = (state.hasHealthInsurance && effect.cashIfInsured != null)
+      ? effect.cashIfInsured!
+      : effect.cash;
+  double cashScore = baseCash +
       (effect.cashBySalaryMultiplier * state.baseSalary) +
       (effect.cashByOutflowMultiplier * state.totalMonthlyOutflow);
 
@@ -52,10 +57,31 @@ double calculateOptionScore(EventOption option, GameState state) {
   longTermPenalty += (effect.monthlyExpensesDelta * 24);
   longTermPenalty -= (effect.salaryDelta * 24);
 
+  // 6.2b effects: a rational bot resists the market temptations.
+  longTermPenalty += effect.salarySuspendedMonths * state.baseSalary;
+  final buyFraction = effect.marketBuyCashFraction;
+  if (buyFraction != null) {
+    // FOMO all-in fires only while the class runs hot -> assume ~30% overpriced.
+    longTermPenalty += state.cash * buyFraction.fraction * 0.3;
+  }
+  for (final classId in effect.marketSellAllClassIds) {
+    // Panic-selling fires only in a drawdown -> realizing the loss + fee.
+    final holding = state.assets.where((a) => a.marketClassId == classId).firstOrNull;
+    if (holding != null) {
+      longTermPenalty += state.assetMarketValue(holding) * 0.35;
+    }
+  }
+  final buyDiscount = effect.marketBuyDiscount;
+  if (buyDiscount != null && state.cash >= 1000000) {
+    // Flash sale: instant equity from the discount on what we can afford.
+    final amount = min(buyDiscount.amount, state.cash);
+    cashScore += amount * buyDiscount.discount / (1 - buyDiscount.discount);
+  }
+
   return cashScore - longTermPenalty - (effect.stress * stressToCashWeight);
 }
 
-enum BotKind { blindDca, disciplined, fomo }
+enum BotKind { blindDca, disciplined, fomo, noReserve }
 
 class BotResult {
   final BotKind kind;
@@ -96,10 +122,12 @@ void main() {
       checkGameStatusUseCase,
       CheckBehavioralInsightsUseCase(),
     );
-    final applyEventOptionUseCase = ApplyEventOptionUseCase(eventPoolRepository, checkGameStatusUseCase);
     final buyMarket = BuyMarketAssetUseCase(checkGameStatusUseCase);
     final sellMarket = SellMarketAssetUseCase(checkGameStatusUseCase);
+    final applyEventOptionUseCase = ApplyEventOptionUseCase(
+        eventPoolRepository, checkGameStatusUseCase, buyMarket, sellMarket, random);
     final workSideJob = WorkSideJobUseCase(checkGameStatusUseCase);
+    final toggleInsurance = ToggleHealthInsuranceUseCase(checkGameStatusUseCase);
     final payDebt = PayDebtUseCase(checkGameStatusUseCase);
     final leisure = SpendOnLeisureUseCase(checkGameStatusUseCase);
 
@@ -114,6 +142,15 @@ void main() {
       state = r.state;
       if (r is TurnWon) won = true;
       if (r is TurnLost) lostReason = r.reason;
+    }
+
+    // Disciplined play includes DEFENSIVE investing: buy insurance on day 1.
+    // FOMO and No-Reserve skip it ("phí tiền, đời còn dài").
+    if (kind == BotKind.blindDca || kind == BotKind.disciplined) {
+      toggleInsurance(state).fold(
+        (l) => debugPrint('[MarketBot] insurance skipped: ${l.message}'),
+        applyTurn,
+      );
     }
 
     // Helpers return true if the game ended.
@@ -140,10 +177,13 @@ void main() {
       final outflow = state.totalMonthlyOutflow;
 
       // --- Survival valves (identical for every bot) ---
-      // Forced selling when cash < 0: index first, then land — at CURRENT price.
-      for (final classId in ['index_fund', 'land']) {
-        while (state.cash < 0 && holdingValue(classId) > 1000) {
-          final needed = -state.cash / (1 - state.assetSellFeeRate) + 1;
+      // Forced selling when spendable + incoming < 0: gold first (instant),
+      // then index (T+1), then land (T+2). Proceeds take months to arrive —
+      // the gap must be survived on side jobs, stress and vay nóng events.
+      for (final classId in ['gold', 'index_fund', 'land']) {
+        while (state.cash + state.totalPendingProceeds < 0 && holdingValue(classId) > 1000) {
+          final shortfall = -(state.cash + state.totalPendingProceeds);
+          final needed = shortfall / (1 - state.assetSellFeeRate) + 1;
           if (sell(classId, needed)) break;
         }
         if (won || lostReason != null) break;
@@ -203,6 +243,17 @@ void main() {
           final invest = state.cash - outflow * 3;
           if (invest > 0 && buy('index_fund', invest)) break;
 
+        case BotKind.noReserve:
+          // The classic Vietnamese mistake: ALL-IN LAND with a one-month
+          // buffer and no insurance. Land is illiquid (T+2 months) and
+          // low-yield, so every shock means months of negative cash, stress,
+          // vay nóng events — the emergency-fund lesson with teeth.
+          // (A thin-buffer INDEX bot measured ~equal to DCA: index funds are
+          // genuinely liquid, so the reserve barely matters there — that is
+          // honest finance, not a bug.)
+          final investNr = state.cash - outflow * 1;
+          if (investNr > 0 && buy('land', investNr)) break;
+
         case BotKind.disciplined:
           // The skill being rewarded: REBALANCING with emotional discipline.
           // 1. Take profit when a class runs hot vs its trailing average.
@@ -220,35 +271,18 @@ void main() {
           //   pressure), bank the gain at +40%, recycle into index units
           //   immediately. Cost-based selling profits even on seeds whose
           //   land price never returns to trend.
-          final landHolding =
-              state.assets.where((a) => a.marketClassId == 'land').firstOrNull;
+          // Pure index discipline. Land cycling was profitable pre-liquidity
+          // but the T+2 settlement drag now makes it a wash for SPEED (it
+          // still builds net worth) — and the canonical line must never be
+          // punished, so it stays out. Land remains a player's high-risk toy.
 
-          // 1. Bank land profits: +40% over cost -> sell half, buy index NOW.
-          if (landHolding != null && landHolding.baseValue > 0) {
-            final gain = holdingValue('land') / landHolding.baseValue;
-            if (gain >= 1.40) {
-              final half = holdingValue('land') * 0.5;
-              if (sell('land', half)) break;
-              if (buy('index_fund', half * (1 - state.assetSellFeeRate))) break;
-            }
-          }
-
-          // 2. Deep index discount: deploy down to a 1-month reserve.
+          // 1. Deep index discount: deploy down to a 1-month reserve.
           if (index.price <= index.trendPrice * 0.85) {
             final invest = state.cash - outflow * 1;
             if (invest > 0 && buy('index_fund', invest)) break;
           }
 
-          // 3. Land fire sale (<=70% of trend): buy with up to the surplus
-          //    above 2 months outflow, capped at 40% of the total portfolio.
-          if (land.price <= land.trendPrice * 0.70) {
-            final portfolio = holdingValue('index_fund') + holdingValue('land');
-            final cap = portfolio * 0.4 - holdingValue('land');
-            final invest = min(state.cash - outflow * 2, cap);
-            if (invest > 0 && buy('land', invest)) break;
-          }
-
-          // 4. Normal times: plain DCA into the index, 3-month reserve.
+          // 2. Normal times: plain DCA into the index, 3-month reserve.
           final invest = state.cash - outflow * 3;
           if (invest > 0 && buy('index_fund', invest)) break;
 
@@ -334,6 +368,23 @@ void main() {
           '(disc=$discTotal, dca=$dcaTotal)');
       expect(ratio, lessThanOrEqualTo(1.0),
           reason: 'Disciplined bot must be at least as fast as blind DCA on average');
+    }, timeout: const Timeout(Duration(minutes: 10)));
+
+    test('Bot No-Reserve (0 dự trữ, không bảo hiểm) chậm hơn DCA ≥ 8% — quỹ khẩn cấp có giá trị', () async {
+      var dcaTotal = 0, nrTotal = 0;
+      for (final seed in seeds) {
+        final dca = await runBot(BotKind.blindDca, seed);
+        final nr = await runBot(BotKind.noReserve, seed);
+        expect(dca.won, isTrue, reason: 'DCA must win (seed $seed): $dca');
+        expect(dca.lostReason, isNull);
+        dcaTotal += dca.score;
+        nrTotal += nr.score;
+      }
+      final ratio = nrTotal / dcaTotal;
+      debugPrint('[MarketBot] noReserve/dca month ratio = ${ratio.toStringAsFixed(3)} '
+          '(noReserve=$nrTotal, dca=$dcaTotal)');
+      expect(ratio, greaterThanOrEqualTo(1.08),
+          reason: 'Skipping the emergency fund + insurance must cost ≥8% of the run');
     }, timeout: const Timeout(Duration(minutes: 10)));
 
     test('SEED SWEEP 20 seeds — công cụ tune thủ công', () async {

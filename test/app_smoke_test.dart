@@ -81,9 +81,9 @@ void main() {
         of: find.byType(EventCard),
         matching: find.byType(ElevatedButton),
       ).first;
+      // ensureVisible is enough; a fixed-offset drag broke whenever the
+      // event card's height changed (e.g. taller pandemic card in 6.2b).
       await tester.ensureVisible(optionBtn);
-      await tester.pumpAndSettle();
-      await tester.drag(find.byType(ListView), const Offset(0, -300));
       await tester.pumpAndSettle();
       await tester.tap(optionBtn);
 

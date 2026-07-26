@@ -30,6 +30,8 @@ class _MainGameScreenState extends State<MainGameScreen> {
   YearlyRecap? _lastShownRecap;
   int _lastStressBannerLevel = 0; // To track 75 or 90
   bool _wasAutoAdvancing = false;
+  int? _lastSalarySuspendedMonths; // null until the first state arrives
+  double? _lastPendingProceeds;
 
   void _showWarningBanner(String message) {
     HapticFeedback.mediumImpact();
@@ -37,6 +39,20 @@ class _MainGameScreenState extends State<MainGameScreen> {
       SnackBar(
         content: Text(message, style: const TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: AppColors.stressHigh,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        duration: const Duration(seconds: 4),
+      ),
+    );
+  }
+
+  void _showGoodNewsBanner(String message) {
+    HapticFeedback.mediumImpact();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, style: const TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: AppColors.primaryDark,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -94,6 +110,42 @@ class _MainGameScreenState extends State<MainGameScreen> {
             );
           }
           
+          // Back to work: salary suspension just ended.
+          final suspendedNow = state.gameState.salarySuspendedMonths;
+          if (_lastSalarySuspendedMonths != null &&
+              _lastSalarySuspendedMonths! > 0 && suspendedNow == 0) {
+            _showGoodNewsBanner('🎉 Bạn đã đi làm trở lại — lương quay về từ tháng này!');
+          }
+          _lastSalarySuspendedMonths = suspendedNow;
+
+          // Sale proceeds settled into cash.
+          final pendingNow = state.gameState.totalPendingProceeds;
+          if (_lastPendingProceeds != null && pendingNow < _lastPendingProceeds! - 0.01) {
+            final arrived = _lastPendingProceeds! - pendingNow;
+            _showGoodNewsBanner('💰 Tiền bán tài sản đã về ví: +${MoneyFormat.format(arrived)}');
+          }
+          _lastPendingProceeds = pendingNow;
+
+          // Milestone celebration: clear FIRST so re-emits can't re-trigger.
+          if (!state.isAutoAdvancing && state.milestonePercent != null) {
+            final percent = state.milestonePercent!;
+            context.read<GameEngineCubit>().clearMilestone();
+            HapticFeedback.mediumImpact();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  '🎉 Thu nhập thụ động đã gánh $percent% chi phí hàng tháng!',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                backgroundColor: AppColors.primaryDark,
+                behavior: SnackBarBehavior.floating,
+                margin: const EdgeInsets.all(16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                duration: const Duration(seconds: 4),
+              ),
+            );
+          }
+
           // Stress Warning Banner logic
           if (state.gameState.stress >= 90 && _lastStressBannerLevel < 90) {
             _lastStressBannerLevel = 90;
@@ -181,10 +233,17 @@ class _MainGameScreenState extends State<MainGameScreen> {
                 if (!state.isAutoAdvancing) ...[
                   Text('Chi tiết dòng tiền:', style: AppTextStyles.h3),
                   const SizedBox(height: AppSpacing.s),
-                  _CashflowItem(label: AppLocalizations.of(context)!.expenseSalary, value: gameState.baseSalary),
+                  _CashflowItem(
+                    label: gameState.salarySuspendedMonths > 0
+                        ? '${AppLocalizations.of(context)!.expenseSalary} (mất việc, còn ${gameState.salarySuspendedMonths} tháng)'
+                        : AppLocalizations.of(context)!.expenseSalary,
+                    value: gameState.effectiveSalary,
+                  ),
                   _CashflowItem(label: AppLocalizations.of(context)!.expenseLiving, value: -gameState.monthlyExpenses),
                   _CashflowItem(label: AppLocalizations.of(context)!.expenseRent, value: -gameState.monthlyRent),
                   _CashflowItem(label: AppLocalizations.of(context)!.expenseFamily, value: -gameState.familySupportExpense),
+                  if (gameState.hasHealthInsurance)
+                    _CashflowItem(label: 'Bảo hiểm y tế', value: -gameState.healthInsurancePremiumMonthly),
                   if (gameState.loans.isNotEmpty)
                     _CashflowItem(
                       label: AppLocalizations.of(context)!.expenseLoan(

@@ -89,4 +89,58 @@ void main() {
     await tester.tap(find.text('Test Option'));
     verify(() => mockCubit.chooseEventOption('evt1', 'opt1')).called(1);
   });
+
+
+  group('Insurance value display (6.2b)', () {
+    final medicalEvent = GameEvent(
+      id: 'e_appendicitis',
+      title: 'Viêm ruột thừa cấp',
+      description: 'Cấp cứu!',
+      options: const [
+        EventOption(
+          id: 'app_opt1',
+          label: 'Bệnh viện tốt',
+          effect: EventEffect(cash: -35000000, cashIfInsured: -6000000, stress: 10),
+        ),
+      ],
+    );
+
+    testWidgets('uninsured player sees what insurance WOULD have saved', (tester) async {
+      await tester.pumpWidget(buildTestWidget(event: medicalEvent, state: baseState));
+
+      // Full price charged...
+      expect(find.textContaining('-35tr ₫', findRichText: true), findsOneWidget);
+      // ...and the lesson rubbed in.
+      expect(find.textContaining('Nếu có bảo hiểm: chỉ tốn 6tr ₫'), findsOneWidget);
+    });
+
+    testWidgets('insured player sees the discounted bill AND the amount saved', (tester) async {
+      final insured = baseState.copyWith(
+        hasHealthInsurance: true,
+        healthInsurancePremiumMonthly: 100000,
+      );
+      await tester.pumpWidget(buildTestWidget(event: medicalEvent, state: insured));
+
+      // Discounted amount shown (engine-shared formula)...
+      expect(find.textContaining('-6tr ₫', findRichText: true), findsOneWidget);
+      expect(find.textContaining('-35tr ₫', findRichText: true), findsNothing);
+      // ...and the saving called out: -6tr - (-35tr) = 29tr.
+      expect(find.textContaining('Bảo hiểm đã đỡ 29tr ₫'), findsOneWidget);
+    });
+
+    testWidgets('options without cashIfInsured show no insurance note', (tester) async {
+      final plainEvent = GameEvent(
+        id: 'e_plain',
+        title: 'Sự kiện thường',
+        description: 'Không liên quan y tế',
+        options: const [
+          EventOption(id: 'p1', label: 'OK', effect: EventEffect(cash: -1000000)),
+        ],
+      );
+      await tester.pumpWidget(buildTestWidget(event: plainEvent, state: baseState));
+
+      expect(find.textContaining('bảo hiểm', findRichText: true), findsNothing);
+      expect(find.textContaining('Bảo hiểm'), findsNothing);
+    });
+  });
 }

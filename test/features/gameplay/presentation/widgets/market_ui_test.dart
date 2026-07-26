@@ -199,6 +199,67 @@ void main() {
     });
   });
 
+  group('Insurance card & gold class', () {
+    testWidgets('insurance card shows premium and toggles via cubit', (tester) async {
+      when(() => mockCubit.state).thenReturn(GameEngineState.playing(
+        buildGameState().copyWith(healthInsurancePremiumMonthly: 300000),
+      ));
+      when(() => mockCubit.toggleHealthInsurance()).thenAnswer((_) async {});
+
+      await tester.pumpWidget(wrap(const InvestScreen()));
+
+      expect(find.textContaining('Bảo hiểm y tế'), findsOneWidget);
+      expect(find.textContaining('300k ₫/tháng'), findsOneWidget);
+      expect(find.widgetWithText(GameButton, 'Mua bảo hiểm'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(GameButton, 'Mua bảo hiểm'));
+      verify(() => mockCubit.toggleHealthInsurance()).called(1);
+    });
+
+    testWidgets('insured state shows badge and cancel button', (tester) async {
+      when(() => mockCubit.state).thenReturn(GameEngineState.playing(
+        buildGameState().copyWith(
+          healthInsurancePremiumMonthly: 300000,
+          hasHealthInsurance: true,
+        ),
+      ));
+
+      await tester.pumpWidget(wrap(const InvestScreen()));
+
+      expect(find.text('Đang bảo vệ'), findsOneWidget);
+      expect(find.widgetWithText(GameButton, 'Hủy bảo hiểm'), findsOneWidget);
+    });
+
+    testWidgets('zero-yield class shows the safe-haven line instead of percentages',
+        (tester) async {
+      final goldConfig = MarketClassConfig(
+        id: 'gold',
+        name: 'Vàng',
+        annualYieldRate: 0.0,
+        monthlyDrift: 0.35,
+        monthlyVolatility: 2.5,
+        crashChance: 0.005,
+        crashMonthlyDrift: -2.5,
+        crashMinMonths: 4,
+        crashMaxMonths: 8,
+        boomChance: 0.010,
+        boomMonthlyDrift: 2.5,
+        boomMinMonths: 6,
+        boomMaxMonths: 10,
+      );
+      when(() => mockCubit.state).thenReturn(GameEngineState.playing(
+        buildGameState().copyWith(market: {
+          'gold': MarketClassState(config: goldConfig, recentPrices: const [1.0, 1.0]),
+        }),
+      ));
+
+      await tester.pumpWidget(wrap(const InvestScreen()));
+
+      expect(find.text('Không sinh thu nhập — trú ẩn giá trị'), findsOneWidget);
+      expect(find.textContaining('%/năm trên mệnh giá'), findsNothing);
+    });
+  });
+
   group('Money input formatting', () {
     testWidgets('typed amount shows thousands separators and still parses correctly',
         (tester) async {

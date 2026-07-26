@@ -33,6 +33,7 @@ abstract class ScenarioConfig with _$ScenarioConfig {
     @Default(2) int maxSideJobsPerMonth,
     @Default(0.03) double assetSellFeeRate,
     @Default([]) List<MarketClassConfig> marketClasses,
+    @Default(0.0) double healthInsurancePremiumMonthly, // 0 = insurance not offered
   }) = _ScenarioConfig;
 
   factory ScenarioConfig.fromJson(Map<String, dynamic> json) => _$ScenarioConfigFromJson(json);

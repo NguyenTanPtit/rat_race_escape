@@ -49,6 +49,8 @@ _ScenarioConfig _$ScenarioConfigFromJson(Map<String, dynamic> json) =>
               )
               .toList() ??
           const [],
+      healthInsurancePremiumMonthly:
+          (json['healthInsurancePremiumMonthly'] as num?)?.toDouble() ?? 0.0,
     );
 
 Map<String, dynamic> _$ScenarioConfigToJson(_ScenarioConfig instance) =>
@@ -76,6 +78,7 @@ Map<String, dynamic> _$ScenarioConfigToJson(_ScenarioConfig instance) =>
       'maxSideJobsPerMonth': instance.maxSideJobsPerMonth,
       'assetSellFeeRate': instance.assetSellFeeRate,
       'marketClasses': instance.marketClasses.map((e) => e.toJson()).toList(),
+      'healthInsurancePremiumMonthly': instance.healthInsurancePremiumMonthly,
     };
 
 const _$HousingLevelEnumMap = {

@@ -23,6 +23,8 @@ import 'package:rat_race_escape/features/gameplay/domain/factories/game_state_fa
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_event.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/asset_listing.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/buy_asset_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/market/buy_market_asset_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/market/sell_market_asset_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/pay_debt_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/sell_asset_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/work_side_job_usecase.dart';
@@ -31,16 +33,41 @@ const stressToCashWeight = 500000.0;
 
 double calculateOptionScore(EventOption option, GameState state) {
   final effect = option.effect;
-  final cashScore = effect.cash + 
-                    (effect.cashBySalaryMultiplier * state.baseSalary) + 
-                    (effect.cashByOutflowMultiplier * state.totalMonthlyOutflow);
-  
+  // Insurance-aware base cash — same rule the engine applies.
+  final baseCash = (state.hasHealthInsurance && effect.cashIfInsured != null)
+      ? effect.cashIfInsured!
+      : effect.cash;
+  double cashScore = baseCash +
+      (effect.cashBySalaryMultiplier * state.baseSalary) +
+      (effect.cashByOutflowMultiplier * state.totalMonthlyOutflow);
+
   double longTermPenalty = 0;
   for (var loan in effect.addedLoans) {
     longTermPenalty += loan.minimumMonthlyPayment * 24;
   }
   longTermPenalty += (effect.monthlyExpensesDelta * 24);
   longTermPenalty -= (effect.salaryDelta * 24);
+
+  // 6.2b effects: a rational bot resists the market temptations.
+  longTermPenalty += effect.salarySuspendedMonths * state.baseSalary;
+  final buyFraction = effect.marketBuyCashFraction;
+  if (buyFraction != null) {
+    // FOMO all-in fires only while the class runs hot -> assume ~30% overpriced.
+    longTermPenalty += state.cash * buyFraction.fraction * 0.3;
+  }
+  for (final classId in effect.marketSellAllClassIds) {
+    // Panic-selling fires only in a drawdown -> realizing the loss + fee.
+    final holding = state.assets.where((a) => a.marketClassId == classId).firstOrNull;
+    if (holding != null) {
+      longTermPenalty += state.assetMarketValue(holding) * 0.35;
+    }
+  }
+  final buyDiscount = effect.marketBuyDiscount;
+  if (buyDiscount != null && state.cash >= 1000000) {
+    // Flash sale: instant equity from the discount on what we can afford.
+    final amount = min(buyDiscount.amount, state.cash);
+    cashScore += amount * buyDiscount.discount / (1 - buyDiscount.discount);
+  }
 
   return cashScore - longTermPenalty - (effect.stress * stressToCashWeight);
 }
@@ -91,6 +118,9 @@ void main() {
     applyEventOptionUseCase = ApplyEventOptionUseCase(
       eventPoolRepository,
       checkGameStatusUseCase,
+      BuyMarketAssetUseCase(checkGameStatusUseCase),
+      SellMarketAssetUseCase(checkGameStatusUseCase),
+      random,
     );
 
     buyAssetUseCase = BuyAssetUseCase(checkGameStatusUseCase);

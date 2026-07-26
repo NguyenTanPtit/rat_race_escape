@@ -17,7 +17,10 @@ class BuyMarketAssetUseCase {
 
   BuyMarketAssetUseCase(this._checkGameStatus);
 
-  Either<Failure, TurnResult> call(GameState state, String classId, double amount) {
+  /// [priceOverride] buys at a non-market price (flash-sale events); the
+  /// asset is still valued at the market price afterwards.
+  Either<Failure, TurnResult> call(GameState state, String classId, double amount,
+      {double? priceOverride}) {
     final classState = state.market[classId];
     if (classState == null) {
       return Left(Failure('Unknown market class: $classId'));
@@ -29,7 +32,11 @@ class BuyMarketAssetUseCase {
       return Left(Failure('Not enough cash to buy this asset'));
     }
 
-    final unitsBought = amount / classState.price;
+    final buyPrice = priceOverride ?? classState.price;
+    if (buyPrice <= 0) {
+      return Left(Failure('Invalid buy price'));
+    }
+    final unitsBought = amount / buyPrice;
     final passiveBought = unitsBought * classState.passivePerUnitMonthly;
 
     final existingIndex = state.assets.indexWhere((a) => a.marketClassId == classId);

@@ -12,6 +12,7 @@ import '../../domain/usecases/market/buy_market_asset_usecase.dart';
 import '../../domain/usecases/engine/process_next_month_usecase.dart';
 import '../../domain/usecases/market/sell_market_asset_usecase.dart';
 import '../../domain/usecases/actions/spend_on_leisure_usecase.dart';
+import '../../domain/usecases/actions/toggle_health_insurance_usecase.dart';
 import '../../domain/repositories/game_state_repository.dart';
 import '../../domain/repositories/scenario_config_repository.dart';
 import '../../domain/repositories/event_pool_repository.dart';
@@ -28,6 +29,7 @@ class GameEngineCubit extends Cubit<GameEngineState> {
   final EventPoolRepository _eventPoolRepository;
   final BuyMarketAssetUseCase _buyMarketAssetUseCase;
   final SellMarketAssetUseCase _sellMarketAssetUseCase;
+  final ToggleHealthInsuranceUseCase _toggleHealthInsuranceUseCase;
   bool _isProcessing = false;
   
   final List<MonthlyHistoryRecord> _historyBuffer = [];
@@ -43,6 +45,7 @@ class GameEngineCubit extends Cubit<GameEngineState> {
     this._eventPoolRepository,
     this._buyMarketAssetUseCase,
     this._sellMarketAssetUseCase,
+    this._toggleHealthInsuranceUseCase,
   ) : super(const GameEngineState.initial());
 
   Future<void> startNewGame(Country country, String scenarioId) async {
@@ -195,6 +198,7 @@ class GameEngineCubit extends Cubit<GameEngineState> {
       yearlyRecap: null,
       newlyUnlockedInsightCardIds: {},
       marketStopInfo: null,
+      milestonePercent: null,
     ));
 
     while (!_stopAdvanceRequested && state is GameEnginePlaying) {
@@ -214,6 +218,10 @@ class GameEngineCubit extends Cubit<GameEngineState> {
         break;
       }
       if (playingState.marketStopInfo != null) {
+        stopAutoAdvance();
+        break;
+      }
+      if (playingState.milestonePercent != null) {
         stopAutoAdvance();
         break;
       }
@@ -334,11 +342,58 @@ class GameEngineCubit extends Cubit<GameEngineState> {
     }
   }
 
+  /// Buys or cancels health insurance (premium charged monthly).
+  Future<void> toggleHealthInsurance() async {
+    if (state is! GameEnginePlaying) return;
+    if (_isProcessing) {
+      debugPrint('[GameEngineCubit] toggleHealthInsurance early return: already processing');
+      return;
+    }
+    final currentState = (state as GameEnginePlaying).gameState;
+
+    _isProcessing = true;
+    try {
+      final result = _toggleHealthInsuranceUseCase(currentState);
+      await result.fold(
+        (failure) async {
+          debugPrint('[GameEngineCubit] toggleHealthInsurance swallowed: ${failure.message}');
+        },
+        (turnResult) async {
+          await _emitTurnResult(turnResult, isFromNextMonth: false);
+        },
+      );
+    } catch (e) {
+      emit(GameEngineState.error('Lỗi hệ thống: $e'));
+    } finally {
+      _isProcessing = false;
+    }
+  }
+
   /// Clears the market stop dialog data after the UI has shown it.
   void clearMarketStop() {
     if (state is GameEnginePlaying) {
       emit((state as GameEnginePlaying).copyWith(marketStopInfo: null));
     }
+  }
+
+  /// Clears the milestone celebration data after the UI has shown it.
+  void clearMilestone() {
+    if (state is GameEnginePlaying) {
+      emit((state as GameEnginePlaying).copyWith(milestonePercent: null));
+    }
+  }
+
+  /// Passive-income milestones (fraction of total outflow), crossing-based.
+  static const List<double> _milestones = [0.25, 0.50, 0.75];
+
+  int? _detectMilestone(GameState oldState, GameState newState) {
+    if (oldState.totalMonthlyOutflow <= 0 || newState.totalMonthlyOutflow <= 0) return null;
+    final oldRatio = oldState.passiveIncome / oldState.totalMonthlyOutflow;
+    final newRatio = newState.passiveIncome / newState.totalMonthlyOutflow;
+    for (final m in _milestones.reversed) {
+      if (oldRatio < m && newRatio >= m) return (m * 100).round();
+    }
+    return null;
   }
 
   /// Spend cash on leisure to reduce stress
@@ -386,6 +441,7 @@ class GameEngineCubit extends Cubit<GameEngineState> {
     bool isAutoAdvancing = false;
     YearlyRecap? currentYearlyRecap;
     MarketStopInfo? currentMarketStop;
+    int? currentMilestone;
     if (state is GameEnginePlaying) {
       final playingState = state as GameEnginePlaying;
       final oldState = playingState.gameState;
@@ -393,6 +449,15 @@ class GameEngineCubit extends Cubit<GameEngineState> {
       isAutoAdvancing = playingState.isAutoAdvancing;
       currentYearlyRecap = playingState.yearlyRecap;
       currentMarketStop = playingState.marketStopInfo;
+      currentMilestone = playingState.milestonePercent;
+
+      // Milestone crossings apply to ANY action that moves passive income
+      // (buying assets included), not only month advances.
+      final milestone = _detectMilestone(oldState, turnResult.state);
+      if (milestone != null) {
+        currentMilestone = milestone;
+        if (isAutoAdvancing) stopAutoAdvance();
+      }
       
       if (isFromNextMonth) {
         // Calculate cashIn and cashOut based on oldState as requested
@@ -490,7 +555,7 @@ class GameEngineCubit extends Cubit<GameEngineState> {
 
     switch (turnResult) {
       case TurnContinued():
-        emit(GameEngineState.playing(newState, newlyUnlockedInsightCardIds, monthlySummary, activeEvent, isAutoAdvancing, currentYearlyRecap, currentMarketStop));
+        emit(GameEngineState.playing(newState, newlyUnlockedInsightCardIds, monthlySummary, activeEvent, isAutoAdvancing, currentYearlyRecap, currentMarketStop, currentMilestone));
         if (!isAutoAdvancing) _gameStateRepository.saveGame(newState);
       case TurnWon():
         stopAutoAdvance();

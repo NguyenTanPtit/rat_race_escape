@@ -13,6 +13,7 @@
   "currency": "vnd",
   "bankruptcyMonthsThreshold": 3,
   "baseEventChance": 0.2,
+  "healthInsurancePremiumMonthly": 100000,
   "marketClasses": [
     {
       "id": "index_fund",
@@ -29,7 +30,8 @@
       "boomMonthlyDrift": 3.0,
       "boomMinMonths": 6,
       "boomMaxMonths": 12,
-      "meanReversion": 0.03
+      "meanReversion": 0.03,
+      "settlementMonths": 1
     },
     {
       "id": "land",
@@ -46,7 +48,26 @@
       "boomMonthlyDrift": 5.5,
       "boomMinMonths": 6,
       "boomMaxMonths": 12,
-      "meanReversion": 0.02
+      "meanReversion": 0.02,
+      "settlementMonths": 2
+    },
+    {
+      "id": "gold",
+      "name": "Vàng",
+      "type": "stock",
+      "annualYieldRate": 0.0,
+      "monthlyDrift": 0.35,
+      "monthlyVolatility": 2.5,
+      "crashChance": 0.005,
+      "crashMonthlyDrift": -2.5,
+      "crashMinMonths": 4,
+      "crashMaxMonths": 8,
+      "boomChance": 0.01,
+      "boomMonthlyDrift": 2.5,
+      "boomMinMonths": 6,
+      "boomMaxMonths": 10,
+      "meanReversion": 0.025,
+      "settlementMonths": 0
     }
   ],
   "events": [
@@ -171,7 +192,8 @@
           "effect": {
             "cash": -3000000,
             "stress": 20,
-            "insightCardId": "paradox_of_thrift"
+            "insightCardId": "paradox_of_thrift",
+            "cashIfInsured": -600000
           }
         },
         {
@@ -183,7 +205,8 @@
             "removedFlags": [
               "extreme_frugality"
             ],
-            "insightCardId": "paradox_of_thrift"
+            "insightCardId": "paradox_of_thrift",
+            "cashIfInsured": -2000000
           }
         }
       ]
@@ -282,7 +305,8 @@
           "labelKey": "si_opt1",
           "effect": {
             "cash": -1000000,
-            "stress": 15
+            "stress": 15,
+            "cashIfInsured": -200000
           }
         }
       ]
@@ -423,6 +447,228 @@
           "effect": {
             "cash": 500000,
             "stress": -5
+          }
+        }
+      ]
+    },
+    {
+      "id": "e_appendicitis",
+      "textKey": "appendicitis",
+      "trigger": {},
+      "weight": 0.5,
+      "options": [
+        {
+          "id": "app_opt1",
+          "labelKey": "app_opt1",
+          "effect": {
+            "cash": -35000000,
+            "cashIfInsured": -6000000,
+            "stress": 10
+          }
+        },
+        {
+          "id": "app_opt2",
+          "labelKey": "app_opt2",
+          "effect": {
+            "cash": -20000000,
+            "cashIfInsured": -4000000,
+            "stress": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": "e_job_loss",
+      "textKey": "job_loss",
+      "trigger": {
+        "minAgeInMonths": 300
+      },
+      "weight": 0.4,
+      "options": [
+        {
+          "id": "jl_opt1",
+          "labelKey": "jl_opt1",
+          "effect": {
+            "salarySuspendedMonths": 3,
+            "cashBySalaryMultiplier": 1.0,
+            "stress": 15
+          }
+        },
+        {
+          "id": "jl_opt2",
+          "labelKey": "jl_opt2",
+          "effect": {
+            "salarySuspendedMonths": 1,
+            "stress": 25
+          }
+        }
+      ]
+    },
+    {
+      "id": "e_pandemic",
+      "textKey": "pandemic",
+      "trigger": {},
+      "absoluteChance": 0.006,
+      "options": [
+        {
+          "id": "pan_opt1",
+          "labelKey": "pan_opt1",
+          "effect": {
+            "cash": -8000000,
+            "cashIfInsured": -2000000,
+            "stress": 15,
+            "forceMarketCrash": {
+              "classIds": [
+                "index_fund",
+                "land"
+              ],
+              "minMonths": 6,
+              "maxMonths": 9
+            }
+          }
+        },
+        {
+          "id": "pan_opt2",
+          "labelKey": "pan_opt2",
+          "effect": {
+            "cash": -15000000,
+            "cashIfInsured": -4000000,
+            "stress": 25,
+            "forceMarketCrash": {
+              "classIds": [
+                "index_fund",
+                "land"
+              ],
+              "minMonths": 6,
+              "maxMonths": 9
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "e_out_of_cash",
+      "textKey": "out_of_cash",
+      "trigger": {
+        "maxCash": 0
+      },
+      "absoluteChance": 1.0,
+      "options": [
+        {
+          "id": "ooc_opt1",
+          "labelKey": "ooc_opt1",
+          "effect": {
+            "stress": 10,
+            "credit": -40,
+            "addedLoans": [
+              {
+                "id": "loan_hot",
+                "name": "Vay nóng",
+                "principalAmount": 20000000,
+                "interestRatePerYear": 40.0,
+                "minimumMonthlyPayment": 1700000
+              }
+            ],
+            "cash": 20000000
+          }
+        },
+        {
+          "id": "ooc_opt2",
+          "labelKey": "ooc_opt2",
+          "effect": {
+            "stress": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "e_neighbor_brag",
+      "textKey": "neighbor_brag",
+      "trigger": {
+        "minMarketTrailingRatio": {
+          "classId": "land",
+          "value": 1.25
+        }
+      },
+      "weight": 2.0,
+      "options": [
+        {
+          "id": "nb_opt1",
+          "labelKey": "nb_opt1",
+          "effect": {
+            "stress": -5,
+            "marketBuyCashFraction": {
+              "classId": "land",
+              "fraction": 0.8
+            }
+          }
+        },
+        {
+          "id": "nb_opt2",
+          "labelKey": "nb_opt2",
+          "effect": {
+            "stress": 8
+          }
+        }
+      ]
+    },
+    {
+      "id": "e_market_panic_news",
+      "textKey": "market_panic_news",
+      "trigger": {
+        "minMarketDrawdown": {
+          "classId": "index_fund",
+          "value": 0.25
+        }
+      },
+      "weight": 2.0,
+      "options": [
+        {
+          "id": "mpn_opt1",
+          "labelKey": "mpn_opt1",
+          "effect": {
+            "stress": -10,
+            "marketSellAllClassIds": [
+              "index_fund"
+            ]
+          }
+        },
+        {
+          "id": "mpn_opt2",
+          "labelKey": "mpn_opt2",
+          "effect": {
+            "stress": 10
+          }
+        }
+      ]
+    },
+    {
+      "id": "e_distress_sale",
+      "textKey": "distress_sale",
+      "trigger": {
+        "minMarketDrawdown": {
+          "classId": "land",
+          "value": 0.3
+        }
+      },
+      "weight": 1.0,
+      "options": [
+        {
+          "id": "ds_opt1",
+          "labelKey": "ds_opt1",
+          "effect": {
+            "marketBuyDiscount": {
+              "classId": "land",
+              "amount": 30000000,
+              "discount": 0.2
+            }
+          }
+        },
+        {
+          "id": "ds_opt2",
+          "labelKey": "ds_opt2",
+          "effect": {
+            "network": -3
           }
         }
       ]

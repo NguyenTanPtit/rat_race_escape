@@ -56,6 +56,10 @@ _GameState _$GameStateFromJson(Map<String, dynamic> json) => _GameState(
   sideJobStress: (json['sideJobStress'] as num?)?.toInt() ?? 8,
   maxSideJobsPerMonth: (json['maxSideJobsPerMonth'] as num?)?.toInt() ?? 2,
   assetSellFeeRate: (json['assetSellFeeRate'] as num?)?.toDouble() ?? 0.03,
+  salarySuspendedMonths: (json['salarySuspendedMonths'] as num?)?.toInt() ?? 0,
+  hasHealthInsurance: json['hasHealthInsurance'] as bool? ?? false,
+  healthInsurancePremiumMonthly:
+      (json['healthInsurancePremiumMonthly'] as num?)?.toDouble() ?? 0.0,
   assets:
       (json['assets'] as List<dynamic>?)
           ?.map((e) => Asset.fromJson(e as Map<String, dynamic>))
@@ -72,45 +76,55 @@ _GameState _$GameStateFromJson(Map<String, dynamic> json) => _GameState(
             MapEntry(k, MarketClassState.fromJson(e as Map<String, dynamic>)),
       ) ??
       const {},
+  pendingProceeds:
+      (json['pendingProceeds'] as List<dynamic>?)
+          ?.map((e) => PendingProceed.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
 );
 
-Map<String, dynamic> _$GameStateToJson(_GameState instance) =>
-    <String, dynamic>{
-      'country': _$CountryEnumMap[instance.country]!,
-      'currency': _$CurrencyEnumMap[instance.currency]!,
-      'scenarioId': instance.scenarioId,
-      'currentMonth': instance.currentMonth,
-      'ageInMonths': instance.ageInMonths,
-      'startCalendarMonth': instance.startCalendarMonth,
-      'cash': instance.cash,
-      'monthlyExpenses': instance.monthlyExpenses,
-      'monthlyRent': instance.monthlyRent,
-      'baseSalary': instance.baseSalary,
-      'stress': instance.stress,
-      'networkScore': instance.networkScore,
-      'creditScore': instance.creditScore,
-      'housingLevel': _$HousingLevelEnumMap[instance.housingLevel]!,
-      'ownedItems': instance.ownedItems,
-      'currentEventId': instance.currentEventId,
-      'flags': instance.flags.toList(),
-      'unlockedInsightCardIds': instance.unlockedInsightCardIds.toList(),
-      'familySupportExpense': instance.familySupportExpense,
-      'baseEventChance': instance.baseEventChance,
-      'bankruptcyMonthsThreshold': instance.bankruptcyMonthsThreshold,
-      'leisureCostPerStressPoint': instance.leisureCostPerStressPoint,
-      'maxLeisureStressReliefPerMonth': instance.maxLeisureStressReliefPerMonth,
-      'leisureReliefUsedThisMonth': instance.leisureReliefUsedThisMonth,
-      'consecutiveMinimumCreditCardPayments':
-          instance.consecutiveMinimumCreditCardPayments,
-      'sideJobsWorkedThisMonth': instance.sideJobsWorkedThisMonth,
-      'sideJobIncome': instance.sideJobIncome,
-      'sideJobStress': instance.sideJobStress,
-      'maxSideJobsPerMonth': instance.maxSideJobsPerMonth,
-      'assetSellFeeRate': instance.assetSellFeeRate,
-      'assets': instance.assets.map((e) => e.toJson()).toList(),
-      'loans': instance.loans.map((e) => e.toJson()).toList(),
-      'market': instance.market.map((k, e) => MapEntry(k, e.toJson())),
-    };
+Map<String, dynamic> _$GameStateToJson(
+  _GameState instance,
+) => <String, dynamic>{
+  'country': _$CountryEnumMap[instance.country]!,
+  'currency': _$CurrencyEnumMap[instance.currency]!,
+  'scenarioId': instance.scenarioId,
+  'currentMonth': instance.currentMonth,
+  'ageInMonths': instance.ageInMonths,
+  'startCalendarMonth': instance.startCalendarMonth,
+  'cash': instance.cash,
+  'monthlyExpenses': instance.monthlyExpenses,
+  'monthlyRent': instance.monthlyRent,
+  'baseSalary': instance.baseSalary,
+  'stress': instance.stress,
+  'networkScore': instance.networkScore,
+  'creditScore': instance.creditScore,
+  'housingLevel': _$HousingLevelEnumMap[instance.housingLevel]!,
+  'ownedItems': instance.ownedItems,
+  'currentEventId': instance.currentEventId,
+  'flags': instance.flags.toList(),
+  'unlockedInsightCardIds': instance.unlockedInsightCardIds.toList(),
+  'familySupportExpense': instance.familySupportExpense,
+  'baseEventChance': instance.baseEventChance,
+  'bankruptcyMonthsThreshold': instance.bankruptcyMonthsThreshold,
+  'leisureCostPerStressPoint': instance.leisureCostPerStressPoint,
+  'maxLeisureStressReliefPerMonth': instance.maxLeisureStressReliefPerMonth,
+  'leisureReliefUsedThisMonth': instance.leisureReliefUsedThisMonth,
+  'consecutiveMinimumCreditCardPayments':
+      instance.consecutiveMinimumCreditCardPayments,
+  'sideJobsWorkedThisMonth': instance.sideJobsWorkedThisMonth,
+  'sideJobIncome': instance.sideJobIncome,
+  'sideJobStress': instance.sideJobStress,
+  'maxSideJobsPerMonth': instance.maxSideJobsPerMonth,
+  'assetSellFeeRate': instance.assetSellFeeRate,
+  'salarySuspendedMonths': instance.salarySuspendedMonths,
+  'hasHealthInsurance': instance.hasHealthInsurance,
+  'healthInsurancePremiumMonthly': instance.healthInsurancePremiumMonthly,
+  'assets': instance.assets.map((e) => e.toJson()).toList(),
+  'loans': instance.loans.map((e) => e.toJson()).toList(),
+  'market': instance.market.map((k, e) => MapEntry(k, e.toJson())),
+  'pendingProceeds': instance.pendingProceeds.map((e) => e.toJson()).toList(),
+};
 
 const _$CountryEnumMap = {
   Country.vietnam: 'vietnam',

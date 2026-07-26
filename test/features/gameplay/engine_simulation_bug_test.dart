@@ -24,6 +24,7 @@ import 'package:rat_race_escape/features/gameplay/domain/usecases/events/generat
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/check_game_status_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/market/buy_market_asset_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/market/sell_market_asset_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/toggle_health_insurance_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/check_behavioral_insights_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/data/repositories/json_scenario_config_repository.dart';
 
@@ -66,9 +67,14 @@ void main() {
       checkBehavioralInsightsUseCase,
     );
     
+    final buyMarketUseCase = BuyMarketAssetUseCase(checkGameStatusUseCase);
+    final sellMarketUseCase = SellMarketAssetUseCase(checkGameStatusUseCase);
     final applyEventOptionUseCase = ApplyEventOptionUseCase(
       eventPoolRepo,
       checkGameStatusUseCase,
+      buyMarketUseCase,
+      sellMarketUseCase,
+      random,
     );
     
     final spendOnLeisureUseCase = SpendOnLeisureUseCase(checkGameStatusUseCase);
@@ -80,8 +86,9 @@ void main() {
       mockGameStateRepo,
       mockScenarioConfigRepo,
       eventPoolRepo,
-      BuyMarketAssetUseCase(checkGameStatusUseCase),
-      SellMarketAssetUseCase(checkGameStatusUseCase),
+      buyMarketUseCase,
+      sellMarketUseCase,
+      ToggleHealthInsuranceUseCase(checkGameStatusUseCase),
     );
 
     // Bypassing root bundle for json loads in test environment

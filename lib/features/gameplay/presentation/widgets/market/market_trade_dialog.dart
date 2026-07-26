@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rat_race_escape/core/format/money_format.dart';
 import 'package:rat_race_escape/core/format/thousands_input_formatter.dart';
 import 'package:rat_race_escape/core/theme/app_colors.dart';
+import 'package:rat_race_escape/features/gameplay/domain/entities/game_state.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/cubit/game_engine_cubit.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/cubit/game_engine_state.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/widgets/common/game_button.dart';
@@ -31,6 +32,12 @@ class MarketTradeDialog extends StatefulWidget {
 class _MarketTradeDialogState extends State<MarketTradeDialog> {
   final TextEditingController _controller = TextEditingController();
   String? _errorText;
+
+  String _settlementNote(GameState gameState) {
+    final months = gameState.market[widget.classId]?.config.settlementMonths ?? 0;
+    if (months <= 0) return '\nNhận tiền ngay';
+    return '\n⏳ Tiền về sau $months tháng';
+  }
 
   @override
   void dispose() {
@@ -107,7 +114,8 @@ class _MarketTradeDialogState extends State<MarketTradeDialog> {
                   Text(
                     widget.isBuy
                         ? 'Tiền mặt hiện tại: ${MoneyFormat.format(gameState.cash)}'
-                        : 'Đang giữ: ${MoneyFormat.format(holdingValue)}\nPhí bán: $feePercent% giá trị bán',
+                        : 'Đang giữ: ${MoneyFormat.format(holdingValue)}\nPhí bán: $feePercent% giá trị bán'
+                            '${_settlementNote(gameState)}',
                     style: textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),

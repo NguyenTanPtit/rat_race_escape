@@ -39,50 +39,75 @@ class InvestScreen extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(AppSpacing.l),
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      GameButton(
-                        onPressed: () => context.pop(),
-                        fill: AppColors.cardFill,
-                        child: const Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Icon(Icons.arrow_back, color: AppColors.ink),
-                        ),
+                      Row(
+                        children: [
+                          GameButton(
+                            onPressed: () => context.pop(),
+                            fill: AppColors.cardFill,
+                            child: const Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Icon(Icons.arrow_back, color: AppColors.ink),
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.m),
+                          Text('ĐẦU TƯ', style: AppTextStyles.h2),
+                          const SizedBox(width: AppSpacing.s),
+                          Expanded(
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                MoneyFormat.format(gameState.cash),
+                                style: AppTextStyles.h3.copyWith(color: AppColors.primaryDark),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: AppSpacing.m),
-                      Text('ĐẦU TƯ', style: AppTextStyles.h2),
-                      const SizedBox(width: AppSpacing.s),
-                      Expanded(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          alignment: Alignment.centerRight,
+                      if (gameState.totalPendingProceeds > 0)
+                        Padding(
+                          padding: const EdgeInsets.only(top: AppSpacing.s),
                           child: Text(
-                            MoneyFormat.format(gameState.cash),
-                            style: AppTextStyles.h3.copyWith(color: AppColors.primaryDark),
+                            '⏳ Tiền bán đang về: ${MoneyFormat.format(gameState.totalPendingProceeds)}',
+                            textAlign: TextAlign.right,
+                            style: AppTextStyles.bodySmall.copyWith(color: AppColors.disabledInk),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),
                 Expanded(
-                  child: classes.isEmpty
+                  child: classes.isEmpty && gameState.healthInsurancePremiumMonthly <= 0
                       ? const Center(
                           child: Text(
                             'Thị trường chưa mở ở kịch bản này',
                             style: TextStyle(fontStyle: FontStyle.italic),
                           ),
                         )
-                      : ListView.separated(
+                      : ListView(
                           padding: const EdgeInsets.fromLTRB(
                               AppSpacing.l, 0, AppSpacing.l, AppSpacing.xl),
-                          itemCount: classes.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.l),
-                          itemBuilder: (context, index) => _MarketClassCard(
-                            cls: classes[index],
-                            gameState: gameState,
-                            tradingEnabled: !state.isAutoAdvancing,
-                          ),
+                          children: [
+                            // Insurance first: defensive investing comes before returns.
+                            if (gameState.healthInsurancePremiumMonthly > 0) ...[
+                              _InsuranceCard(
+                                gameState: gameState,
+                                enabled: !state.isAutoAdvancing,
+                              ),
+                              const SizedBox(height: AppSpacing.l),
+                            ],
+                            for (final cls in classes) ...[
+                              _MarketClassCard(
+                                cls: cls,
+                                gameState: gameState,
+                                tradingEnabled: !state.isAutoAdvancing,
+                              ),
+                              const SizedBox(height: AppSpacing.l),
+                            ],
+                          ],
                         ),
                 ),
               ],
@@ -90,6 +115,58 @@ class InvestScreen extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _InsuranceCard extends StatelessWidget {
+  final GameState gameState;
+  final bool enabled;
+
+  const _InsuranceCard({required this.gameState, required this.enabled});
+
+  @override
+  Widget build(BuildContext context) {
+    final insured = gameState.hasHealthInsurance;
+    return GameCard(
+      fill: AppColors.cardFill,
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.l),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(child: Text('🛡️ Bảo hiểm y tế', style: AppTextStyles.h3)),
+                if (insured)
+                  const _Badge(text: 'Đang bảo vệ', color: AppColors.primaryDark),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.s),
+            Text(
+              'Phí ${MoneyFormat.format(gameState.healthInsurancePremiumMonthly)}/tháng'
+              ' • giảm mạnh viện phí khi biến cố sức khỏe',
+              style: AppTextStyles.bodySmall.copyWith(color: AppColors.disabledInk),
+            ),
+            const SizedBox(height: AppSpacing.m),
+            GameButton(
+              onPressed: enabled
+                  ? () => context.read<GameEngineCubit>().toggleHealthInsurance()
+                  : null,
+              fill: insured ? AppColors.disabledFill : AppColors.primary,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Center(
+                  child: Text(
+                    insured ? 'Hủy bảo hiểm' : 'Mua bảo hiểm',
+                    style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -188,8 +265,10 @@ class _MarketClassCard extends StatelessWidget {
             MarketSparkline(prices: cls.recentPrices),
             const SizedBox(height: AppSpacing.s),
             Text(
-              'Thu nhập ~${cls.config.annualYieldRate.toStringAsFixed(1)}%/năm trên mệnh giá'
-              ' • mua lúc này: ~${effectiveYield.toStringAsFixed(1)}%/năm',
+              cls.config.annualYieldRate <= 0
+                  ? 'Không sinh thu nhập — trú ẩn giá trị'
+                  : 'Thu nhập ~${cls.config.annualYieldRate.toStringAsFixed(1)}%/năm trên mệnh giá'
+                      ' • mua lúc này: ~${effectiveYield.toStringAsFixed(1)}%/năm',
               style: AppTextStyles.bodySmall.copyWith(color: AppColors.disabledInk),
             ),
             const Divider(height: AppSpacing.xl),

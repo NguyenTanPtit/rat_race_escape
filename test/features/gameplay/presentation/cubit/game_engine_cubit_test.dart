@@ -18,8 +18,10 @@ import 'package:rat_race_escape/features/gameplay/domain/entities/scenario_confi
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/spend_on_leisure_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/market/buy_market_asset_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/market/sell_market_asset_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/toggle_health_insurance_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/market_class_config.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/market_class_state.dart';
+import 'package:rat_race_escape/features/gameplay/domain/entities/asset.dart';
 
 class MockProcessNextMonthUseCase implements ProcessNextMonthUseCase {
   Either<Failure, TurnResult> resultToReturn = Right(const TurnContinued(GameState(
@@ -97,7 +99,8 @@ class MockBuyMarketAssetUseCase implements BuyMarketAssetUseCase {
   double? lastAmount;
 
   @override
-  Either<Failure, TurnResult> call(GameState state, String classId, double amount) {
+  Either<Failure, TurnResult> call(GameState state, String classId, double amount,
+      {double? priceOverride}) {
     lastClassId = classId;
     lastAmount = amount;
     return resultToReturn;
@@ -122,6 +125,26 @@ class MockSellMarketAssetUseCase implements SellMarketAssetUseCase {
   Either<Failure, TurnResult> call(GameState state, String classId, double amount) {
     lastClassId = classId;
     lastAmount = amount;
+    return resultToReturn;
+  }
+}
+
+class MockToggleHealthInsuranceUseCase implements ToggleHealthInsuranceUseCase {
+  Either<Failure, TurnResult> resultToReturn = Right(const TurnContinued(GameState(
+    country: Country.vietnam,
+    currency: Currency.vnd,
+    scenarioId: 'test',
+    cash: 0,
+    monthlyExpenses: 0,
+    monthlyRent: 0,
+    baseSalary: 0,
+  )));
+
+  int callCount = 0;
+
+  @override
+  Either<Failure, TurnResult> call(GameState state) {
+    callCount++;
     return resultToReturn;
   }
 }
@@ -223,6 +246,7 @@ void main() {
   late MockEventPoolRepository mockEventPoolRepository;
   late MockBuyMarketAssetUseCase mockBuyMarketAssetUseCase;
   late MockSellMarketAssetUseCase mockSellMarketAssetUseCase;
+  late MockToggleHealthInsuranceUseCase mockToggleHealthInsuranceUseCase;
 
   setUp(() {
     mockProcessNextMonthUseCase = MockProcessNextMonthUseCase();
@@ -233,6 +257,7 @@ void main() {
     mockEventPoolRepository = MockEventPoolRepository();
     mockBuyMarketAssetUseCase = MockBuyMarketAssetUseCase();
     mockSellMarketAssetUseCase = MockSellMarketAssetUseCase();
+    mockToggleHealthInsuranceUseCase = MockToggleHealthInsuranceUseCase();
     cubit = GameEngineCubit(
       mockProcessNextMonthUseCase,
       mockApplyEventOptionUseCase,
@@ -242,6 +267,7 @@ void main() {
       mockEventPoolRepository,
       mockBuyMarketAssetUseCase,
       mockSellMarketAssetUseCase,
+      mockToggleHealthInsuranceUseCase,
     );
   });
 
@@ -419,6 +445,7 @@ void main() {
         mockEventPoolRepository,
         mockBuyMarketAssetUseCase,
         mockSellMarketAssetUseCase,
+        mockToggleHealthInsuranceUseCase,
       );
       
       cubit2.startGame(baseState);
@@ -448,6 +475,7 @@ void main() {
         mockEventPoolRepository,
         mockBuyMarketAssetUseCase,
         mockSellMarketAssetUseCase,
+        mockToggleHealthInsuranceUseCase,
       );
       
       cubit2.startGame(baseState.copyWith(currentEventId: 'event_1'));
@@ -1152,6 +1180,60 @@ void main() {
 
       cubit.clearMarketStop();
       expect((cubit.state as GameEnginePlaying).marketStopInfo, isNull);
+    });
+
+    test('autoAdvance stops ONCE when passive income crosses a milestone', () async {
+      // outflow 8tr; passive jumps from 1.6tr (20%) to 2.4tr (30%) -> crosses 25%.
+      final base = baseState.copyWith(monthlyExpenses: 5000000, monthlyRent: 3000000);
+      Asset holdingWith(double passive) => Asset(
+          id: 'a1', name: 'ETF', baseValue: 100, monthlyPassiveIncome: passive);
+
+      cubit.startGame(base.copyWith(assets: [holdingWith(1600000)]));
+
+      final month1 = base.copyWith(
+          assets: [holdingWith(2400000)], currentMonth: 2, ageInMonths: 265);
+      final month2 = base.copyWith(
+          assets: [holdingWith(2450000)], currentMonth: 3, ageInMonths: 266,
+          currentEventId: 'safety_stop');
+
+      mockProcessNextMonthUseCase.resultsQueue = [
+        Right(TurnContinued(month1)),
+        Right(TurnContinued(month2)),
+      ];
+
+      await cubit.autoAdvance(tick: Duration.zero);
+
+      var playing = cubit.state as GameEnginePlaying;
+      expect(playing.gameState.currentMonth, 2, reason: 'must stop ON the crossing month');
+      expect(playing.milestonePercent, 25);
+
+      // Resume: milestone cleared, no re-trigger while staying above 25%.
+      await cubit.autoAdvance(tick: Duration.zero);
+      playing = cubit.state as GameEnginePlaying;
+      expect(playing.gameState.currentMonth, 3);
+      expect(playing.milestonePercent, isNull);
+    });
+
+    test('clearMilestone removes milestone from state', () async {
+      cubit.startGame(baseState);
+      cubit.emit(GameEngineState.playing(
+          baseState, const {}, null, null, false, null, null, 50));
+      expect((cubit.state as GameEnginePlaying).milestonePercent, 50);
+
+      cubit.clearMilestone();
+      expect((cubit.state as GameEnginePlaying).milestonePercent, isNull);
+    });
+
+    test('toggleHealthInsurance delegates to usecase and emits + saves state', () async {
+      cubit.startGame(baseState);
+      final insured = baseState.copyWith(hasHealthInsurance: true);
+      mockToggleHealthInsuranceUseCase.resultToReturn = Right(TurnContinued(insured));
+
+      await cubit.toggleHealthInsurance();
+
+      expect(mockToggleHealthInsuranceUseCase.callCount, 1);
+      expect((cubit.state as GameEnginePlaying).gameState.hasHealthInsurance, isTrue);
+      expect(mockGameStateRepository.savedState?.hasHealthInsurance, isTrue);
     });
 
     test('resuming autoAdvance after a market stop clears marketStopInfo', () async {

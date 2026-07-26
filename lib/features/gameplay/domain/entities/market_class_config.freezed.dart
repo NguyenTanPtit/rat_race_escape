@@ -21,7 +21,9 @@ mixin _$MarketClassConfig {
 // Fraction of the gap to the trend price closed per month (0 = pure
 // random walk). Keeps long-run prices anchored so yield-on-cost stays
 // meaningful, and makes crashes recover gradually instead of forever.
- double get meanReversion; double get crashChance;// per month, only while regime is normal
+ double get meanReversion;// Liquidity: months until sale proceeds actually arrive as cash.
+// 0 = instant (gold at the shop), 1 = fund settlement, 2+ = land.
+ int get settlementMonths; double get crashChance;// per month, only while regime is normal
  double get crashMonthlyDrift;// % per month while crashing (negative)
  int get crashMinMonths; int get crashMaxMonths; double get boomChance;// per month, only while regime is normal
  double get boomMonthlyDrift;// % per month while booming
@@ -38,16 +40,16 @@ $MarketClassConfigCopyWith<MarketClassConfig> get copyWith => _$MarketClassConfi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MarketClassConfig&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.annualYieldRate, annualYieldRate) || other.annualYieldRate == annualYieldRate)&&(identical(other.monthlyDrift, monthlyDrift) || other.monthlyDrift == monthlyDrift)&&(identical(other.monthlyVolatility, monthlyVolatility) || other.monthlyVolatility == monthlyVolatility)&&(identical(other.meanReversion, meanReversion) || other.meanReversion == meanReversion)&&(identical(other.crashChance, crashChance) || other.crashChance == crashChance)&&(identical(other.crashMonthlyDrift, crashMonthlyDrift) || other.crashMonthlyDrift == crashMonthlyDrift)&&(identical(other.crashMinMonths, crashMinMonths) || other.crashMinMonths == crashMinMonths)&&(identical(other.crashMaxMonths, crashMaxMonths) || other.crashMaxMonths == crashMaxMonths)&&(identical(other.boomChance, boomChance) || other.boomChance == boomChance)&&(identical(other.boomMonthlyDrift, boomMonthlyDrift) || other.boomMonthlyDrift == boomMonthlyDrift)&&(identical(other.boomMinMonths, boomMinMonths) || other.boomMinMonths == boomMinMonths)&&(identical(other.boomMaxMonths, boomMaxMonths) || other.boomMaxMonths == boomMaxMonths));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MarketClassConfig&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.annualYieldRate, annualYieldRate) || other.annualYieldRate == annualYieldRate)&&(identical(other.monthlyDrift, monthlyDrift) || other.monthlyDrift == monthlyDrift)&&(identical(other.monthlyVolatility, monthlyVolatility) || other.monthlyVolatility == monthlyVolatility)&&(identical(other.meanReversion, meanReversion) || other.meanReversion == meanReversion)&&(identical(other.settlementMonths, settlementMonths) || other.settlementMonths == settlementMonths)&&(identical(other.crashChance, crashChance) || other.crashChance == crashChance)&&(identical(other.crashMonthlyDrift, crashMonthlyDrift) || other.crashMonthlyDrift == crashMonthlyDrift)&&(identical(other.crashMinMonths, crashMinMonths) || other.crashMinMonths == crashMinMonths)&&(identical(other.crashMaxMonths, crashMaxMonths) || other.crashMaxMonths == crashMaxMonths)&&(identical(other.boomChance, boomChance) || other.boomChance == boomChance)&&(identical(other.boomMonthlyDrift, boomMonthlyDrift) || other.boomMonthlyDrift == boomMonthlyDrift)&&(identical(other.boomMinMonths, boomMinMonths) || other.boomMinMonths == boomMinMonths)&&(identical(other.boomMaxMonths, boomMaxMonths) || other.boomMaxMonths == boomMaxMonths));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,type,annualYieldRate,monthlyDrift,monthlyVolatility,meanReversion,crashChance,crashMonthlyDrift,crashMinMonths,crashMaxMonths,boomChance,boomMonthlyDrift,boomMinMonths,boomMaxMonths);
+int get hashCode => Object.hash(runtimeType,id,name,type,annualYieldRate,monthlyDrift,monthlyVolatility,meanReversion,settlementMonths,crashChance,crashMonthlyDrift,crashMinMonths,crashMaxMonths,boomChance,boomMonthlyDrift,boomMinMonths,boomMaxMonths);
 
 @override
 String toString() {
-  return 'MarketClassConfig(id: $id, name: $name, type: $type, annualYieldRate: $annualYieldRate, monthlyDrift: $monthlyDrift, monthlyVolatility: $monthlyVolatility, meanReversion: $meanReversion, crashChance: $crashChance, crashMonthlyDrift: $crashMonthlyDrift, crashMinMonths: $crashMinMonths, crashMaxMonths: $crashMaxMonths, boomChance: $boomChance, boomMonthlyDrift: $boomMonthlyDrift, boomMinMonths: $boomMinMonths, boomMaxMonths: $boomMaxMonths)';
+  return 'MarketClassConfig(id: $id, name: $name, type: $type, annualYieldRate: $annualYieldRate, monthlyDrift: $monthlyDrift, monthlyVolatility: $monthlyVolatility, meanReversion: $meanReversion, settlementMonths: $settlementMonths, crashChance: $crashChance, crashMonthlyDrift: $crashMonthlyDrift, crashMinMonths: $crashMinMonths, crashMaxMonths: $crashMaxMonths, boomChance: $boomChance, boomMonthlyDrift: $boomMonthlyDrift, boomMinMonths: $boomMinMonths, boomMaxMonths: $boomMaxMonths)';
 }
 
 
@@ -58,7 +60,7 @@ abstract mixin class $MarketClassConfigCopyWith<$Res>  {
   factory $MarketClassConfigCopyWith(MarketClassConfig value, $Res Function(MarketClassConfig) _then) = _$MarketClassConfigCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, AssetType type, double annualYieldRate, double monthlyDrift, double monthlyVolatility, double meanReversion, double crashChance, double crashMonthlyDrift, int crashMinMonths, int crashMaxMonths, double boomChance, double boomMonthlyDrift, int boomMinMonths, int boomMaxMonths
+ String id, String name, AssetType type, double annualYieldRate, double monthlyDrift, double monthlyVolatility, double meanReversion, int settlementMonths, double crashChance, double crashMonthlyDrift, int crashMinMonths, int crashMaxMonths, double boomChance, double boomMonthlyDrift, int boomMinMonths, int boomMaxMonths
 });
 
 
@@ -75,7 +77,7 @@ class _$MarketClassConfigCopyWithImpl<$Res>
 
 /// Create a copy of MarketClassConfig
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? type = null,Object? annualYieldRate = null,Object? monthlyDrift = null,Object? monthlyVolatility = null,Object? meanReversion = null,Object? crashChance = null,Object? crashMonthlyDrift = null,Object? crashMinMonths = null,Object? crashMaxMonths = null,Object? boomChance = null,Object? boomMonthlyDrift = null,Object? boomMinMonths = null,Object? boomMaxMonths = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? type = null,Object? annualYieldRate = null,Object? monthlyDrift = null,Object? monthlyVolatility = null,Object? meanReversion = null,Object? settlementMonths = null,Object? crashChance = null,Object? crashMonthlyDrift = null,Object? crashMinMonths = null,Object? crashMaxMonths = null,Object? boomChance = null,Object? boomMonthlyDrift = null,Object? boomMinMonths = null,Object? boomMaxMonths = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -84,7 +86,8 @@ as AssetType,annualYieldRate: null == annualYieldRate ? _self.annualYieldRate : 
 as double,monthlyDrift: null == monthlyDrift ? _self.monthlyDrift : monthlyDrift // ignore: cast_nullable_to_non_nullable
 as double,monthlyVolatility: null == monthlyVolatility ? _self.monthlyVolatility : monthlyVolatility // ignore: cast_nullable_to_non_nullable
 as double,meanReversion: null == meanReversion ? _self.meanReversion : meanReversion // ignore: cast_nullable_to_non_nullable
-as double,crashChance: null == crashChance ? _self.crashChance : crashChance // ignore: cast_nullable_to_non_nullable
+as double,settlementMonths: null == settlementMonths ? _self.settlementMonths : settlementMonths // ignore: cast_nullable_to_non_nullable
+as int,crashChance: null == crashChance ? _self.crashChance : crashChance // ignore: cast_nullable_to_non_nullable
 as double,crashMonthlyDrift: null == crashMonthlyDrift ? _self.crashMonthlyDrift : crashMonthlyDrift // ignore: cast_nullable_to_non_nullable
 as double,crashMinMonths: null == crashMinMonths ? _self.crashMinMonths : crashMinMonths // ignore: cast_nullable_to_non_nullable
 as int,crashMaxMonths: null == crashMaxMonths ? _self.crashMaxMonths : crashMaxMonths // ignore: cast_nullable_to_non_nullable
@@ -177,10 +180,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  AssetType type,  double annualYieldRate,  double monthlyDrift,  double monthlyVolatility,  double meanReversion,  double crashChance,  double crashMonthlyDrift,  int crashMinMonths,  int crashMaxMonths,  double boomChance,  double boomMonthlyDrift,  int boomMinMonths,  int boomMaxMonths)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  AssetType type,  double annualYieldRate,  double monthlyDrift,  double monthlyVolatility,  double meanReversion,  int settlementMonths,  double crashChance,  double crashMonthlyDrift,  int crashMinMonths,  int crashMaxMonths,  double boomChance,  double boomMonthlyDrift,  int boomMinMonths,  int boomMaxMonths)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MarketClassConfig() when $default != null:
-return $default(_that.id,_that.name,_that.type,_that.annualYieldRate,_that.monthlyDrift,_that.monthlyVolatility,_that.meanReversion,_that.crashChance,_that.crashMonthlyDrift,_that.crashMinMonths,_that.crashMaxMonths,_that.boomChance,_that.boomMonthlyDrift,_that.boomMinMonths,_that.boomMaxMonths);case _:
+return $default(_that.id,_that.name,_that.type,_that.annualYieldRate,_that.monthlyDrift,_that.monthlyVolatility,_that.meanReversion,_that.settlementMonths,_that.crashChance,_that.crashMonthlyDrift,_that.crashMinMonths,_that.crashMaxMonths,_that.boomChance,_that.boomMonthlyDrift,_that.boomMinMonths,_that.boomMaxMonths);case _:
   return orElse();
 
 }
@@ -198,10 +201,10 @@ return $default(_that.id,_that.name,_that.type,_that.annualYieldRate,_that.month
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  AssetType type,  double annualYieldRate,  double monthlyDrift,  double monthlyVolatility,  double meanReversion,  double crashChance,  double crashMonthlyDrift,  int crashMinMonths,  int crashMaxMonths,  double boomChance,  double boomMonthlyDrift,  int boomMinMonths,  int boomMaxMonths)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  AssetType type,  double annualYieldRate,  double monthlyDrift,  double monthlyVolatility,  double meanReversion,  int settlementMonths,  double crashChance,  double crashMonthlyDrift,  int crashMinMonths,  int crashMaxMonths,  double boomChance,  double boomMonthlyDrift,  int boomMinMonths,  int boomMaxMonths)  $default,) {final _that = this;
 switch (_that) {
 case _MarketClassConfig():
-return $default(_that.id,_that.name,_that.type,_that.annualYieldRate,_that.monthlyDrift,_that.monthlyVolatility,_that.meanReversion,_that.crashChance,_that.crashMonthlyDrift,_that.crashMinMonths,_that.crashMaxMonths,_that.boomChance,_that.boomMonthlyDrift,_that.boomMinMonths,_that.boomMaxMonths);case _:
+return $default(_that.id,_that.name,_that.type,_that.annualYieldRate,_that.monthlyDrift,_that.monthlyVolatility,_that.meanReversion,_that.settlementMonths,_that.crashChance,_that.crashMonthlyDrift,_that.crashMinMonths,_that.crashMaxMonths,_that.boomChance,_that.boomMonthlyDrift,_that.boomMinMonths,_that.boomMaxMonths);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -218,10 +221,10 @@ return $default(_that.id,_that.name,_that.type,_that.annualYieldRate,_that.month
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  AssetType type,  double annualYieldRate,  double monthlyDrift,  double monthlyVolatility,  double meanReversion,  double crashChance,  double crashMonthlyDrift,  int crashMinMonths,  int crashMaxMonths,  double boomChance,  double boomMonthlyDrift,  int boomMinMonths,  int boomMaxMonths)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  AssetType type,  double annualYieldRate,  double monthlyDrift,  double monthlyVolatility,  double meanReversion,  int settlementMonths,  double crashChance,  double crashMonthlyDrift,  int crashMinMonths,  int crashMaxMonths,  double boomChance,  double boomMonthlyDrift,  int boomMinMonths,  int boomMaxMonths)?  $default,) {final _that = this;
 switch (_that) {
 case _MarketClassConfig() when $default != null:
-return $default(_that.id,_that.name,_that.type,_that.annualYieldRate,_that.monthlyDrift,_that.monthlyVolatility,_that.meanReversion,_that.crashChance,_that.crashMonthlyDrift,_that.crashMinMonths,_that.crashMaxMonths,_that.boomChance,_that.boomMonthlyDrift,_that.boomMinMonths,_that.boomMaxMonths);case _:
+return $default(_that.id,_that.name,_that.type,_that.annualYieldRate,_that.monthlyDrift,_that.monthlyVolatility,_that.meanReversion,_that.settlementMonths,_that.crashChance,_that.crashMonthlyDrift,_that.crashMinMonths,_that.crashMaxMonths,_that.boomChance,_that.boomMonthlyDrift,_that.boomMinMonths,_that.boomMaxMonths);case _:
   return null;
 
 }
@@ -233,7 +236,7 @@ return $default(_that.id,_that.name,_that.type,_that.annualYieldRate,_that.month
 @JsonSerializable()
 
 class _MarketClassConfig implements MarketClassConfig {
-  const _MarketClassConfig({required this.id, required this.name, this.type = AssetType.stock, required this.annualYieldRate, required this.monthlyDrift, required this.monthlyVolatility, this.meanReversion = 0.0, required this.crashChance, required this.crashMonthlyDrift, required this.crashMinMonths, required this.crashMaxMonths, required this.boomChance, required this.boomMonthlyDrift, required this.boomMinMonths, required this.boomMaxMonths});
+  const _MarketClassConfig({required this.id, required this.name, this.type = AssetType.stock, required this.annualYieldRate, required this.monthlyDrift, required this.monthlyVolatility, this.meanReversion = 0.0, this.settlementMonths = 0, required this.crashChance, required this.crashMonthlyDrift, required this.crashMinMonths, required this.crashMaxMonths, required this.boomChance, required this.boomMonthlyDrift, required this.boomMinMonths, required this.boomMaxMonths});
   factory _MarketClassConfig.fromJson(Map<String, dynamic> json) => _$MarketClassConfigFromJson(json);
 
 @override final  String id;
@@ -249,6 +252,9 @@ class _MarketClassConfig implements MarketClassConfig {
 // random walk). Keeps long-run prices anchored so yield-on-cost stays
 // meaningful, and makes crashes recover gradually instead of forever.
 @override@JsonKey() final  double meanReversion;
+// Liquidity: months until sale proceeds actually arrive as cash.
+// 0 = instant (gold at the shop), 1 = fund settlement, 2+ = land.
+@override@JsonKey() final  int settlementMonths;
 @override final  double crashChance;
 // per month, only while regime is normal
 @override final  double crashMonthlyDrift;
@@ -275,16 +281,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MarketClassConfig&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.annualYieldRate, annualYieldRate) || other.annualYieldRate == annualYieldRate)&&(identical(other.monthlyDrift, monthlyDrift) || other.monthlyDrift == monthlyDrift)&&(identical(other.monthlyVolatility, monthlyVolatility) || other.monthlyVolatility == monthlyVolatility)&&(identical(other.meanReversion, meanReversion) || other.meanReversion == meanReversion)&&(identical(other.crashChance, crashChance) || other.crashChance == crashChance)&&(identical(other.crashMonthlyDrift, crashMonthlyDrift) || other.crashMonthlyDrift == crashMonthlyDrift)&&(identical(other.crashMinMonths, crashMinMonths) || other.crashMinMonths == crashMinMonths)&&(identical(other.crashMaxMonths, crashMaxMonths) || other.crashMaxMonths == crashMaxMonths)&&(identical(other.boomChance, boomChance) || other.boomChance == boomChance)&&(identical(other.boomMonthlyDrift, boomMonthlyDrift) || other.boomMonthlyDrift == boomMonthlyDrift)&&(identical(other.boomMinMonths, boomMinMonths) || other.boomMinMonths == boomMinMonths)&&(identical(other.boomMaxMonths, boomMaxMonths) || other.boomMaxMonths == boomMaxMonths));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MarketClassConfig&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.annualYieldRate, annualYieldRate) || other.annualYieldRate == annualYieldRate)&&(identical(other.monthlyDrift, monthlyDrift) || other.monthlyDrift == monthlyDrift)&&(identical(other.monthlyVolatility, monthlyVolatility) || other.monthlyVolatility == monthlyVolatility)&&(identical(other.meanReversion, meanReversion) || other.meanReversion == meanReversion)&&(identical(other.settlementMonths, settlementMonths) || other.settlementMonths == settlementMonths)&&(identical(other.crashChance, crashChance) || other.crashChance == crashChance)&&(identical(other.crashMonthlyDrift, crashMonthlyDrift) || other.crashMonthlyDrift == crashMonthlyDrift)&&(identical(other.crashMinMonths, crashMinMonths) || other.crashMinMonths == crashMinMonths)&&(identical(other.crashMaxMonths, crashMaxMonths) || other.crashMaxMonths == crashMaxMonths)&&(identical(other.boomChance, boomChance) || other.boomChance == boomChance)&&(identical(other.boomMonthlyDrift, boomMonthlyDrift) || other.boomMonthlyDrift == boomMonthlyDrift)&&(identical(other.boomMinMonths, boomMinMonths) || other.boomMinMonths == boomMinMonths)&&(identical(other.boomMaxMonths, boomMaxMonths) || other.boomMaxMonths == boomMaxMonths));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,type,annualYieldRate,monthlyDrift,monthlyVolatility,meanReversion,crashChance,crashMonthlyDrift,crashMinMonths,crashMaxMonths,boomChance,boomMonthlyDrift,boomMinMonths,boomMaxMonths);
+int get hashCode => Object.hash(runtimeType,id,name,type,annualYieldRate,monthlyDrift,monthlyVolatility,meanReversion,settlementMonths,crashChance,crashMonthlyDrift,crashMinMonths,crashMaxMonths,boomChance,boomMonthlyDrift,boomMinMonths,boomMaxMonths);
 
 @override
 String toString() {
-  return 'MarketClassConfig(id: $id, name: $name, type: $type, annualYieldRate: $annualYieldRate, monthlyDrift: $monthlyDrift, monthlyVolatility: $monthlyVolatility, meanReversion: $meanReversion, crashChance: $crashChance, crashMonthlyDrift: $crashMonthlyDrift, crashMinMonths: $crashMinMonths, crashMaxMonths: $crashMaxMonths, boomChance: $boomChance, boomMonthlyDrift: $boomMonthlyDrift, boomMinMonths: $boomMinMonths, boomMaxMonths: $boomMaxMonths)';
+  return 'MarketClassConfig(id: $id, name: $name, type: $type, annualYieldRate: $annualYieldRate, monthlyDrift: $monthlyDrift, monthlyVolatility: $monthlyVolatility, meanReversion: $meanReversion, settlementMonths: $settlementMonths, crashChance: $crashChance, crashMonthlyDrift: $crashMonthlyDrift, crashMinMonths: $crashMinMonths, crashMaxMonths: $crashMaxMonths, boomChance: $boomChance, boomMonthlyDrift: $boomMonthlyDrift, boomMinMonths: $boomMinMonths, boomMaxMonths: $boomMaxMonths)';
 }
 
 
@@ -295,7 +301,7 @@ abstract mixin class _$MarketClassConfigCopyWith<$Res> implements $MarketClassCo
   factory _$MarketClassConfigCopyWith(_MarketClassConfig value, $Res Function(_MarketClassConfig) _then) = __$MarketClassConfigCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, AssetType type, double annualYieldRate, double monthlyDrift, double monthlyVolatility, double meanReversion, double crashChance, double crashMonthlyDrift, int crashMinMonths, int crashMaxMonths, double boomChance, double boomMonthlyDrift, int boomMinMonths, int boomMaxMonths
+ String id, String name, AssetType type, double annualYieldRate, double monthlyDrift, double monthlyVolatility, double meanReversion, int settlementMonths, double crashChance, double crashMonthlyDrift, int crashMinMonths, int crashMaxMonths, double boomChance, double boomMonthlyDrift, int boomMinMonths, int boomMaxMonths
 });
 
 
@@ -312,7 +318,7 @@ class __$MarketClassConfigCopyWithImpl<$Res>
 
 /// Create a copy of MarketClassConfig
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? type = null,Object? annualYieldRate = null,Object? monthlyDrift = null,Object? monthlyVolatility = null,Object? meanReversion = null,Object? crashChance = null,Object? crashMonthlyDrift = null,Object? crashMinMonths = null,Object? crashMaxMonths = null,Object? boomChance = null,Object? boomMonthlyDrift = null,Object? boomMinMonths = null,Object? boomMaxMonths = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? type = null,Object? annualYieldRate = null,Object? monthlyDrift = null,Object? monthlyVolatility = null,Object? meanReversion = null,Object? settlementMonths = null,Object? crashChance = null,Object? crashMonthlyDrift = null,Object? crashMinMonths = null,Object? crashMaxMonths = null,Object? boomChance = null,Object? boomMonthlyDrift = null,Object? boomMinMonths = null,Object? boomMaxMonths = null,}) {
   return _then(_MarketClassConfig(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -321,7 +327,8 @@ as AssetType,annualYieldRate: null == annualYieldRate ? _self.annualYieldRate : 
 as double,monthlyDrift: null == monthlyDrift ? _self.monthlyDrift : monthlyDrift // ignore: cast_nullable_to_non_nullable
 as double,monthlyVolatility: null == monthlyVolatility ? _self.monthlyVolatility : monthlyVolatility // ignore: cast_nullable_to_non_nullable
 as double,meanReversion: null == meanReversion ? _self.meanReversion : meanReversion // ignore: cast_nullable_to_non_nullable
-as double,crashChance: null == crashChance ? _self.crashChance : crashChance // ignore: cast_nullable_to_non_nullable
+as double,settlementMonths: null == settlementMonths ? _self.settlementMonths : settlementMonths // ignore: cast_nullable_to_non_nullable
+as int,crashChance: null == crashChance ? _self.crashChance : crashChance // ignore: cast_nullable_to_non_nullable
 as double,crashMonthlyDrift: null == crashMonthlyDrift ? _self.crashMonthlyDrift : crashMonthlyDrift // ignore: cast_nullable_to_non_nullable
 as double,crashMinMonths: null == crashMinMonths ? _self.crashMinMonths : crashMinMonths // ignore: cast_nullable_to_non_nullable
 as int,crashMaxMonths: null == crashMaxMonths ? _self.crashMaxMonths : crashMaxMonths // ignore: cast_nullable_to_non_nullable

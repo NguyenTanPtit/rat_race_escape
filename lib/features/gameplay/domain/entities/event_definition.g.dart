@@ -22,6 +22,15 @@ Map<String, dynamic> _$EventDefinitionToJson(_EventDefinition instance) =>
       'weight': instance.weight,
     };
 
+_MarketCondition _$MarketConditionFromJson(Map<String, dynamic> json) =>
+    _MarketCondition(
+      classId: json['classId'] as String,
+      value: (json['value'] as num).toDouble(),
+    );
+
+Map<String, dynamic> _$MarketConditionToJson(_MarketCondition instance) =>
+    <String, dynamic>{'classId': instance.classId, 'value': instance.value};
+
 _EventTrigger _$EventTriggerFromJson(Map<String, dynamic> json) =>
     _EventTrigger(
       minAgeInMonths: (json['minAgeInMonths'] as num?)?.toInt(),
@@ -43,6 +52,17 @@ _EventTrigger _$EventTriggerFromJson(Map<String, dynamic> json) =>
               ?.map((e) => e as String)
               .toSet() ??
           const {},
+      maxCash: (json['maxCash'] as num?)?.toDouble(),
+      minMarketDrawdown: json['minMarketDrawdown'] == null
+          ? null
+          : MarketCondition.fromJson(
+              json['minMarketDrawdown'] as Map<String, dynamic>,
+            ),
+      minMarketTrailingRatio: json['minMarketTrailingRatio'] == null
+          ? null
+          : MarketCondition.fromJson(
+              json['minMarketTrailingRatio'] as Map<String, dynamic>,
+            ),
     );
 
 Map<String, dynamic> _$EventTriggerToJson(_EventTrigger instance) =>
@@ -54,4 +74,7 @@ Map<String, dynamic> _$EventTriggerToJson(_EventTrigger instance) =>
       'targetCalendarMonths': instance.targetCalendarMonths,
       'requiredFlags': instance.requiredFlags.toList(),
       'excludedFlags': instance.excludedFlags.toList(),
+      'maxCash': instance.maxCash,
+      'minMarketDrawdown': instance.minMarketDrawdown?.toJson(),
+      'minMarketTrailingRatio': instance.minMarketTrailingRatio?.toJson(),
     };

@@ -5,6 +5,7 @@ import 'package:rat_race_escape/features/gameplay/domain/entities/market_class_c
 import 'package:rat_race_escape/features/gameplay/domain/entities/market_class_state.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/turn_result.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/market/buy_market_asset_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/calculate_cashflow_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/check_game_status_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/market/sell_market_asset_usecase.dart';
 
@@ -168,6 +169,78 @@ void main() {
       final before = state.netWorth;
       final newState = sell(state, _classId, 2000000).getRight().toNullable()!.state;
       expect((before - 2000000 * 0.03 - newState.netWorth).abs(), lessThan(0.01));
+    });
+  });
+
+
+  group('Liquidity (settlementMonths)', () {
+    const slowId = 'land_slow';
+    MarketClassState slowClass({double price = 1.0}) {
+      return MarketClassState(
+        config: const MarketClassConfig(
+          id: slowId,
+          name: 'Đất chậm',
+          type: AssetType.realEstate,
+          annualYieldRate: 2.5,
+          monthlyDrift: 0.55,
+          monthlyVolatility: 4.5,
+          crashChance: 0.011,
+          crashMonthlyDrift: -7.5,
+          crashMinMonths: 6,
+          crashMaxMonths: 12,
+          boomChance: 0.014,
+          boomMonthlyDrift: 5.5,
+          boomMinMonths: 6,
+          boomMaxMonths: 12,
+          settlementMonths: 2,
+        ),
+        price: price,
+        peakPrice: price >= 1.0 ? price : 1.0,
+      );
+    }
+
+    GameState slowState({double cash = 10000000}) {
+      final withMarket = buildState(cash: cash).copyWith(
+        market: {slowId: slowClass()},
+      );
+      return buy(withMarket.copyWith(cash: cash + 6000000), slowId, 6000000)
+          .getRight().toNullable()!.state;
+    }
+
+    test('selling an illiquid class parks proceeds as pending, NOT cash', () {
+      final state = slowState();
+      final after = sell(state, slowId, 6000000).getRight().toNullable()!.state;
+
+      expect(after.assets, isEmpty);
+      expect(after.cash, closeTo(10000000, 0.01), reason: 'no instant cash');
+      expect(after.pendingProceeds.single.amount, closeTo(6000000 * 0.97, 0.01));
+      expect(after.pendingProceeds.single.monthsLeft, 2);
+      // The money still counts toward net worth while settling.
+      expect(after.netWorth, closeTo(10000000 + 6000000 * 0.97, 0.01));
+    });
+
+    test('proceeds mature into cash after exactly N cashflows', () {
+      final cashflow = CalculateCashflowUseCase();
+      var state = sell(slowState(), slowId, 6000000).getRight().toNullable()!.state;
+      // Zero out flows so only maturation moves cash.
+      state = state.copyWith(
+          baseSalary: 0, monthlyExpenses: 0, monthlyRent: 0);
+
+      state = cashflow(state); // month 1: still pending
+      expect(state.cash, closeTo(10000000, 0.01));
+      expect(state.pendingProceeds.single.monthsLeft, 1);
+
+      state = cashflow(state); // month 2: settles
+      expect(state.cash, closeTo(10000000 + 6000000 * 0.97, 0.01));
+      expect(state.pendingProceeds, isEmpty);
+    });
+
+    test('instant class (settlementMonths 0) still pays cash immediately', () {
+      final bought = buy(buildState(cash: 6000000), _classId, 6000000)
+          .getRight().toNullable()!.state;
+      final after = sell(bought, _classId, 2000000).getRight().toNullable()!.state;
+      expect(after.cash, closeTo(2000000 * 0.97, 0.01));
+      expect(after.pendingProceeds, isEmpty);
     });
   });
 }

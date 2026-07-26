@@ -18,6 +18,9 @@ abstract class MarketClassConfig with _$MarketClassConfig {
     // random walk). Keeps long-run prices anchored so yield-on-cost stays
     // meaningful, and makes crashes recover gradually instead of forever.
     @Default(0.0) double meanReversion,
+    // Liquidity: months until sale proceeds actually arrive as cash.
+    // 0 = instant (gold at the shop), 1 = fund settlement, 2+ = land.
+    @Default(0) int settlementMonths,
     required double crashChance, // per month, only while regime is normal
     required double crashMonthlyDrift, // % per month while crashing (negative)
     required int crashMinMonths,

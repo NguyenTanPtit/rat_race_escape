@@ -47,6 +47,11 @@ class ProcessNextMonthUseCase {
     // d. Pass the state sequentially through the injected use cases (Pipeline).
     state = _updateMarket(state);
     state = _calculateCashflow(state);
+    // Job-loss suspension ticks down AFTER cashflow so N suspended months
+    // mean exactly N months without salary.
+    if (state.salarySuspendedMonths > 0) {
+      state = state.copyWith(salarySuspendedMonths: state.salarySuspendedMonths - 1);
+    }
     state = _processLoans(state);
     state = _checkBehavioralInsights(state);
     state = _updateMetrics(state);

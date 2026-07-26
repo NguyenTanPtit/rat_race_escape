@@ -43,6 +43,7 @@ class EventCard extends StatelessWidget {
               final breakdown = option.effect.calculateCashBreakdown(
                 gameState.baseSalary,
                 gameState.totalMonthlyOutflow,
+                insured: gameState.hasHealthInsurance,
               );
               
               return Padding(
@@ -100,6 +101,24 @@ class EventCard extends StatelessWidget {
                                 ),
                               );
                             },
+                          ),
+                        ),
+                      // Insurance value made explicit: the insured see what
+                      // they saved, the uninsured see what it would have cost.
+                      if (option.effect.cashIfInsured != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2.0),
+                          child: Text(
+                            gameState.hasHealthInsurance
+                                ? '🛡️ Bảo hiểm đã đỡ ${MoneyFormat.format(option.effect.cashIfInsured! - option.effect.cash)}'
+                                : '🛡️ Nếu có bảo hiểm: chỉ tốn ${MoneyFormat.format(option.effect.cashIfInsured!.abs())}',
+                            textAlign: TextAlign.center,
+                            style: AppTextStyles.caption.copyWith(
+                              color: gameState.hasHealthInsurance
+                                  ? AppColors.primaryDark
+                                  : AppColors.stressHigh,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                     ],

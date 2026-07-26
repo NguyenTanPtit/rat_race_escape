@@ -70,7 +70,18 @@ class GenerateEventUseCase {
     for (final excFlag in trigger.excludedFlags) {
       if (state.flags.contains(excFlag)) return false;
     }
-    
+
+    // 6.2b: shock & market-aware conditions
+    if (trigger.maxCash != null && state.cash >= trigger.maxCash!) return false;
+    if (trigger.minMarketDrawdown != null) {
+      final cls = state.market[trigger.minMarketDrawdown!.classId];
+      if (cls == null || cls.drawdown < trigger.minMarketDrawdown!.value) return false;
+    }
+    if (trigger.minMarketTrailingRatio != null) {
+      final cls = state.market[trigger.minMarketTrailingRatio!.classId];
+      if (cls == null || cls.trailingRatio < trigger.minMarketTrailingRatio!.value) return false;
+    }
+
     return true;
   }
 }

@@ -663,11 +663,11 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function( GameState gameState,  Set<String> newlyUnlockedInsightCardIds,  MonthlySummaryDelta? monthlySummary,  GameEvent? currentEvent,  bool isAutoAdvancing,  YearlyRecap? yearlyRecap,  MarketStopInfo? marketStopInfo)?  playing,TResult Function( GameOverReason reason,  GameState finalState,  Set<String> newlyUnlockedInsightCardIds)?  gameOver,TResult Function( GameState finalState,  Set<String> newlyUnlockedInsightCardIds)?  won,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function( GameState gameState,  Set<String> newlyUnlockedInsightCardIds,  MonthlySummaryDelta? monthlySummary,  GameEvent? currentEvent,  bool isAutoAdvancing,  YearlyRecap? yearlyRecap,  MarketStopInfo? marketStopInfo,  int? milestonePercent)?  playing,TResult Function( GameOverReason reason,  GameState finalState,  Set<String> newlyUnlockedInsightCardIds)?  gameOver,TResult Function( GameState finalState,  Set<String> newlyUnlockedInsightCardIds)?  won,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case GameEngineInitial() when initial != null:
 return initial();case GameEnginePlaying() when playing != null:
-return playing(_that.gameState,_that.newlyUnlockedInsightCardIds,_that.monthlySummary,_that.currentEvent,_that.isAutoAdvancing,_that.yearlyRecap,_that.marketStopInfo);case GameEngineGameOver() when gameOver != null:
+return playing(_that.gameState,_that.newlyUnlockedInsightCardIds,_that.monthlySummary,_that.currentEvent,_that.isAutoAdvancing,_that.yearlyRecap,_that.marketStopInfo,_that.milestonePercent);case GameEngineGameOver() when gameOver != null:
 return gameOver(_that.reason,_that.finalState,_that.newlyUnlockedInsightCardIds);case GameEngineWon() when won != null:
 return won(_that.finalState,_that.newlyUnlockedInsightCardIds);case GameEngineError() when error != null:
 return error(_that.message);case _:
@@ -688,11 +688,11 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function( GameState gameState,  Set<String> newlyUnlockedInsightCardIds,  MonthlySummaryDelta? monthlySummary,  GameEvent? currentEvent,  bool isAutoAdvancing,  YearlyRecap? yearlyRecap,  MarketStopInfo? marketStopInfo)  playing,required TResult Function( GameOverReason reason,  GameState finalState,  Set<String> newlyUnlockedInsightCardIds)  gameOver,required TResult Function( GameState finalState,  Set<String> newlyUnlockedInsightCardIds)  won,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function( GameState gameState,  Set<String> newlyUnlockedInsightCardIds,  MonthlySummaryDelta? monthlySummary,  GameEvent? currentEvent,  bool isAutoAdvancing,  YearlyRecap? yearlyRecap,  MarketStopInfo? marketStopInfo,  int? milestonePercent)  playing,required TResult Function( GameOverReason reason,  GameState finalState,  Set<String> newlyUnlockedInsightCardIds)  gameOver,required TResult Function( GameState finalState,  Set<String> newlyUnlockedInsightCardIds)  won,required TResult Function( String message)  error,}) {final _that = this;
 switch (_that) {
 case GameEngineInitial():
 return initial();case GameEnginePlaying():
-return playing(_that.gameState,_that.newlyUnlockedInsightCardIds,_that.monthlySummary,_that.currentEvent,_that.isAutoAdvancing,_that.yearlyRecap,_that.marketStopInfo);case GameEngineGameOver():
+return playing(_that.gameState,_that.newlyUnlockedInsightCardIds,_that.monthlySummary,_that.currentEvent,_that.isAutoAdvancing,_that.yearlyRecap,_that.marketStopInfo,_that.milestonePercent);case GameEngineGameOver():
 return gameOver(_that.reason,_that.finalState,_that.newlyUnlockedInsightCardIds);case GameEngineWon():
 return won(_that.finalState,_that.newlyUnlockedInsightCardIds);case GameEngineError():
 return error(_that.message);}
@@ -709,11 +709,11 @@ return error(_that.message);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function( GameState gameState,  Set<String> newlyUnlockedInsightCardIds,  MonthlySummaryDelta? monthlySummary,  GameEvent? currentEvent,  bool isAutoAdvancing,  YearlyRecap? yearlyRecap,  MarketStopInfo? marketStopInfo)?  playing,TResult? Function( GameOverReason reason,  GameState finalState,  Set<String> newlyUnlockedInsightCardIds)?  gameOver,TResult? Function( GameState finalState,  Set<String> newlyUnlockedInsightCardIds)?  won,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function( GameState gameState,  Set<String> newlyUnlockedInsightCardIds,  MonthlySummaryDelta? monthlySummary,  GameEvent? currentEvent,  bool isAutoAdvancing,  YearlyRecap? yearlyRecap,  MarketStopInfo? marketStopInfo,  int? milestonePercent)?  playing,TResult? Function( GameOverReason reason,  GameState finalState,  Set<String> newlyUnlockedInsightCardIds)?  gameOver,TResult? Function( GameState finalState,  Set<String> newlyUnlockedInsightCardIds)?  won,TResult? Function( String message)?  error,}) {final _that = this;
 switch (_that) {
 case GameEngineInitial() when initial != null:
 return initial();case GameEnginePlaying() when playing != null:
-return playing(_that.gameState,_that.newlyUnlockedInsightCardIds,_that.monthlySummary,_that.currentEvent,_that.isAutoAdvancing,_that.yearlyRecap,_that.marketStopInfo);case GameEngineGameOver() when gameOver != null:
+return playing(_that.gameState,_that.newlyUnlockedInsightCardIds,_that.monthlySummary,_that.currentEvent,_that.isAutoAdvancing,_that.yearlyRecap,_that.marketStopInfo,_that.milestonePercent);case GameEngineGameOver() when gameOver != null:
 return gameOver(_that.reason,_that.finalState,_that.newlyUnlockedInsightCardIds);case GameEngineWon() when won != null:
 return won(_that.finalState,_that.newlyUnlockedInsightCardIds);case GameEngineError() when error != null:
 return error(_that.message);case _:
@@ -760,7 +760,7 @@ String toString() {
 
 
 class GameEnginePlaying implements GameEngineState {
-  const GameEnginePlaying(this.gameState, [final  Set<String> newlyUnlockedInsightCardIds = const {}, this.monthlySummary, this.currentEvent, this.isAutoAdvancing = false, this.yearlyRecap, this.marketStopInfo]): _newlyUnlockedInsightCardIds = newlyUnlockedInsightCardIds;
+  const GameEnginePlaying(this.gameState, [final  Set<String> newlyUnlockedInsightCardIds = const {}, this.monthlySummary, this.currentEvent, this.isAutoAdvancing = false, this.yearlyRecap, this.marketStopInfo, this.milestonePercent]): _newlyUnlockedInsightCardIds = newlyUnlockedInsightCardIds;
   
 
  final  GameState gameState;
@@ -776,6 +776,7 @@ class GameEnginePlaying implements GameEngineState {
 @JsonKey() final  bool isAutoAdvancing;
  final  YearlyRecap? yearlyRecap;
  final  MarketStopInfo? marketStopInfo;
+ final  int? milestonePercent;
 
 /// Create a copy of GameEngineState
 /// with the given fields replaced by the non-null parameter values.
@@ -787,16 +788,16 @@ $GameEnginePlayingCopyWith<GameEnginePlaying> get copyWith => _$GameEnginePlayin
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GameEnginePlaying&&(identical(other.gameState, gameState) || other.gameState == gameState)&&const DeepCollectionEquality().equals(other._newlyUnlockedInsightCardIds, _newlyUnlockedInsightCardIds)&&(identical(other.monthlySummary, monthlySummary) || other.monthlySummary == monthlySummary)&&(identical(other.currentEvent, currentEvent) || other.currentEvent == currentEvent)&&(identical(other.isAutoAdvancing, isAutoAdvancing) || other.isAutoAdvancing == isAutoAdvancing)&&(identical(other.yearlyRecap, yearlyRecap) || other.yearlyRecap == yearlyRecap)&&(identical(other.marketStopInfo, marketStopInfo) || other.marketStopInfo == marketStopInfo));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GameEnginePlaying&&(identical(other.gameState, gameState) || other.gameState == gameState)&&const DeepCollectionEquality().equals(other._newlyUnlockedInsightCardIds, _newlyUnlockedInsightCardIds)&&(identical(other.monthlySummary, monthlySummary) || other.monthlySummary == monthlySummary)&&(identical(other.currentEvent, currentEvent) || other.currentEvent == currentEvent)&&(identical(other.isAutoAdvancing, isAutoAdvancing) || other.isAutoAdvancing == isAutoAdvancing)&&(identical(other.yearlyRecap, yearlyRecap) || other.yearlyRecap == yearlyRecap)&&(identical(other.marketStopInfo, marketStopInfo) || other.marketStopInfo == marketStopInfo)&&(identical(other.milestonePercent, milestonePercent) || other.milestonePercent == milestonePercent));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,gameState,const DeepCollectionEquality().hash(_newlyUnlockedInsightCardIds),monthlySummary,currentEvent,isAutoAdvancing,yearlyRecap,marketStopInfo);
+int get hashCode => Object.hash(runtimeType,gameState,const DeepCollectionEquality().hash(_newlyUnlockedInsightCardIds),monthlySummary,currentEvent,isAutoAdvancing,yearlyRecap,marketStopInfo,milestonePercent);
 
 @override
 String toString() {
-  return 'GameEngineState.playing(gameState: $gameState, newlyUnlockedInsightCardIds: $newlyUnlockedInsightCardIds, monthlySummary: $monthlySummary, currentEvent: $currentEvent, isAutoAdvancing: $isAutoAdvancing, yearlyRecap: $yearlyRecap, marketStopInfo: $marketStopInfo)';
+  return 'GameEngineState.playing(gameState: $gameState, newlyUnlockedInsightCardIds: $newlyUnlockedInsightCardIds, monthlySummary: $monthlySummary, currentEvent: $currentEvent, isAutoAdvancing: $isAutoAdvancing, yearlyRecap: $yearlyRecap, marketStopInfo: $marketStopInfo, milestonePercent: $milestonePercent)';
 }
 
 
@@ -807,7 +808,7 @@ abstract mixin class $GameEnginePlayingCopyWith<$Res> implements $GameEngineStat
   factory $GameEnginePlayingCopyWith(GameEnginePlaying value, $Res Function(GameEnginePlaying) _then) = _$GameEnginePlayingCopyWithImpl;
 @useResult
 $Res call({
- GameState gameState, Set<String> newlyUnlockedInsightCardIds, MonthlySummaryDelta? monthlySummary, GameEvent? currentEvent, bool isAutoAdvancing, YearlyRecap? yearlyRecap, MarketStopInfo? marketStopInfo
+ GameState gameState, Set<String> newlyUnlockedInsightCardIds, MonthlySummaryDelta? monthlySummary, GameEvent? currentEvent, bool isAutoAdvancing, YearlyRecap? yearlyRecap, MarketStopInfo? marketStopInfo, int? milestonePercent
 });
 
 
@@ -824,7 +825,7 @@ class _$GameEnginePlayingCopyWithImpl<$Res>
 
 /// Create a copy of GameEngineState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? gameState = null,Object? newlyUnlockedInsightCardIds = null,Object? monthlySummary = freezed,Object? currentEvent = freezed,Object? isAutoAdvancing = null,Object? yearlyRecap = freezed,Object? marketStopInfo = freezed,}) {
+@pragma('vm:prefer-inline') $Res call({Object? gameState = null,Object? newlyUnlockedInsightCardIds = null,Object? monthlySummary = freezed,Object? currentEvent = freezed,Object? isAutoAdvancing = null,Object? yearlyRecap = freezed,Object? marketStopInfo = freezed,Object? milestonePercent = freezed,}) {
   return _then(GameEnginePlaying(
 null == gameState ? _self.gameState : gameState // ignore: cast_nullable_to_non_nullable
 as GameState,null == newlyUnlockedInsightCardIds ? _self._newlyUnlockedInsightCardIds : newlyUnlockedInsightCardIds // ignore: cast_nullable_to_non_nullable
@@ -833,7 +834,8 @@ as MonthlySummaryDelta?,freezed == currentEvent ? _self.currentEvent : currentEv
 as GameEvent?,null == isAutoAdvancing ? _self.isAutoAdvancing : isAutoAdvancing // ignore: cast_nullable_to_non_nullable
 as bool,freezed == yearlyRecap ? _self.yearlyRecap : yearlyRecap // ignore: cast_nullable_to_non_nullable
 as YearlyRecap?,freezed == marketStopInfo ? _self.marketStopInfo : marketStopInfo // ignore: cast_nullable_to_non_nullable
-as MarketStopInfo?,
+as MarketStopInfo?,freezed == milestonePercent ? _self.milestonePercent : milestonePercent // ignore: cast_nullable_to_non_nullable
+as int?,
   ));
 }
 

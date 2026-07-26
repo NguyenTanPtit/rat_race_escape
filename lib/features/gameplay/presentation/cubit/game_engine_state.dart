@@ -42,6 +42,7 @@ sealed class GameEngineState with _$GameEngineState {
     @Default(false) bool isAutoAdvancing,
     YearlyRecap? yearlyRecap,
     MarketStopInfo? marketStopInfo,
+    int? milestonePercent, // passive income crossed 25/50/75% of outflow
   ]) = GameEnginePlaying;
   const factory GameEngineState.gameOver(GameOverReason reason, GameState finalState, [@Default({}) Set<String> newlyUnlockedInsightCardIds]) = GameEngineGameOver;
   const factory GameEngineState.won(GameState finalState, [@Default({}) Set<String> newlyUnlockedInsightCardIds]) = GameEngineWon;

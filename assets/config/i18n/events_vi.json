@@ -120,5 +120,61 @@
     "options": {
       "fm_opt1": "Nhặt được 500k"
     }
+  },
+  "appendicitis": {
+    "title": "Viêm ruột thừa cấp",
+    "description": "Nửa đêm đau bụng quằn quại, cấp cứu bảo phải mổ ngay. Không ai hỏi bạn có tiền hay không — chỉ hỏi mổ ở đâu.",
+    "options": {
+      "app_opt1": "Bệnh viện tốt, mổ dịch vụ",
+      "app_opt2": "Bệnh viện thường, nằm ghép giường"
+    }
+  },
+  "job_loss": {
+    "title": "Công ty cắt giảm nhân sự",
+    "description": "Cả phòng họp khẩn lúc 4 giờ chiều. Danh sách cắt giảm có tên bạn. Sếp bảo \"công ty khó khăn, mong em thông cảm\".",
+    "options": {
+      "jl_opt1": "Nhận trợ cấp thôi việc, tìm việc từ từ",
+      "jl_opt2": "Nhảy việc gấp, lương thấp cũng nhận"
+    }
+  },
+  "pandemic": {
+    "title": "Dịch bệnh bùng phát",
+    "description": "Tin tức tràn ngập ca nhiễm mới. Công ty cho làm việc từ xa, hàng quán đóng cửa, thị trường đỏ lửa. Không ai biết bao giờ mới kết thúc.",
+    "options": {
+      "pan_opt1": "Ở yên chống dịch, thắt lưng buộc bụng",
+      "pan_opt2": "Vẫn ra ngoài chạy thêm việc bất chấp"
+    }
+  },
+  "out_of_cash": {
+    "title": "Cạn ví giữa tháng",
+    "description": "Tài khoản về số âm. Tiền trọ chưa đóng, chủ nhà đã nhắn tin lần thứ ba. Trên mạng đầy quảng cáo \"vay nhanh 5 phút, không thẩm định\".",
+    "options": {
+      "ooc_opt1": "Vay nóng 20 triệu cho nhẹ đầu",
+      "ooc_opt2": "Tự xoay — bán bớt tài sản vậy"
+    }
+  },
+  "neighbor_brag": {
+    "title": "Hàng xóm khoe lãi đất",
+    "description": "Anh hàng xóm mua lô đất năm ngoái, giờ khoe lời gấp đôi, sắp đổi xe. Cả xóm rần rần bàn chuyện đất cát. \"Không mua bây giờ thì bao giờ?\"",
+    "options": {
+      "nb_opt1": "All-in theo, sợ gì!",
+      "nb_opt2": "Mặc kệ, tiền mình mình giữ"
+    }
+  },
+  "market_panic_news": {
+    "title": "Báo chí: \"Thị trường sụp đổ!\"",
+    "description": "Mở điện thoại toàn tin xấu: \"Nhà đầu tư tháo chạy\", \"Bay hơi nghìn tỷ\". Nhóm chat đầu tư im như tờ, chỉ còn vài người hỏi \"bán chưa?\".",
+    "options": {
+      "mpn_opt1": "Bán tháo hết cho nhẹ nợ",
+      "mpn_opt2": "Đóng app, không nhìn nữa"
+    }
+  },
+  "distress_sale": {
+    "title": "Người quen bán đất gấp",
+    "description": "Người quen vỡ nợ, cần tiền gấp trong tuần. Lô đất đang rao rẻ hơn giá thị trường 20%, giấy tờ đầy đủ. Cơ hội chỉ dành cho người có tiền mặt.",
+    "options": {
+      "ds_opt1": "Gom 30 triệu mua giúp",
+      "ds_opt2": "Lực bất tòng tâm"
+    }
   }
 }

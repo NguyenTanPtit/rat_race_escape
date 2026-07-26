@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'asset.dart';
 import 'loan.dart';
 import 'market_class_state.dart';
+import 'pending_proceed.dart';
 
 part 'game_state.freezed.dart';
 part 'game_state.g.dart';
@@ -54,6 +55,9 @@ abstract class GameState with _$GameState {
     @Default(8) int sideJobStress,
     @Default(2) int maxSideJobsPerMonth,
     @Default(0.03) double assetSellFeeRate,
+    @Default(0) int salarySuspendedMonths, // job loss: months left without salary
+    @Default(false) bool hasHealthInsurance,
+    @Default(0.0) double healthInsurancePremiumMonthly, // 0 = not offered in scenario
 
     // 6. Inventories
     @Default([]) List<Asset> assets,
@@ -61,6 +65,8 @@ abstract class GameState with _$GameState {
 
     // 7. Market (per asset class; empty for pre-market saves)
     @Default({}) Map<String, MarketClassState> market,
+    // Sale proceeds still settling (liquidity delay); cash arrives when due.
+    @Default([]) List<PendingProceed> pendingProceeds,
   }) = _GameState;
 
   // Custom getters can be added through private constructor
@@ -78,17 +84,25 @@ abstract class GameState with _$GameState {
     return asset.units * classState.price;
   }
 
+  /// Sale money still settling — yours, but not spendable yet.
+  double get totalPendingProceeds =>
+      pendingProceeds.fold(0, (sum, p) => sum + p.amount);
+
   double get netWorth {
     double totalAssets = assets.fold(0, (sum, asset) => sum + assetMarketValue(asset));
     double totalLoans = loans.fold(0, (sum, loan) => sum + loan.principalAmount);
-    return cash + totalAssets - totalLoans;
+    return cash + totalAssets + totalPendingProceeds - totalLoans;
   }
 
   double get passiveIncome => assets.fold(0, (sum, a) => sum + a.monthlyPassiveIncome);
 
-  double get totalMonthlyOutflow => monthlyExpenses + familySupportExpense + monthlyRent;
+  /// Salary actually received this month (0 while suspended by job loss).
+  double get effectiveSalary => salarySuspendedMonths > 0 ? 0.0 : baseSalary;
 
-  double get totalCashFlow => baseSalary + passiveIncome - totalMonthlyOutflow;
+  double get totalMonthlyOutflow => monthlyExpenses + familySupportExpense + monthlyRent +
+      (hasHealthInsurance ? healthInsurancePremiumMonthly : 0.0);
+
+  double get totalCashFlow => effectiveSalary + passiveIncome - totalMonthlyOutflow;
 
   double get totalLoanPayment => loans.fold(0, (sum, loan) => sum + loan.minimumMonthlyPayment);
   double get totalLoanInterest => loans.fold(0, (sum, loan) => sum + (loan.principalAmount * loan.interestRatePerYear / 100 / 12));
