@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/asset.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/apply_inflation_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/event_definition.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/event_effect.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_event.dart';
@@ -318,6 +319,7 @@ void main() {
         GenerateEventUseCase(FakeEventPoolRepository(), Random(1)),
         checkStatus,
         CheckBehavioralInsightsUseCase(),
+      ApplyInflationUseCase(),
       );
 
       var state = buildState(cash: 100000000, salarySuspendedMonths: 2);

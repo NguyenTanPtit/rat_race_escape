@@ -60,6 +60,10 @@ _GameState _$GameStateFromJson(Map<String, dynamic> json) => _GameState(
   hasHealthInsurance: json['hasHealthInsurance'] as bool? ?? false,
   healthInsurancePremiumMonthly:
       (json['healthInsurancePremiumMonthly'] as num?)?.toDouble() ?? 0.0,
+  inflationAnnualRate: (json['inflationAnnualRate'] as num?)?.toDouble() ?? 0.0,
+  salaryGrowthAnnualRate:
+      (json['salaryGrowthAnnualRate'] as num?)?.toDouble() ?? 0.0,
+  inflationIndex: (json['inflationIndex'] as num?)?.toDouble() ?? 1.0,
   assets:
       (json['assets'] as List<dynamic>?)
           ?.map((e) => Asset.fromJson(e as Map<String, dynamic>))
@@ -120,6 +124,9 @@ Map<String, dynamic> _$GameStateToJson(
   'salarySuspendedMonths': instance.salarySuspendedMonths,
   'hasHealthInsurance': instance.hasHealthInsurance,
   'healthInsurancePremiumMonthly': instance.healthInsurancePremiumMonthly,
+  'inflationAnnualRate': instance.inflationAnnualRate,
+  'salaryGrowthAnnualRate': instance.salaryGrowthAnnualRate,
+  'inflationIndex': instance.inflationIndex,
   'assets': instance.assets.map((e) => e.toJson()).toList(),
   'loans': instance.loans.map((e) => e.toJson()).toList(),
   'market': instance.market.map((k, e) => MapEntry(k, e.toJson())),

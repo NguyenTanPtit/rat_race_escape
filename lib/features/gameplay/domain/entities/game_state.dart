@@ -59,6 +59,12 @@ abstract class GameState with _$GameState {
     @Default(false) bool hasHealthInsurance,
     @Default(0.0) double healthInsurancePremiumMonthly, // 0 = not offered in scenario
 
+    // Inflation (applied every Tet). Cash is deliberately NOT indexed —
+    // money sitting still is money dying.
+    @Default(0.0) double inflationAnnualRate,
+    @Default(0.0) double salaryGrowthAnnualRate,
+    @Default(1.0) double inflationIndex,
+
     // 6. Inventories
     @Default([]) List<Asset> assets,
     @Default([]) List<Loan> loans,

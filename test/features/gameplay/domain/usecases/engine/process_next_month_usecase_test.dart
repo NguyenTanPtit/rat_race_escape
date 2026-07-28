@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_state.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/apply_inflation_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/turn_result.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/calculate_cashflow_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/check_game_status_usecase.dart';
@@ -21,6 +22,7 @@ class MockCheckGameStatusUseCase extends Mock implements CheckGameStatusUseCase 
 class FakeGameState extends Fake implements GameState {}
 
 class MockCheckBehavioralInsightsUseCase extends Mock implements CheckBehavioralInsightsUseCase {}
+class MockApplyInflationUseCase extends Mock implements ApplyInflationUseCase {}
 
 void main() {
   late ProcessNextMonthUseCase usecase;
@@ -31,6 +33,7 @@ void main() {
   late MockGenerateEventUseCase mockGenerateEventUseCase;
   late MockCheckGameStatusUseCase mockCheckGameStatusUseCase;
   late MockCheckBehavioralInsightsUseCase mockCheckBehavioralInsightsUseCase;
+  late MockApplyInflationUseCase mockApplyInflationUseCase;
 
   setUpAll(() {
     registerFallbackValue(FakeGameState());
@@ -44,6 +47,7 @@ void main() {
     mockGenerateEventUseCase = MockGenerateEventUseCase();
     mockCheckGameStatusUseCase = MockCheckGameStatusUseCase();
     mockCheckBehavioralInsightsUseCase = MockCheckBehavioralInsightsUseCase();
+    mockApplyInflationUseCase = MockApplyInflationUseCase();
 
     usecase = ProcessNextMonthUseCase(
       mockCalculateCashflowUseCase,
@@ -53,6 +57,7 @@ void main() {
       mockGenerateEventUseCase,
       mockCheckGameStatusUseCase,
       mockCheckBehavioralInsightsUseCase,
+      mockApplyInflationUseCase,
     );
   });
 
@@ -77,6 +82,7 @@ void main() {
     when(() => mockUpdateMetricsUseCase(any())).thenAnswer((inv) => inv.positionalArguments[0] as GameState);
     when(() => mockGenerateEventUseCase(any())).thenAnswer((inv) async => inv.positionalArguments[0] as GameState);
     when(() => mockCheckBehavioralInsightsUseCase(any())).thenAnswer((inv) => inv.positionalArguments[0] as GameState);
+    when(() => mockApplyInflationUseCase(any())).thenAnswer((inv) => inv.positionalArguments[0] as GameState);
     // Finally, mockCheckGameStatusUseCase returns TurnContinued so we can inspect the state
     when(() => mockCheckGameStatusUseCase(any())).thenAnswer((inv) => TurnResult.continued(inv.positionalArguments[0] as GameState));
 

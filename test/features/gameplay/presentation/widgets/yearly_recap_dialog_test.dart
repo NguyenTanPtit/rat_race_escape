@@ -64,4 +64,68 @@ void main() {
     // Buttons
     expect(find.text('Ăn Tết'), findsOneWidget);
   });
+
+
+  group('Inflation block (Slice 2.5)', () {
+    YearlyRecap recapWith(InflationRecap? inflation) => YearlyRecap(
+          totalCashIn: 50000000,
+          totalCashOut: 45000000,
+          topEvents: const [],
+          fullHistory: const [
+            (
+              ageInMonths: 300,
+              netWorth: 10000000,
+              cashIn: 0,
+              cashOut: 0,
+              cashDelta: 0,
+              eventId: null,
+            ),
+          ],
+          inflation: inflation,
+        );
+
+    Future<void> pump(WidgetTester tester, YearlyRecap recap) async {
+      await tester.pumpWidget(MaterialApp(
+        theme: AppTheme.lightTheme,
+        home: Material(child: YearlyRecapDialog(recap: recap)),
+      ));
+    }
+
+    testWidgets('shows the yearly price/salary bump', (tester) async {
+      await pump(tester, recapWith(const InflationRecap(
+        annualRate: 0.035,
+        salaryGrowthRate: 0.03,
+        newMonthlyOutflow: 10867500,
+        newSalary: 11330000,
+        cashHeld: 2000000,
+        cashValueLost: 67632,
+      )));
+
+      expect(find.textContaining('Vật giá năm nay +3.5%'), findsOneWidget);
+      expect(find.textContaining('Chi phí sống giờ 10,87tr ₫/tháng'), findsOneWidget);
+      expect(find.textContaining('Lương +3.0%'), findsOneWidget);
+      // Small cash pile -> no nagging.
+      expect(find.textContaining('mất'), findsNothing);
+    });
+
+    testWidgets('warns about idle cash once the pile is over 3 months of costs',
+        (tester) async {
+      await pump(tester, recapWith(const InflationRecap(
+        annualRate: 0.035,
+        salaryGrowthRate: 0.03,
+        newMonthlyOutflow: 10000000,
+        newSalary: 11330000,
+        cashHeld: 100000000,
+        cashValueLost: 3381643,
+      )));
+
+      expect(find.textContaining('100tr ₫ tiền mặt của bạn'), findsOneWidget);
+      expect(find.textContaining('mất 3,38tr ₫ giá trị năm nay'), findsOneWidget);
+    });
+
+    testWidgets('scenario without inflation shows no inflation block', (tester) async {
+      await pump(tester, recapWith(null));
+      expect(find.textContaining('Vật giá'), findsNothing);
+    });
+  });
 }

@@ -1137,7 +1137,8 @@ as String,
 mixin _$YearlyRecap {
 
  double get totalCashIn; double get totalCashOut; List<MonthlyHistoryRecord> get topEvents;// Sorted by absolute cash impact
- List<MonthlyHistoryRecord> get fullHistory;
+ List<MonthlyHistoryRecord> get fullHistory;// Last 12 months for chart
+ InflationRecap? get inflation;
 /// Create a copy of YearlyRecap
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1148,16 +1149,16 @@ $YearlyRecapCopyWith<YearlyRecap> get copyWith => _$YearlyRecapCopyWithImpl<Year
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is YearlyRecap&&(identical(other.totalCashIn, totalCashIn) || other.totalCashIn == totalCashIn)&&(identical(other.totalCashOut, totalCashOut) || other.totalCashOut == totalCashOut)&&const DeepCollectionEquality().equals(other.topEvents, topEvents)&&const DeepCollectionEquality().equals(other.fullHistory, fullHistory));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is YearlyRecap&&(identical(other.totalCashIn, totalCashIn) || other.totalCashIn == totalCashIn)&&(identical(other.totalCashOut, totalCashOut) || other.totalCashOut == totalCashOut)&&const DeepCollectionEquality().equals(other.topEvents, topEvents)&&const DeepCollectionEquality().equals(other.fullHistory, fullHistory)&&(identical(other.inflation, inflation) || other.inflation == inflation));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,totalCashIn,totalCashOut,const DeepCollectionEquality().hash(topEvents),const DeepCollectionEquality().hash(fullHistory));
+int get hashCode => Object.hash(runtimeType,totalCashIn,totalCashOut,const DeepCollectionEquality().hash(topEvents),const DeepCollectionEquality().hash(fullHistory),inflation);
 
 @override
 String toString() {
-  return 'YearlyRecap(totalCashIn: $totalCashIn, totalCashOut: $totalCashOut, topEvents: $topEvents, fullHistory: $fullHistory)';
+  return 'YearlyRecap(totalCashIn: $totalCashIn, totalCashOut: $totalCashOut, topEvents: $topEvents, fullHistory: $fullHistory, inflation: $inflation)';
 }
 
 
@@ -1168,11 +1169,11 @@ abstract mixin class $YearlyRecapCopyWith<$Res>  {
   factory $YearlyRecapCopyWith(YearlyRecap value, $Res Function(YearlyRecap) _then) = _$YearlyRecapCopyWithImpl;
 @useResult
 $Res call({
- double totalCashIn, double totalCashOut, List<MonthlyHistoryRecord> topEvents, List<MonthlyHistoryRecord> fullHistory
+ double totalCashIn, double totalCashOut, List<MonthlyHistoryRecord> topEvents, List<MonthlyHistoryRecord> fullHistory, InflationRecap? inflation
 });
 
 
-
+$InflationRecapCopyWith<$Res>? get inflation;
 
 }
 /// @nodoc
@@ -1185,16 +1186,29 @@ class _$YearlyRecapCopyWithImpl<$Res>
 
 /// Create a copy of YearlyRecap
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? totalCashIn = null,Object? totalCashOut = null,Object? topEvents = null,Object? fullHistory = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? totalCashIn = null,Object? totalCashOut = null,Object? topEvents = null,Object? fullHistory = null,Object? inflation = freezed,}) {
   return _then(_self.copyWith(
 totalCashIn: null == totalCashIn ? _self.totalCashIn : totalCashIn // ignore: cast_nullable_to_non_nullable
 as double,totalCashOut: null == totalCashOut ? _self.totalCashOut : totalCashOut // ignore: cast_nullable_to_non_nullable
 as double,topEvents: null == topEvents ? _self.topEvents : topEvents // ignore: cast_nullable_to_non_nullable
 as List<MonthlyHistoryRecord>,fullHistory: null == fullHistory ? _self.fullHistory : fullHistory // ignore: cast_nullable_to_non_nullable
-as List<MonthlyHistoryRecord>,
+as List<MonthlyHistoryRecord>,inflation: freezed == inflation ? _self.inflation : inflation // ignore: cast_nullable_to_non_nullable
+as InflationRecap?,
   ));
 }
+/// Create a copy of YearlyRecap
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$InflationRecapCopyWith<$Res>? get inflation {
+    if (_self.inflation == null) {
+    return null;
+  }
 
+  return $InflationRecapCopyWith<$Res>(_self.inflation!, (value) {
+    return _then(_self.copyWith(inflation: value));
+  });
+}
 }
 
 
@@ -1276,10 +1290,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( double totalCashIn,  double totalCashOut,  List<MonthlyHistoryRecord> topEvents,  List<MonthlyHistoryRecord> fullHistory)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( double totalCashIn,  double totalCashOut,  List<MonthlyHistoryRecord> topEvents,  List<MonthlyHistoryRecord> fullHistory,  InflationRecap? inflation)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _YearlyRecap() when $default != null:
-return $default(_that.totalCashIn,_that.totalCashOut,_that.topEvents,_that.fullHistory);case _:
+return $default(_that.totalCashIn,_that.totalCashOut,_that.topEvents,_that.fullHistory,_that.inflation);case _:
   return orElse();
 
 }
@@ -1297,10 +1311,10 @@ return $default(_that.totalCashIn,_that.totalCashOut,_that.topEvents,_that.fullH
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double totalCashIn,  double totalCashOut,  List<MonthlyHistoryRecord> topEvents,  List<MonthlyHistoryRecord> fullHistory)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double totalCashIn,  double totalCashOut,  List<MonthlyHistoryRecord> topEvents,  List<MonthlyHistoryRecord> fullHistory,  InflationRecap? inflation)  $default,) {final _that = this;
 switch (_that) {
 case _YearlyRecap():
-return $default(_that.totalCashIn,_that.totalCashOut,_that.topEvents,_that.fullHistory);case _:
+return $default(_that.totalCashIn,_that.totalCashOut,_that.topEvents,_that.fullHistory,_that.inflation);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1317,10 +1331,10 @@ return $default(_that.totalCashIn,_that.totalCashOut,_that.topEvents,_that.fullH
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( double totalCashIn,  double totalCashOut,  List<MonthlyHistoryRecord> topEvents,  List<MonthlyHistoryRecord> fullHistory)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( double totalCashIn,  double totalCashOut,  List<MonthlyHistoryRecord> topEvents,  List<MonthlyHistoryRecord> fullHistory,  InflationRecap? inflation)?  $default,) {final _that = this;
 switch (_that) {
 case _YearlyRecap() when $default != null:
-return $default(_that.totalCashIn,_that.totalCashOut,_that.topEvents,_that.fullHistory);case _:
+return $default(_that.totalCashIn,_that.totalCashOut,_that.topEvents,_that.fullHistory,_that.inflation);case _:
   return null;
 
 }
@@ -1332,7 +1346,7 @@ return $default(_that.totalCashIn,_that.totalCashOut,_that.topEvents,_that.fullH
 
 
 class _YearlyRecap implements YearlyRecap {
-  const _YearlyRecap({required this.totalCashIn, required this.totalCashOut, required final  List<MonthlyHistoryRecord> topEvents, required final  List<MonthlyHistoryRecord> fullHistory}): _topEvents = topEvents,_fullHistory = fullHistory;
+  const _YearlyRecap({required this.totalCashIn, required this.totalCashOut, required final  List<MonthlyHistoryRecord> topEvents, required final  List<MonthlyHistoryRecord> fullHistory, this.inflation}): _topEvents = topEvents,_fullHistory = fullHistory;
   
 
 @override final  double totalCashIn;
@@ -1353,6 +1367,8 @@ class _YearlyRecap implements YearlyRecap {
   return EqualUnmodifiableListView(_fullHistory);
 }
 
+// Last 12 months for chart
+@override final  InflationRecap? inflation;
 
 /// Create a copy of YearlyRecap
 /// with the given fields replaced by the non-null parameter values.
@@ -1364,16 +1380,16 @@ _$YearlyRecapCopyWith<_YearlyRecap> get copyWith => __$YearlyRecapCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _YearlyRecap&&(identical(other.totalCashIn, totalCashIn) || other.totalCashIn == totalCashIn)&&(identical(other.totalCashOut, totalCashOut) || other.totalCashOut == totalCashOut)&&const DeepCollectionEquality().equals(other._topEvents, _topEvents)&&const DeepCollectionEquality().equals(other._fullHistory, _fullHistory));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _YearlyRecap&&(identical(other.totalCashIn, totalCashIn) || other.totalCashIn == totalCashIn)&&(identical(other.totalCashOut, totalCashOut) || other.totalCashOut == totalCashOut)&&const DeepCollectionEquality().equals(other._topEvents, _topEvents)&&const DeepCollectionEquality().equals(other._fullHistory, _fullHistory)&&(identical(other.inflation, inflation) || other.inflation == inflation));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,totalCashIn,totalCashOut,const DeepCollectionEquality().hash(_topEvents),const DeepCollectionEquality().hash(_fullHistory));
+int get hashCode => Object.hash(runtimeType,totalCashIn,totalCashOut,const DeepCollectionEquality().hash(_topEvents),const DeepCollectionEquality().hash(_fullHistory),inflation);
 
 @override
 String toString() {
-  return 'YearlyRecap(totalCashIn: $totalCashIn, totalCashOut: $totalCashOut, topEvents: $topEvents, fullHistory: $fullHistory)';
+  return 'YearlyRecap(totalCashIn: $totalCashIn, totalCashOut: $totalCashOut, topEvents: $topEvents, fullHistory: $fullHistory, inflation: $inflation)';
 }
 
 
@@ -1384,11 +1400,11 @@ abstract mixin class _$YearlyRecapCopyWith<$Res> implements $YearlyRecapCopyWith
   factory _$YearlyRecapCopyWith(_YearlyRecap value, $Res Function(_YearlyRecap) _then) = __$YearlyRecapCopyWithImpl;
 @override @useResult
 $Res call({
- double totalCashIn, double totalCashOut, List<MonthlyHistoryRecord> topEvents, List<MonthlyHistoryRecord> fullHistory
+ double totalCashIn, double totalCashOut, List<MonthlyHistoryRecord> topEvents, List<MonthlyHistoryRecord> fullHistory, InflationRecap? inflation
 });
 
 
-
+@override $InflationRecapCopyWith<$Res>? get inflation;
 
 }
 /// @nodoc
@@ -1401,13 +1417,298 @@ class __$YearlyRecapCopyWithImpl<$Res>
 
 /// Create a copy of YearlyRecap
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? totalCashIn = null,Object? totalCashOut = null,Object? topEvents = null,Object? fullHistory = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? totalCashIn = null,Object? totalCashOut = null,Object? topEvents = null,Object? fullHistory = null,Object? inflation = freezed,}) {
   return _then(_YearlyRecap(
 totalCashIn: null == totalCashIn ? _self.totalCashIn : totalCashIn // ignore: cast_nullable_to_non_nullable
 as double,totalCashOut: null == totalCashOut ? _self.totalCashOut : totalCashOut // ignore: cast_nullable_to_non_nullable
 as double,topEvents: null == topEvents ? _self._topEvents : topEvents // ignore: cast_nullable_to_non_nullable
 as List<MonthlyHistoryRecord>,fullHistory: null == fullHistory ? _self._fullHistory : fullHistory // ignore: cast_nullable_to_non_nullable
-as List<MonthlyHistoryRecord>,
+as List<MonthlyHistoryRecord>,inflation: freezed == inflation ? _self.inflation : inflation // ignore: cast_nullable_to_non_nullable
+as InflationRecap?,
+  ));
+}
+
+/// Create a copy of YearlyRecap
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$InflationRecapCopyWith<$Res>? get inflation {
+    if (_self.inflation == null) {
+    return null;
+  }
+
+  return $InflationRecapCopyWith<$Res>(_self.inflation!, (value) {
+    return _then(_self.copyWith(inflation: value));
+  });
+}
+}
+
+/// @nodoc
+mixin _$InflationRecap {
+
+ double get annualRate; double get salaryGrowthRate; double get newMonthlyOutflow; double get newSalary; double get cashHeld; double get cashValueLost;
+/// Create a copy of InflationRecap
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$InflationRecapCopyWith<InflationRecap> get copyWith => _$InflationRecapCopyWithImpl<InflationRecap>(this as InflationRecap, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InflationRecap&&(identical(other.annualRate, annualRate) || other.annualRate == annualRate)&&(identical(other.salaryGrowthRate, salaryGrowthRate) || other.salaryGrowthRate == salaryGrowthRate)&&(identical(other.newMonthlyOutflow, newMonthlyOutflow) || other.newMonthlyOutflow == newMonthlyOutflow)&&(identical(other.newSalary, newSalary) || other.newSalary == newSalary)&&(identical(other.cashHeld, cashHeld) || other.cashHeld == cashHeld)&&(identical(other.cashValueLost, cashValueLost) || other.cashValueLost == cashValueLost));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,annualRate,salaryGrowthRate,newMonthlyOutflow,newSalary,cashHeld,cashValueLost);
+
+@override
+String toString() {
+  return 'InflationRecap(annualRate: $annualRate, salaryGrowthRate: $salaryGrowthRate, newMonthlyOutflow: $newMonthlyOutflow, newSalary: $newSalary, cashHeld: $cashHeld, cashValueLost: $cashValueLost)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $InflationRecapCopyWith<$Res>  {
+  factory $InflationRecapCopyWith(InflationRecap value, $Res Function(InflationRecap) _then) = _$InflationRecapCopyWithImpl;
+@useResult
+$Res call({
+ double annualRate, double salaryGrowthRate, double newMonthlyOutflow, double newSalary, double cashHeld, double cashValueLost
+});
+
+
+
+
+}
+/// @nodoc
+class _$InflationRecapCopyWithImpl<$Res>
+    implements $InflationRecapCopyWith<$Res> {
+  _$InflationRecapCopyWithImpl(this._self, this._then);
+
+  final InflationRecap _self;
+  final $Res Function(InflationRecap) _then;
+
+/// Create a copy of InflationRecap
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? annualRate = null,Object? salaryGrowthRate = null,Object? newMonthlyOutflow = null,Object? newSalary = null,Object? cashHeld = null,Object? cashValueLost = null,}) {
+  return _then(_self.copyWith(
+annualRate: null == annualRate ? _self.annualRate : annualRate // ignore: cast_nullable_to_non_nullable
+as double,salaryGrowthRate: null == salaryGrowthRate ? _self.salaryGrowthRate : salaryGrowthRate // ignore: cast_nullable_to_non_nullable
+as double,newMonthlyOutflow: null == newMonthlyOutflow ? _self.newMonthlyOutflow : newMonthlyOutflow // ignore: cast_nullable_to_non_nullable
+as double,newSalary: null == newSalary ? _self.newSalary : newSalary // ignore: cast_nullable_to_non_nullable
+as double,cashHeld: null == cashHeld ? _self.cashHeld : cashHeld // ignore: cast_nullable_to_non_nullable
+as double,cashValueLost: null == cashValueLost ? _self.cashValueLost : cashValueLost // ignore: cast_nullable_to_non_nullable
+as double,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [InflationRecap].
+extension InflationRecapPatterns on InflationRecap {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _InflationRecap value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _InflationRecap() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _InflationRecap value)  $default,){
+final _that = this;
+switch (_that) {
+case _InflationRecap():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _InflationRecap value)?  $default,){
+final _that = this;
+switch (_that) {
+case _InflationRecap() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( double annualRate,  double salaryGrowthRate,  double newMonthlyOutflow,  double newSalary,  double cashHeld,  double cashValueLost)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _InflationRecap() when $default != null:
+return $default(_that.annualRate,_that.salaryGrowthRate,_that.newMonthlyOutflow,_that.newSalary,_that.cashHeld,_that.cashValueLost);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double annualRate,  double salaryGrowthRate,  double newMonthlyOutflow,  double newSalary,  double cashHeld,  double cashValueLost)  $default,) {final _that = this;
+switch (_that) {
+case _InflationRecap():
+return $default(_that.annualRate,_that.salaryGrowthRate,_that.newMonthlyOutflow,_that.newSalary,_that.cashHeld,_that.cashValueLost);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( double annualRate,  double salaryGrowthRate,  double newMonthlyOutflow,  double newSalary,  double cashHeld,  double cashValueLost)?  $default,) {final _that = this;
+switch (_that) {
+case _InflationRecap() when $default != null:
+return $default(_that.annualRate,_that.salaryGrowthRate,_that.newMonthlyOutflow,_that.newSalary,_that.cashHeld,_that.cashValueLost);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _InflationRecap implements InflationRecap {
+  const _InflationRecap({required this.annualRate, required this.salaryGrowthRate, required this.newMonthlyOutflow, required this.newSalary, required this.cashHeld, required this.cashValueLost});
+  
+
+@override final  double annualRate;
+@override final  double salaryGrowthRate;
+@override final  double newMonthlyOutflow;
+@override final  double newSalary;
+@override final  double cashHeld;
+@override final  double cashValueLost;
+
+/// Create a copy of InflationRecap
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$InflationRecapCopyWith<_InflationRecap> get copyWith => __$InflationRecapCopyWithImpl<_InflationRecap>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InflationRecap&&(identical(other.annualRate, annualRate) || other.annualRate == annualRate)&&(identical(other.salaryGrowthRate, salaryGrowthRate) || other.salaryGrowthRate == salaryGrowthRate)&&(identical(other.newMonthlyOutflow, newMonthlyOutflow) || other.newMonthlyOutflow == newMonthlyOutflow)&&(identical(other.newSalary, newSalary) || other.newSalary == newSalary)&&(identical(other.cashHeld, cashHeld) || other.cashHeld == cashHeld)&&(identical(other.cashValueLost, cashValueLost) || other.cashValueLost == cashValueLost));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,annualRate,salaryGrowthRate,newMonthlyOutflow,newSalary,cashHeld,cashValueLost);
+
+@override
+String toString() {
+  return 'InflationRecap(annualRate: $annualRate, salaryGrowthRate: $salaryGrowthRate, newMonthlyOutflow: $newMonthlyOutflow, newSalary: $newSalary, cashHeld: $cashHeld, cashValueLost: $cashValueLost)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$InflationRecapCopyWith<$Res> implements $InflationRecapCopyWith<$Res> {
+  factory _$InflationRecapCopyWith(_InflationRecap value, $Res Function(_InflationRecap) _then) = __$InflationRecapCopyWithImpl;
+@override @useResult
+$Res call({
+ double annualRate, double salaryGrowthRate, double newMonthlyOutflow, double newSalary, double cashHeld, double cashValueLost
+});
+
+
+
+
+}
+/// @nodoc
+class __$InflationRecapCopyWithImpl<$Res>
+    implements _$InflationRecapCopyWith<$Res> {
+  __$InflationRecapCopyWithImpl(this._self, this._then);
+
+  final _InflationRecap _self;
+  final $Res Function(_InflationRecap) _then;
+
+/// Create a copy of InflationRecap
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? annualRate = null,Object? salaryGrowthRate = null,Object? newMonthlyOutflow = null,Object? newSalary = null,Object? cashHeld = null,Object? cashValueLost = null,}) {
+  return _then(_InflationRecap(
+annualRate: null == annualRate ? _self.annualRate : annualRate // ignore: cast_nullable_to_non_nullable
+as double,salaryGrowthRate: null == salaryGrowthRate ? _self.salaryGrowthRate : salaryGrowthRate // ignore: cast_nullable_to_non_nullable
+as double,newMonthlyOutflow: null == newMonthlyOutflow ? _self.newMonthlyOutflow : newMonthlyOutflow // ignore: cast_nullable_to_non_nullable
+as double,newSalary: null == newSalary ? _self.newSalary : newSalary // ignore: cast_nullable_to_non_nullable
+as double,cashHeld: null == cashHeld ? _self.cashHeld : cashHeld // ignore: cast_nullable_to_non_nullable
+as double,cashValueLost: null == cashValueLost ? _self.cashValueLost : cashValueLost // ignore: cast_nullable_to_non_nullable
+as double,
   ));
 }
 

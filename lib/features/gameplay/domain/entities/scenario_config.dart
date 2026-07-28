@@ -34,6 +34,8 @@ abstract class ScenarioConfig with _$ScenarioConfig {
     @Default(0.03) double assetSellFeeRate,
     @Default([]) List<MarketClassConfig> marketClasses,
     @Default(0.0) double healthInsurancePremiumMonthly, // 0 = insurance not offered
+    @Default(0.0) double inflationAnnualRate, // 0 = no inflation in this scenario
+    @Default(0.0) double salaryGrowthAnnualRate,
   }) = _ScenarioConfig;
 
   factory ScenarioConfig.fromJson(Map<String, dynamic> json) => _$ScenarioConfigFromJson(json);

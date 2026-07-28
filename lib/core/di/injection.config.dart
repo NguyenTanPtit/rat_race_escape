@@ -42,6 +42,8 @@ import '../../features/gameplay/domain/usecases/actions/toggle_health_insurance_
     as _i649;
 import '../../features/gameplay/domain/usecases/actions/work_side_job_usecase.dart'
     as _i453;
+import '../../features/gameplay/domain/usecases/engine/apply_inflation_usecase.dart'
+    as _i250;
 import '../../features/gameplay/domain/usecases/engine/calculate_cashflow_usecase.dart'
     as _i37;
 import '../../features/gameplay/domain/usecases/engine/check_behavioral_insights_usecase.dart'
@@ -77,6 +79,9 @@ extension GetItInjectableX on _i174.GetIt {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final registerModule = _$RegisterModule();
     gh.lazySingleton<_i407.Random>(() => registerModule.random);
+    gh.lazySingleton<_i250.ApplyInflationUseCase>(
+      () => _i250.ApplyInflationUseCase(),
+    );
     gh.lazySingleton<_i37.CalculateCashflowUseCase>(
       () => _i37.CalculateCashflowUseCase(),
     );
@@ -157,6 +162,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i319.GenerateEventUseCase>(),
         gh<_i782.CheckGameStatusUseCase>(),
         gh<_i951.CheckBehavioralInsightsUseCase>(),
+        gh<_i250.ApplyInflationUseCase>(),
       ),
     );
     gh.factory<_i910.GameEngineCubit>(

@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_state.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/apply_inflation_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/cubit/game_engine_cubit.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/cubit/game_engine_state.dart';
 import 'package:rat_race_escape/features/gameplay/data/repositories/json_event_pool_repository.dart';
@@ -65,6 +66,7 @@ void main() {
       generateEventUseCase,
       checkGameStatusUseCase,
       checkBehavioralInsightsUseCase,
+      ApplyInflationUseCase(),
     );
     
     final buyMarketUseCase = BuyMarketAssetUseCase(checkGameStatusUseCase);

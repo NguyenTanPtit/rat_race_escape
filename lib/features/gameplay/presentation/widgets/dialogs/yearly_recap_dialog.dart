@@ -97,6 +97,13 @@ class YearlyRecapDialog extends StatelessWidget {
                 )),
               const SizedBox(height: 24),
 
+              // Block 2.5: Inflation — the yearly reminder that standing
+              // still costs money.
+              if (recap.inflation != null) ...[
+                _buildInflationBlock(recap.inflation!, textTheme),
+                const SizedBox(height: 24),
+              ],
+
               // Block 3: Net Worth Chart
               Text(
                 'Biến động tài sản (12 tháng)',
@@ -129,6 +136,48 @@ class YearlyRecapDialog extends StatelessWidget {
           ),
         ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildInflationBlock(InflationRecap inflation, TextTheme textTheme) {
+    final ratePercent = (inflation.annualRate * 100).toStringAsFixed(1);
+    final salaryPercent = (inflation.salaryGrowthRate * 100).toStringAsFixed(1);
+    // Only nag about idle cash once it is a real pile (3 months of costs).
+    final showCashWarning = inflation.cashHeld > inflation.newMonthlyOutflow * 3;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.stressMedium.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.stressMedium, width: 2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '📈 Vật giá năm nay +$ratePercent%',
+            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Chi phí sống giờ ${MoneyFormat.format(inflation.newMonthlyOutflow)}/tháng'
+            ' • Lương +$salaryPercent% → ${MoneyFormat.format(inflation.newSalary)}',
+            style: textTheme.bodySmall,
+          ),
+          if (showCashWarning) ...[
+            const SizedBox(height: 8),
+            Text(
+              '💸 ${MoneyFormat.format(inflation.cashHeld)} tiền mặt của bạn'
+              ' mất ${MoneyFormat.format(inflation.cashValueLost)} giá trị năm nay.',
+              style: textTheme.bodySmall?.copyWith(
+                color: AppColors.stressHigh,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }

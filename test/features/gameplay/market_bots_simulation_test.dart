@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'dart:math';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rat_race_escape/features/gameplay/data/repositories/json_event_pool_repository.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/apply_inflation_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/data/repositories/json_scenario_config_repository.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_event.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_state.dart';
@@ -81,7 +82,7 @@ double calculateOptionScore(EventOption option, GameState state) {
   return cashScore - longTermPenalty - (effect.stress * stressToCashWeight);
 }
 
-enum BotKind { blindDca, disciplined, fomo, noReserve }
+enum BotKind { blindDca, disciplined, fomo, noReserve, cashHoarder }
 
 class BotResult {
   final BotKind kind;
@@ -121,6 +122,7 @@ void main() {
       generateEventUseCase,
       checkGameStatusUseCase,
       CheckBehavioralInsightsUseCase(),
+      ApplyInflationUseCase(),
     );
     final buyMarket = BuyMarketAssetUseCase(checkGameStatusUseCase);
     final sellMarket = SellMarketAssetUseCase(checkGameStatusUseCase);
@@ -276,15 +278,24 @@ void main() {
           // still builds net worth) — and the canonical line must never be
           // punished, so it stays out. Land remains a player's high-risk toy.
 
-          // 1. Deep index discount: deploy down to a 1-month reserve.
+          // 1. Deep index discount: deploy the reserve down to TWO months.
+          //    (One month died of burnout on seed 500: a long crash left
+          //    nothing to fund stress relief. Post-6.2b, keeping a real
+          //    buffer while buying dips IS the disciplined behaviour.)
           if (index.price <= index.trendPrice * 0.85) {
-            final invest = state.cash - outflow * 1;
+            final invest = state.cash - outflow * 2;
             if (invest > 0 && buy('index_fund', invest)) break;
           }
 
           // 2. Normal times: plain DCA into the index, 3-month reserve.
           final invest = state.cash - outflow * 3;
           if (invest > 0 && buy('index_fund', invest)) break;
+
+        case BotKind.cashHoarder:
+          // Never invests a single đồng: lives disciplined (side jobs, stress
+          // relief, debt paid) but keeps everything as cash in the drawer.
+          // Inflation quietly eats it — the Slice 2.5 lesson.
+          break;
 
         case BotKind.fomo:
           // Panic-sell everything in a class once it is 20% off its peak.
@@ -334,7 +345,9 @@ void main() {
     final r = BotResult(kind, seed, won, lostReason, monthsPlayed, state.netWorth);
     final idx = state.assets.where((a) => a.marketClassId == 'index_fund').firstOrNull;
     final avgBuy = (idx == null || idx.units <= 0) ? 0.0 : idx.baseValue / idx.units;
-    debugPrint('[MarketBot] $r | passive=${state.passiveIncome.toStringAsFixed(0)}'
+    debugPrint('[MarketBot] $r | real=${(state.netWorth / state.inflationIndex).toStringAsFixed(0)}'
+        ' idx=${state.inflationIndex.toStringAsFixed(3)}'
+        ' passive=${state.passiveIncome.toStringAsFixed(0)}'
         ' outflow=${state.totalMonthlyOutflow.toStringAsFixed(0)}'
         ' avgBuyIdx=${avgBuy.toStringAsFixed(3)}'
         ' idxPrice=${state.market['index_fund']?.price.toStringAsFixed(3)}'
@@ -385,6 +398,16 @@ void main() {
           '(noReserve=$nrTotal, dca=$dcaTotal)');
       expect(ratio, greaterThanOrEqualTo(1.08),
           reason: 'Skipping the emergency fund + insurance must cost ≥8% of the run');
+    }, timeout: const Timeout(Duration(minutes: 10)));
+
+    test('Bot Ôm-Tiền-Mặt THUA cả 3 seed — tiền mặt nằm im là tiền đang chết', () async {
+      for (final seed in seeds) {
+        final hoarder = await runBot(BotKind.cashHoarder, seed);
+        expect(hoarder.won, isFalse,
+            reason: 'Never investing must never escape the rat race (seed $seed)');
+        expect(hoarder.lostReason, isNotNull,
+            reason: 'The hoarder must actually LOSE, not merely stall (seed $seed): $hoarder');
+      }
     }, timeout: const Timeout(Duration(minutes: 10)));
 
     test('SEED SWEEP 20 seeds — công cụ tune thủ công', () async {

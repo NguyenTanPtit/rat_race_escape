@@ -65,5 +65,19 @@ abstract class YearlyRecap with _$YearlyRecap {
     required double totalCashOut,
     required List<MonthlyHistoryRecord> topEvents, // Sorted by absolute cash impact
     required List<MonthlyHistoryRecord> fullHistory, // Last 12 months for chart
+    InflationRecap? inflation, // null when the scenario has no inflation
   }) = _YearlyRecap;
+}
+
+/// What this year's inflation did, in the numbers the player actually feels.
+@freezed
+abstract class InflationRecap with _$InflationRecap {
+  const factory InflationRecap({
+    required double annualRate,
+    required double salaryGrowthRate,
+    required double newMonthlyOutflow,
+    required double newSalary,
+    required double cashHeld,
+    required double cashValueLost, // purchasing power burned this year
+  }) = _InflationRecap;
 }

@@ -29,6 +29,8 @@ class GameStateFactory {
       maxSideJobsPerMonth: config.maxSideJobsPerMonth,
       assetSellFeeRate: config.assetSellFeeRate,
       healthInsurancePremiumMonthly: config.healthInsurancePremiumMonthly,
+      inflationAnnualRate: config.inflationAnnualRate,
+      salaryGrowthAnnualRate: config.salaryGrowthAnnualRate,
       market: {
         for (final c in config.marketClasses) c.id: MarketClassState(config: c),
       },

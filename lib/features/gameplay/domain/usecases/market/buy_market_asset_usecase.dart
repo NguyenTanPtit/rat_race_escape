@@ -37,7 +37,11 @@ class BuyMarketAssetUseCase {
       return Left(Failure('Invalid buy price'));
     }
     final unitsBought = amount / buyPrice;
-    final passiveBought = unitsBought * classState.passivePerUnitMonthly;
+    // Scaled by the inflation index so a purchase made in year 10 yields the
+    // same REAL income as the identical purchase made in year 1 (prices stay
+    // in real terms — see ApplyInflationUseCase).
+    final passiveBought =
+        unitsBought * classState.passivePerUnitMonthly * state.inflationIndex;
 
     final existingIndex = state.assets.indexWhere((a) => a.marketClassId == classId);
     final List<Asset> updatedAssets;

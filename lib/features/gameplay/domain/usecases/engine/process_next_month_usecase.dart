@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:rat_race_escape/core/error/failure.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_state.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/turn_result.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/apply_inflation_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/calculate_cashflow_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/events/generate_event_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/process_loans_usecase.dart';
@@ -20,6 +21,7 @@ class ProcessNextMonthUseCase {
   final GenerateEventUseCase _generateEvent;
   final CheckGameStatusUseCase _checkGameStatus;
   final CheckBehavioralInsightsUseCase _checkBehavioralInsights;
+  final ApplyInflationUseCase _applyInflation;
 
   ProcessNextMonthUseCase(
     this._calculateCashflow,
@@ -29,6 +31,7 @@ class ProcessNextMonthUseCase {
     this._generateEvent,
     this._checkGameStatus,
     this._checkBehavioralInsights,
+    this._applyInflation,
   );
 
   /// Executes the core logic for advancing the game to the next month using a Pipeline pattern.
@@ -45,6 +48,8 @@ class ProcessNextMonthUseCase {
     );
 
     // d. Pass the state sequentially through the injected use cases (Pipeline).
+    // Inflation lands first so the Tet month is already charged at new prices.
+    state = _applyInflation(state);
     state = _updateMarket(state);
     state = _calculateCashflow(state);
     // Job-loss suspension ticks down AFTER cashflow so N suspended months

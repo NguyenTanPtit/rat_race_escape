@@ -531,11 +531,24 @@ class GameEngineCubit extends Cubit<GameEngineState> {
               return impactB.compareTo(impactA);
             });
           
+          final newState = turnResult.state;
           currentYearlyRecap = YearlyRecap(
             totalCashIn: last12.fold(0.0, (sum, e) => sum + e.cashIn),
             totalCashOut: last12.fold(0.0, (sum, e) => sum + e.cashOut),
             topEvents: topEvents.take(3).toList(),
             fullHistory: last12,
+            inflation: newState.inflationAnnualRate <= 0
+                ? null
+                : InflationRecap(
+                    annualRate: newState.inflationAnnualRate,
+                    salaryGrowthRate: newState.salaryGrowthAnnualRate,
+                    newMonthlyOutflow: newState.totalMonthlyOutflow,
+                    newSalary: newState.baseSalary,
+                    cashHeld: newState.cash,
+                    // Purchasing power burned on cash held through the bump.
+                    cashValueLost: newState.cash *
+                        (newState.inflationAnnualRate / (1 + newState.inflationAnnualRate)),
+                  ),
           );
         }
       }

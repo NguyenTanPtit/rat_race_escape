@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'dart:math';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rat_race_escape/features/gameplay/data/repositories/json_event_pool_repository.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/apply_inflation_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/data/repositories/json_scenario_config_repository.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_state.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/turn_result.dart';
@@ -113,6 +114,7 @@ void main() {
       generateEventUseCase,
       checkGameStatusUseCase,
       checkBehavioralInsightsUseCase,
+      ApplyInflationUseCase(),
     );
     
     applyEventOptionUseCase = ApplyEventOptionUseCase(
@@ -137,10 +139,14 @@ void main() {
     setUpDependencies(42);
   });
 
+  /// Independent mirror of GameState.netWorth. Must value market holdings at
+  /// MARKET price and count settling proceeds — this bot can now receive
+  /// market assets from events (e.g. the flash-sale land at -20%).
   double calculateNetWorth(GameState state) {
-    final totalAssets = state.assets.fold<double>(0, (sum, a) => sum + a.baseValue);
+    final totalAssets =
+        state.assets.fold<double>(0, (sum, a) => sum + state.assetMarketValue(a));
     final totalLoans = state.loans.fold<double>(0, (sum, l) => sum + l.principalAmount);
-    return state.cash + totalAssets - totalLoans;
+    return state.cash + totalAssets + state.totalPendingProceeds - totalLoans;
   }
 
   void assertInvariants(GameState state, GameState prevState) {

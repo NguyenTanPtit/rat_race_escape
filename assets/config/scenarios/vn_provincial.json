@@ -14,6 +14,8 @@
   "bankruptcyMonthsThreshold": 3,
   "baseEventChance": 0.2,
   "healthInsurancePremiumMonthly": 100000,
+  "inflationAnnualRate": 0.035,
+  "salaryGrowthAnnualRate": 0.035,
   "marketClasses": [
     {
       "id": "index_fund",
