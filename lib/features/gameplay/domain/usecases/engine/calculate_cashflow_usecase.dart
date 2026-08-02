@@ -27,6 +27,15 @@ class CalculateCashflowUseCase {
         matured -
         currentState.totalMonthlyOutflow;
 
-    return currentState.copyWith(cash: newCash, pendingProceeds: stillPending);
+    // Savings compound monthly, inside the savings balance itself.
+    final double newSavings = currentState.savingsAnnualRate > 0
+        ? currentState.savingsBalance * (1 + currentState.savingsAnnualRate / 12)
+        : currentState.savingsBalance;
+
+    return currentState.copyWith(
+      cash: newCash,
+      savingsBalance: newSavings,
+      pendingProceeds: stillPending,
+    );
   }
 }

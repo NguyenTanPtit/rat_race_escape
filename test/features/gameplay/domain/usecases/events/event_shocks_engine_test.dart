@@ -8,7 +8,6 @@ import 'package:rat_race_escape/features/gameplay/domain/entities/game_event.dar
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_state.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/market_class_config.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/market_class_state.dart';
-import 'package:rat_race_escape/features/gameplay/domain/entities/turn_result.dart';
 import 'package:rat_race_escape/features/gameplay/domain/repositories/event_pool_repository.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/calculate_cashflow_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/check_behavioral_insights_usecase.dart';

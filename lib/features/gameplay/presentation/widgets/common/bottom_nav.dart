@@ -44,7 +44,14 @@ class BottomNav extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 96), // Space for EndTurnButton
-            const Expanded(child: _NavItem(icon: Icons.account_balance, label: 'Ngân hàng', isLocked: true)),
+            Expanded(
+              child: _NavItem(
+                icon: Icons.account_balance,
+                label: 'Ngân hàng',
+                isLocked: false,
+                onTap: () => context.push('/bank'),
+              ),
+            ),
             const Expanded(child: _NavItem(icon: Icons.upgrade, label: 'Nâng cấp', isLocked: true)),
           ],
         ),

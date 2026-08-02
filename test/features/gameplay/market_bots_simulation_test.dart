@@ -20,6 +20,7 @@ import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/process
 import 'package:rat_race_escape/features/gameplay/domain/usecases/market/sell_market_asset_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/spend_on_leisure_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/toggle_health_insurance_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/manage_savings_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/market/update_market_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/update_metrics_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/work_side_job_usecase.dart';
@@ -82,7 +83,7 @@ double calculateOptionScore(EventOption option, GameState state) {
   return cashScore - longTermPenalty - (effect.stress * stressToCashWeight);
 }
 
-enum BotKind { blindDca, disciplined, fomo, noReserve, cashHoarder }
+enum BotKind { blindDca, disciplined, fomo, noReserve, cashHoarder, savingsOnly }
 
 class BotResult {
   final BotKind kind;
@@ -130,6 +131,8 @@ void main() {
         eventPoolRepository, checkGameStatusUseCase, buyMarket, sellMarket, random);
     final workSideJob = WorkSideJobUseCase(checkGameStatusUseCase);
     final toggleInsurance = ToggleHealthInsuranceUseCase(checkGameStatusUseCase);
+    final depositSavingsUseCase = DepositSavingsUseCase(checkGameStatusUseCase);
+    final withdrawSavingsUseCase = WithdrawSavingsUseCase(checkGameStatusUseCase);
     final payDebt = PayDebtUseCase(checkGameStatusUseCase);
     final leisure = SpendOnLeisureUseCase(checkGameStatusUseCase);
 
@@ -170,6 +173,20 @@ void main() {
       return won || lostReason != null;
     }
 
+    bool deposit(double amount) {
+      if (amount < 1000) return false;
+      final result = depositSavingsUseCase(state, amount);
+      result.fold((l) => fail('deposit failed: ${l.message}'), applyTurn);
+      return won || lostReason != null;
+    }
+
+    bool withdrawSv(double amount) {
+      if (amount < 1000) return false;
+      final result = withdrawSavingsUseCase(state, amount);
+      result.fold((l) => fail('withdraw failed: ${l.message}'), applyTurn);
+      return won || lostReason != null;
+    }
+
     double holdingValue(String classId) {
       final holding = state.assets.where((a) => a.marketClassId == classId).firstOrNull;
       return holding == null ? 0.0 : state.assetMarketValue(holding);
@@ -179,6 +196,12 @@ void main() {
       final outflow = state.totalMonthlyOutflow;
 
       // --- Survival valves (identical for every bot) ---
+      // The emergency fund lives in savings: draw it down FIRST.
+      if (state.cash < 0 && state.savingsBalance > 1000) {
+        if (withdrawSv(min(-state.cash + 1, state.savingsBalance))) break;
+      }
+      if (won || lostReason != null) break;
+
       // Forced selling when spendable + incoming < 0: gold first (instant),
       // then index (T+1), then land (T+2). Proceeds take months to arrive —
       // the gap must be survived on side jobs, stress and vay nóng events.
@@ -189,6 +212,12 @@ void main() {
           if (sell(classId, needed)) break;
         }
         if (won || lostReason != null) break;
+      }
+      if (won || lostReason != null) break;
+
+      // Top up the monthly float from savings before resorting to side jobs.
+      if (state.cash < outflow && state.savingsBalance > 1000) {
+        if (withdrawSv(min(outflow - state.cash, state.savingsBalance))) break;
       }
       if (won || lostReason != null) break;
 
@@ -241,9 +270,22 @@ void main() {
       switch (kind) {
         case BotKind.blindDca:
           // Invests the surplus above a 3-month reserve into the index fund,
-          // every month, regardless of price. The baseline lesson.
-          final invest = state.cash - outflow * 3;
-          if (invest > 0 && buy('index_fund', invest)) break;
+          // every month, regardless of price. The reserve LIVES IN SAVINGS
+          // (Slice 3a) — one month stays as a cash float for daily life.
+          final liquid = state.cash + state.savingsBalance;
+          final invest = liquid - outflow * 3;
+          if (invest > 0) {
+            if (state.cash < invest &&
+                withdrawSv(min(invest - state.cash, state.savingsBalance))) {
+              break;
+            }
+            final buyable = min(invest, state.cash);
+            if (buyable > 0 && buy('index_fund', buyable)) break;
+          }
+          // Keep TWO months as cash float: the leisure valve only fires when
+          // cash - cost >= outflow, so a one-month float starves stress relief.
+          final parkable = state.cash - outflow * 2;
+          if (parkable > 1000 && deposit(parkable)) break;
 
         case BotKind.noReserve:
           // The classic Vietnamese mistake: ALL-IN LAND with a one-month
@@ -282,20 +324,33 @@ void main() {
           //    (One month died of burnout on seed 500: a long crash left
           //    nothing to fund stress relief. Post-6.2b, keeping a real
           //    buffer while buying dips IS the disciplined behaviour.)
-          if (index.price <= index.trendPrice * 0.85) {
-            final invest = state.cash - outflow * 2;
-            if (invest > 0 && buy('index_fund', invest)) break;
+          final liquidD = state.cash + state.savingsBalance;
+          final reserveMonths = index.price <= index.trendPrice * 0.85 ? 2 : 3;
+          final investD = liquidD - outflow * reserveMonths;
+          if (investD > 0) {
+            if (state.cash < investD &&
+                withdrawSv(min(investD - state.cash, state.savingsBalance))) {
+              break;
+            }
+            final buyable = min(investD, state.cash);
+            if (buyable > 0 && buy('index_fund', buyable)) break;
           }
-
-          // 2. Normal times: plain DCA into the index, 3-month reserve.
-          final invest = state.cash - outflow * 3;
-          if (invest > 0 && buy('index_fund', invest)) break;
+          final parkableD = state.cash - outflow * 2;
+          if (parkableD > 1000 && deposit(parkableD)) break;
 
         case BotKind.cashHoarder:
           // Never invests a single đồng: lives disciplined (side jobs, stress
           // relief, debt paid) but keeps everything as cash in the drawer.
           // Inflation quietly eats it — the Slice 2.5 lesson.
           break;
+
+        case BotKind.savingsOnly:
+          // Parks everything above one month of costs in the savings account
+          // and never buys a single asset. Safer than the drawer — the money
+          // even grows a little in real terms — but passive income stays at
+          // zero, so the rat race never ends. A shelter, not a way out.
+          final parkableS = state.cash - outflow * 1;
+          if (parkableS > 1000 && deposit(parkableS)) break;
 
         case BotKind.fomo:
           // Panic-sell everything in a class once it is 20% off its peak.
@@ -407,6 +462,16 @@ void main() {
             reason: 'Never investing must never escape the rat race (seed $seed)');
         expect(hoarder.lostReason, isNotNull,
             reason: 'The hoarder must actually LOSE, not merely stall (seed $seed): $hoarder');
+      }
+    }, timeout: const Timeout(Duration(minutes: 10)));
+
+    test('Bot Tiết-Kiệm-Thuần THUA cả 3 seed — trú ẩn không phải đường thắng', () async {
+      for (final seed in seeds) {
+        final saver = await runBot(BotKind.savingsOnly, seed);
+        expect(saver.won, isFalse,
+            reason: 'Savings alone must never escape the rat race (seed $seed)');
+        expect(saver.lostReason, isNotNull,
+            reason: 'The pure saver must actually LOSE (seed $seed): $saver');
       }
     }, timeout: const Timeout(Duration(minutes: 10)));
 

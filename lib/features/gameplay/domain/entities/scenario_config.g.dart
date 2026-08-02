@@ -53,6 +53,10 @@ _ScenarioConfig _$ScenarioConfigFromJson(
   inflationAnnualRate: (json['inflationAnnualRate'] as num?)?.toDouble() ?? 0.0,
   salaryGrowthAnnualRate:
       (json['salaryGrowthAnnualRate'] as num?)?.toDouble() ?? 0.0,
+  savingsAnnualRate: (json['savingsAnnualRate'] as num?)?.toDouble() ?? 0.0,
+  bankLoanAnnualRate: (json['bankLoanAnnualRate'] as num?)?.toDouble() ?? 0.0,
+  bankLoanMinCredit: (json['bankLoanMinCredit'] as num?)?.toInt() ?? 700,
+  bankLoanMaxLtv: (json['bankLoanMaxLtv'] as num?)?.toDouble() ?? 0.5,
 );
 
 Map<String, dynamic> _$ScenarioConfigToJson(_ScenarioConfig instance) =>
@@ -83,6 +87,10 @@ Map<String, dynamic> _$ScenarioConfigToJson(_ScenarioConfig instance) =>
       'healthInsurancePremiumMonthly': instance.healthInsurancePremiumMonthly,
       'inflationAnnualRate': instance.inflationAnnualRate,
       'salaryGrowthAnnualRate': instance.salaryGrowthAnnualRate,
+      'savingsAnnualRate': instance.savingsAnnualRate,
+      'bankLoanAnnualRate': instance.bankLoanAnnualRate,
+      'bankLoanMinCredit': instance.bankLoanMinCredit,
+      'bankLoanMaxLtv': instance.bankLoanMaxLtv,
     };
 
 const _$HousingLevelEnumMap = {

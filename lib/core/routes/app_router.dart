@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/pages/component_gallery_page.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/pages/new_game_screen.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/pages/bank_screen.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/pages/invest_screen.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/pages/main_game_screen.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/pages/game_over_screen.dart';
@@ -28,6 +29,10 @@ class AppRouter {
       GoRoute(
         path: '/invest',
         builder: (context, state) => const InvestScreen(),
+      ),
+      GoRoute(
+        path: '/bank',
+        builder: (context, state) => const BankScreen(),
       ),
       GoRoute(
         path: '/gameOver',

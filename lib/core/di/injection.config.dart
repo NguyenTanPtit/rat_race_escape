@@ -32,12 +32,16 @@ import '../../features/gameplay/domain/repositories/scenario_config_repository.d
     as _i96;
 import '../../features/gameplay/domain/usecases/actions/buy_asset_usecase.dart'
     as _i78;
+import '../../features/gameplay/domain/usecases/actions/manage_savings_usecase.dart'
+    as _i389;
 import '../../features/gameplay/domain/usecases/actions/pay_debt_usecase.dart'
     as _i22;
 import '../../features/gameplay/domain/usecases/actions/sell_asset_usecase.dart'
     as _i635;
 import '../../features/gameplay/domain/usecases/actions/spend_on_leisure_usecase.dart'
     as _i298;
+import '../../features/gameplay/domain/usecases/actions/take_bank_loan_usecase.dart'
+    as _i1060;
 import '../../features/gameplay/domain/usecases/actions/toggle_health_insurance_usecase.dart'
     as _i649;
 import '../../features/gameplay/domain/usecases/actions/work_side_job_usecase.dart'
@@ -103,6 +107,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i78.BuyAssetUseCase>(
       () => _i78.BuyAssetUseCase(gh<_i782.CheckGameStatusUseCase>()),
     );
+    gh.lazySingleton<_i389.DepositSavingsUseCase>(
+      () => _i389.DepositSavingsUseCase(gh<_i782.CheckGameStatusUseCase>()),
+    );
+    gh.lazySingleton<_i389.WithdrawSavingsUseCase>(
+      () => _i389.WithdrawSavingsUseCase(gh<_i782.CheckGameStatusUseCase>()),
+    );
     gh.lazySingleton<_i22.PayDebtUseCase>(
       () => _i22.PayDebtUseCase(gh<_i782.CheckGameStatusUseCase>()),
     );
@@ -111,6 +121,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i298.SpendOnLeisureUseCase>(
       () => _i298.SpendOnLeisureUseCase(gh<_i782.CheckGameStatusUseCase>()),
+    );
+    gh.lazySingleton<_i1060.TakeBankLoanUseCase>(
+      () => _i1060.TakeBankLoanUseCase(gh<_i782.CheckGameStatusUseCase>()),
     );
     gh.lazySingleton<_i649.ToggleHealthInsuranceUseCase>(
       () => _i649.ToggleHealthInsuranceUseCase(
@@ -176,6 +189,10 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1072.BuyMarketAssetUseCase>(),
         gh<_i359.SellMarketAssetUseCase>(),
         gh<_i649.ToggleHealthInsuranceUseCase>(),
+        gh<_i389.DepositSavingsUseCase>(),
+        gh<_i389.WithdrawSavingsUseCase>(),
+        gh<_i1060.TakeBankLoanUseCase>(),
+        gh<_i22.PayDebtUseCase>(),
       ),
     );
     return this;

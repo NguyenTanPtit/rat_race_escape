@@ -12,6 +12,9 @@ import '../../domain/usecases/market/buy_market_asset_usecase.dart';
 import '../../domain/usecases/engine/process_next_month_usecase.dart';
 import '../../domain/usecases/market/sell_market_asset_usecase.dart';
 import '../../domain/usecases/actions/spend_on_leisure_usecase.dart';
+import '../../domain/usecases/actions/manage_savings_usecase.dart';
+import '../../domain/usecases/actions/pay_debt_usecase.dart';
+import '../../domain/usecases/actions/take_bank_loan_usecase.dart';
 import '../../domain/usecases/actions/toggle_health_insurance_usecase.dart';
 import '../../domain/repositories/game_state_repository.dart';
 import '../../domain/repositories/scenario_config_repository.dart';
@@ -30,6 +33,10 @@ class GameEngineCubit extends Cubit<GameEngineState> {
   final BuyMarketAssetUseCase _buyMarketAssetUseCase;
   final SellMarketAssetUseCase _sellMarketAssetUseCase;
   final ToggleHealthInsuranceUseCase _toggleHealthInsuranceUseCase;
+  final DepositSavingsUseCase _depositSavingsUseCase;
+  final WithdrawSavingsUseCase _withdrawSavingsUseCase;
+  final TakeBankLoanUseCase _takeBankLoanUseCase;
+  final PayDebtUseCase _payDebtUseCase;
   bool _isProcessing = false;
   
   final List<MonthlyHistoryRecord> _historyBuffer = [];
@@ -46,6 +53,10 @@ class GameEngineCubit extends Cubit<GameEngineState> {
     this._buyMarketAssetUseCase,
     this._sellMarketAssetUseCase,
     this._toggleHealthInsuranceUseCase,
+    this._depositSavingsUseCase,
+    this._withdrawSavingsUseCase,
+    this._takeBankLoanUseCase,
+    this._payDebtUseCase,
   ) : super(const GameEngineState.initial());
 
   Future<void> startNewGame(Country country, String scenarioId) async {
@@ -357,6 +368,115 @@ class GameEngineCubit extends Cubit<GameEngineState> {
       await result.fold(
         (failure) async {
           debugPrint('[GameEngineCubit] toggleHealthInsurance swallowed: ${failure.message}');
+        },
+        (turnResult) async {
+          await _emitTurnResult(turnResult, isFromNextMonth: false);
+        },
+      );
+    } catch (e) {
+      emit(GameEngineState.error('Lỗi hệ thống: $e'));
+    } finally {
+      _isProcessing = false;
+    }
+  }
+
+
+  /// Moves cash into the savings account.
+  Future<void> depositSavings(double amount) async {
+    if (state is! GameEnginePlaying) return;
+    if (_isProcessing) {
+      debugPrint('[GameEngineCubit] depositSavings early return: already processing');
+      return;
+    }
+    final currentState = (state as GameEnginePlaying).gameState;
+
+    _isProcessing = true;
+    try {
+      final result = _depositSavingsUseCase(currentState, amount);
+      await result.fold(
+        (failure) async {
+          debugPrint('[GameEngineCubit] depositSavings swallowed: ${failure.message}');
+        },
+        (turnResult) async {
+          await _emitTurnResult(turnResult, isFromNextMonth: false);
+        },
+      );
+    } catch (e) {
+      emit(GameEngineState.error('Lỗi hệ thống: $e'));
+    } finally {
+      _isProcessing = false;
+    }
+  }
+
+  /// Withdraws savings back into cash (instant).
+  Future<void> withdrawSavings(double amount) async {
+    if (state is! GameEnginePlaying) return;
+    if (_isProcessing) {
+      debugPrint('[GameEngineCubit] withdrawSavings early return: already processing');
+      return;
+    }
+    final currentState = (state as GameEnginePlaying).gameState;
+
+    _isProcessing = true;
+    try {
+      final result = _withdrawSavingsUseCase(currentState, amount);
+      await result.fold(
+        (failure) async {
+          debugPrint('[GameEngineCubit] withdrawSavings swallowed: ${failure.message}');
+        },
+        (turnResult) async {
+          await _emitTurnResult(turnResult, isFromNextMonth: false);
+        },
+      );
+    } catch (e) {
+      emit(GameEngineState.error('Lỗi hệ thống: $e'));
+    } finally {
+      _isProcessing = false;
+    }
+  }
+
+  /// Takes a collateral-backed bank loan.
+  Future<void> takeBankLoan(double amount) async {
+    if (state is! GameEnginePlaying) return;
+    if (_isProcessing) {
+      debugPrint('[GameEngineCubit] takeBankLoan early return: already processing');
+      return;
+    }
+    final currentState = (state as GameEnginePlaying).gameState;
+
+    _isProcessing = true;
+    try {
+      final result = _takeBankLoanUseCase(currentState, amount);
+      await result.fold(
+        (failure) async {
+          debugPrint('[GameEngineCubit] takeBankLoan swallowed: ${failure.message}');
+        },
+        (turnResult) async {
+          await _emitTurnResult(turnResult, isFromNextMonth: false);
+        },
+      );
+    } catch (e) {
+      emit(GameEngineState.error('Lỗi hệ thống: $e'));
+    } finally {
+      _isProcessing = false;
+    }
+  }
+
+  /// Repays part or all of a loan.
+  Future<void> payDebt(String loanId, double amount) async {
+    if (state is! GameEnginePlaying) return;
+    if (_isProcessing) {
+      debugPrint('[GameEngineCubit] payDebt early return: already processing');
+      return;
+    }
+    final currentState = (state as GameEnginePlaying).gameState;
+
+    _isProcessing = true;
+    try {
+      final result = _payDebtUseCase(currentState, loanId, amount);
+      await result.fold(
+        (failure) async {
+          debugPrint('[GameEngineCubit] payDebt swallowed: ${failure.message}');
         },
         (turnResult) async {
           await _emitTurnResult(turnResult, isFromNextMonth: false);

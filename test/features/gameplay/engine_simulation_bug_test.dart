@@ -8,12 +8,7 @@ import 'package:rat_race_escape/features/gameplay/data/repositories/hive_game_st
 import 'package:rat_race_escape/features/gameplay/domain/usecases/events/apply_event_option_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/process_next_month_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/spend_on_leisure_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/factories/game_state_factory.dart';
-import 'package:rat_race_escape/features/gameplay/domain/repositories/scenario_config_repository.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:flutter/services.dart';
-import 'dart:io';
-import 'dart:convert';
 import 'package:mocktail/mocktail.dart';
 
 import 'dart:math';
@@ -26,6 +21,9 @@ import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/check_g
 import 'package:rat_race_escape/features/gameplay/domain/usecases/market/buy_market_asset_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/market/sell_market_asset_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/toggle_health_insurance_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/manage_savings_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/take_bank_loan_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/pay_debt_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/check_behavioral_insights_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/data/repositories/json_scenario_config_repository.dart';
 
@@ -91,6 +89,10 @@ void main() {
       buyMarketUseCase,
       sellMarketUseCase,
       ToggleHealthInsuranceUseCase(checkGameStatusUseCase),
+      DepositSavingsUseCase(checkGameStatusUseCase),
+      WithdrawSavingsUseCase(checkGameStatusUseCase),
+      TakeBankLoanUseCase(checkGameStatusUseCase),
+      PayDebtUseCase(checkGameStatusUseCase),
     );
 
     // Bypassing root bundle for json loads in test environment

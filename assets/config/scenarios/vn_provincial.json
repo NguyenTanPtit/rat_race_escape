@@ -16,6 +16,10 @@
   "healthInsurancePremiumMonthly": 100000,
   "inflationAnnualRate": 0.035,
   "salaryGrowthAnnualRate": 0.035,
+  "savingsAnnualRate": 0.045,
+  "bankLoanAnnualRate": 10.0,
+  "bankLoanMinCredit": 700,
+  "bankLoanMaxLtv": 0.5,
   "marketClasses": [
     {
       "id": "index_fund",

@@ -1,33 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:rat_race_escape/core/theme/app_colors.dart';
 import 'package:rat_race_escape/core/format/money_format.dart';
 import 'package:rat_race_escape/core/format/thousands_input_formatter.dart';
+import 'package:rat_race_escape/core/theme/app_colors.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/cubit/game_engine_cubit.dart';
-import 'package:rat_race_escape/features/gameplay/presentation/widgets/common/game_card.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/widgets/common/game_button.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/widgets/common/game_card.dart';
 
-class LeisureDialog extends StatefulWidget {
-  final int leisureReliefUsedThisMonth;
-  final double currentCash;
+enum BankAction { deposit, withdraw, takeLoan, repay }
 
-  const LeisureDialog({
+/// One amount-input dialog for all four bank moves. [maxAmount] mirrors the
+/// usecase's own validation so errors surface before submitting.
+class BankAmountDialog extends StatefulWidget {
+  final BankAction action;
+  final double maxAmount;
+  final String? loanId; // required for BankAction.repay
+
+  const BankAmountDialog({
     super.key,
-    required this.leisureReliefUsedThisMonth,
-    required this.currentCash,
+    required this.action,
+    required this.maxAmount,
+    this.loanId,
   });
 
   @override
-  State<LeisureDialog> createState() => _LeisureDialogState();
+  State<BankAmountDialog> createState() => _BankAmountDialogState();
 }
 
-class _LeisureDialogState extends State<LeisureDialog> {
+class _BankAmountDialogState extends State<BankAmountDialog> {
   final TextEditingController _controller = TextEditingController();
-  final int maxStressReliefPerMonth = 20;
-  final double costPerStressPoint = 100000;
-  
   String? _errorText;
+
+  String get _title => switch (widget.action) {
+        BankAction.deposit => 'GỬI TIẾT KIỆM',
+        BankAction.withdraw => 'RÚT TIẾT KIỆM',
+        BankAction.takeLoan => 'VAY THẾ CHẤP',
+        BankAction.repay => 'TRẢ NỢ',
+      };
+
+  String get _maxLabel => switch (widget.action) {
+        BankAction.deposit => 'Tiền mặt hiện có',
+        BankAction.withdraw => 'Số dư tiết kiệm',
+        BankAction.takeLoan => 'Hạn mức còn lại',
+        BankAction.repay => 'Có thể trả tối đa',
+      };
 
   @override
   void dispose() {
@@ -41,34 +58,34 @@ class _LeisureDialogState extends State<LeisureDialog> {
       setState(() => _errorText = 'Vui lòng nhập số tiền');
       return;
     }
-
     final double amount = double.tryParse(text) ?? 0;
     if (amount <= 0) {
       setState(() => _errorText = 'Số tiền phải lớn hơn 0');
       return;
     }
-
-    if (amount > widget.currentCash) {
-      setState(() => _errorText = 'Không đủ tiền mặt');
+    if (amount > widget.maxAmount + 0.01) {
+      setState(() => _errorText =
+          'Vượt mức cho phép — tối đa ${MoneyFormat.format(widget.maxAmount)}');
       return;
     }
 
-    final int maxPointsLeft = maxStressReliefPerMonth - widget.leisureReliefUsedThisMonth;
-    final double maxAmountAllowed = maxPointsLeft * costPerStressPoint;
-
-    if (amount > maxAmountAllowed) {
-      setState(() => _errorText = 'Tháng này chỉ có thể chi tối đa ${MoneyFormat.format(maxAmountAllowed)} để giảm stress');
-      return;
+    final cubit = context.read<GameEngineCubit>();
+    switch (widget.action) {
+      case BankAction.deposit:
+        cubit.depositSavings(amount);
+      case BankAction.withdraw:
+        cubit.withdrawSavings(amount);
+      case BankAction.takeLoan:
+        cubit.takeBankLoan(amount);
+      case BankAction.repay:
+        cubit.payDebt(widget.loanId!, amount);
     }
-
-    context.read<GameEngineCubit>().spendOnLeisure(amount);
     Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final int maxPointsLeft = maxStressReliefPerMonth - widget.leisureReliefUsedThisMonth;
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -83,7 +100,7 @@ class _LeisureDialogState extends State<LeisureDialog> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'GIẢI TRÍ & XẢ STRESS',
+                _title,
                 style: textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w900,
                   color: AppColors.primary,
@@ -92,7 +109,7 @@ class _LeisureDialogState extends State<LeisureDialog> {
               ),
               const SizedBox(height: 16),
               Text(
-                '100.000đ = -1 Stress\nGiới hạn tháng này: còn giảm được tối đa $maxPointsLeft điểm',
+                '$_maxLabel: ${MoneyFormat.format(widget.maxAmount)}',
                 style: textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
@@ -100,11 +117,10 @@ class _LeisureDialogState extends State<LeisureDialog> {
               TextField(
                 controller: _controller,
                 keyboardType: TextInputType.number,
-                inputFormatters: [
-                  ThousandsSeparatorInputFormatter(),
-                ],
+                autofocus: true,
+                inputFormatters: [ThousandsSeparatorInputFormatter()],
                 decoration: InputDecoration(
-                  labelText: 'Số tiền muốn chi',
+                  labelText: 'Số tiền',
                   errorText: _errorText,
                   errorMaxLines: 2,
                   border: const OutlineInputBorder(),
@@ -113,16 +129,9 @@ class _LeisureDialogState extends State<LeisureDialog> {
                   ),
                 ),
                 onChanged: (_) {
-                  if (_errorText != null) {
-                    setState(() => _errorText = null);
-                  }
+                  if (_errorText != null) setState(() => _errorText = null);
                 },
                 onSubmitted: (_) => _validateAndSubmit(),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Tiền mặt hiện tại: ${MoneyFormat.format(widget.currentCash)}',
-                style: textTheme.bodySmall?.copyWith(color: AppColors.ink),
               ),
               const SizedBox(height: 32),
               Row(
@@ -134,7 +143,8 @@ class _LeisureDialogState extends State<LeisureDialog> {
                       child: const Padding(
                         padding: EdgeInsets.symmetric(vertical: 12),
                         child: Center(
-                          child: Text('Hủy', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                          child: Text('Hủy',
+                              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
                         ),
                       ),
                     ),
@@ -146,7 +156,8 @@ class _LeisureDialogState extends State<LeisureDialog> {
                       child: const Padding(
                         padding: EdgeInsets.symmetric(vertical: 12),
                         child: Center(
-                          child: Text('Xác nhận', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                          child: Text('Xác nhận',
+                              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
                         ),
                       ),
                     ),

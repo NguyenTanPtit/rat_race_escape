@@ -65,6 +65,14 @@ abstract class GameState with _$GameState {
     @Default(0.0) double salaryGrowthAnnualRate,
     @Default(1.0) double inflationIndex,
 
+    // Bank (Slice 3a). Savings compound monthly and are NOT indexed by
+    // inflation either — the interest is the compensation (real ~+1%/yr).
+    @Default(0.0) double savingsBalance,
+    @Default(0.0) double savingsAnnualRate, // decimal, e.g. 0.045; 0 = no bank
+    @Default(0.0) double bankLoanAnnualRate, // % per year (Loan convention); 0 = no lending
+    @Default(700) int bankLoanMinCredit,
+    @Default(0.5) double bankLoanMaxLtv, // bank debt cap vs portfolio market value
+
     // 6. Inventories
     @Default([]) List<Asset> assets,
     @Default([]) List<Loan> loans,
@@ -97,7 +105,24 @@ abstract class GameState with _$GameState {
   double get netWorth {
     double totalAssets = assets.fold(0, (sum, asset) => sum + assetMarketValue(asset));
     double totalLoans = loans.fold(0, (sum, loan) => sum + loan.principalAmount);
-    return cash + totalAssets + totalPendingProceeds - totalLoans;
+    return cash + savingsBalance + totalAssets + totalPendingProceeds - totalLoans;
+  }
+
+  /// Market value of every asset (the collateral base for bank lending).
+  double get totalPortfolioValue =>
+      assets.fold(0, (sum, asset) => sum + assetMarketValue(asset));
+
+  /// Outstanding mortgage-type debt taken from the bank.
+  double get totalBankDebt => loans
+      .where((l) => l.type == LoanType.mortgage)
+      .fold(0, (sum, l) => sum + l.principalAmount);
+
+  /// How much more the bank is willing to lend right now.
+  double get bankLoanHeadroom {
+    if (bankLoanAnnualRate <= 0 || creditScore < bankLoanMinCredit) return 0;
+    final cap = totalPortfolioValue * bankLoanMaxLtv;
+    final headroom = cap - totalBankDebt;
+    return headroom > 0 ? headroom : 0;
   }
 
   double get passiveIncome => assets.fold(0, (sum, a) => sum + a.monthlyPassiveIncome);

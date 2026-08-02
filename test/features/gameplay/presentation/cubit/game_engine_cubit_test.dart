@@ -19,6 +19,9 @@ import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/spend_
 import 'package:rat_race_escape/features/gameplay/domain/usecases/market/buy_market_asset_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/market/sell_market_asset_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/toggle_health_insurance_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/manage_savings_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/take_bank_loan_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/pay_debt_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/market_class_config.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/market_class_state.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/asset.dart';
@@ -149,6 +152,61 @@ class MockToggleHealthInsuranceUseCase implements ToggleHealthInsuranceUseCase {
   }
 }
 
+
+class MockDepositSavingsUseCase implements DepositSavingsUseCase {
+  Either<Failure, TurnResult> resultToReturn = Right(const TurnContinued(GameState(
+    country: Country.vietnam, currency: Currency.vnd, scenarioId: 'test',
+    cash: 0, monthlyExpenses: 0, monthlyRent: 0, baseSalary: 0,
+  )));
+  double? lastAmount;
+  @override
+  Either<Failure, TurnResult> call(GameState state, double amount) {
+    lastAmount = amount;
+    return resultToReturn;
+  }
+}
+
+class MockWithdrawSavingsUseCase implements WithdrawSavingsUseCase {
+  Either<Failure, TurnResult> resultToReturn = Right(const TurnContinued(GameState(
+    country: Country.vietnam, currency: Currency.vnd, scenarioId: 'test',
+    cash: 0, monthlyExpenses: 0, monthlyRent: 0, baseSalary: 0,
+  )));
+  double? lastAmount;
+  @override
+  Either<Failure, TurnResult> call(GameState state, double amount) {
+    lastAmount = amount;
+    return resultToReturn;
+  }
+}
+
+class MockTakeBankLoanUseCase implements TakeBankLoanUseCase {
+  Either<Failure, TurnResult> resultToReturn = Right(const TurnContinued(GameState(
+    country: Country.vietnam, currency: Currency.vnd, scenarioId: 'test',
+    cash: 0, monthlyExpenses: 0, monthlyRent: 0, baseSalary: 0,
+  )));
+  double? lastAmount;
+  @override
+  Either<Failure, TurnResult> call(GameState state, double amount) {
+    lastAmount = amount;
+    return resultToReturn;
+  }
+}
+
+class MockPayDebtUseCase implements PayDebtUseCase {
+  Either<Failure, TurnResult> resultToReturn = Right(const TurnContinued(GameState(
+    country: Country.vietnam, currency: Currency.vnd, scenarioId: 'test',
+    cash: 0, monthlyExpenses: 0, monthlyRent: 0, baseSalary: 0,
+  )));
+  String? lastLoanId;
+  double? lastAmount;
+  @override
+  Either<Failure, TurnResult> call(GameState state, String loanId, double amount) {
+    lastLoanId = loanId;
+    lastAmount = amount;
+    return resultToReturn;
+  }
+}
+
 class MockGameStateRepository implements GameStateRepository {
   bool saveGameCalled = false;
   bool deleteSaveCalled = false;
@@ -247,6 +305,10 @@ void main() {
   late MockBuyMarketAssetUseCase mockBuyMarketAssetUseCase;
   late MockSellMarketAssetUseCase mockSellMarketAssetUseCase;
   late MockToggleHealthInsuranceUseCase mockToggleHealthInsuranceUseCase;
+  late MockDepositSavingsUseCase mockDepositSavingsUseCase;
+  late MockWithdrawSavingsUseCase mockWithdrawSavingsUseCase;
+  late MockTakeBankLoanUseCase mockTakeBankLoanUseCase;
+  late MockPayDebtUseCase mockPayDebtUseCase;
 
   setUp(() {
     mockProcessNextMonthUseCase = MockProcessNextMonthUseCase();
@@ -258,6 +320,10 @@ void main() {
     mockBuyMarketAssetUseCase = MockBuyMarketAssetUseCase();
     mockSellMarketAssetUseCase = MockSellMarketAssetUseCase();
     mockToggleHealthInsuranceUseCase = MockToggleHealthInsuranceUseCase();
+    mockDepositSavingsUseCase = MockDepositSavingsUseCase();
+    mockWithdrawSavingsUseCase = MockWithdrawSavingsUseCase();
+    mockTakeBankLoanUseCase = MockTakeBankLoanUseCase();
+    mockPayDebtUseCase = MockPayDebtUseCase();
     cubit = GameEngineCubit(
       mockProcessNextMonthUseCase,
       mockApplyEventOptionUseCase,
@@ -268,6 +334,10 @@ void main() {
       mockBuyMarketAssetUseCase,
       mockSellMarketAssetUseCase,
       mockToggleHealthInsuranceUseCase,
+      mockDepositSavingsUseCase,
+      mockWithdrawSavingsUseCase,
+      mockTakeBankLoanUseCase,
+      mockPayDebtUseCase,
     );
   });
 
@@ -446,6 +516,10 @@ void main() {
         mockBuyMarketAssetUseCase,
         mockSellMarketAssetUseCase,
         mockToggleHealthInsuranceUseCase,
+        mockDepositSavingsUseCase,
+        mockWithdrawSavingsUseCase,
+        mockTakeBankLoanUseCase,
+        mockPayDebtUseCase,
       );
       
       cubit2.startGame(baseState);
@@ -476,6 +550,10 @@ void main() {
         mockBuyMarketAssetUseCase,
         mockSellMarketAssetUseCase,
         mockToggleHealthInsuranceUseCase,
+        mockDepositSavingsUseCase,
+        mockWithdrawSavingsUseCase,
+        mockTakeBankLoanUseCase,
+        mockPayDebtUseCase,
       );
       
       cubit2.startGame(baseState.copyWith(currentEventId: 'event_1'));
@@ -1222,6 +1300,46 @@ void main() {
 
       cubit.clearMilestone();
       expect((cubit.state as GameEnginePlaying).milestonePercent, isNull);
+    });
+
+    test('bank actions delegate to their usecases and emit + save state', () async {
+      cubit.startGame(baseState);
+
+      final saved = baseState.copyWith(savingsBalance: 5000000);
+      mockDepositSavingsUseCase.resultToReturn = Right(TurnContinued(saved));
+      await cubit.depositSavings(5000000);
+      expect(mockDepositSavingsUseCase.lastAmount, 5000000);
+      expect((cubit.state as GameEnginePlaying).gameState.savingsBalance, 5000000);
+      expect(mockGameStateRepository.savedState?.savingsBalance, 5000000);
+
+      final withdrawn = baseState.copyWith(cash: 99);
+      mockWithdrawSavingsUseCase.resultToReturn = Right(TurnContinued(withdrawn));
+      await cubit.withdrawSavings(2000000);
+      expect(mockWithdrawSavingsUseCase.lastAmount, 2000000);
+      expect((cubit.state as GameEnginePlaying).gameState.cash, 99);
+
+      final borrowed = baseState.copyWith(cash: 777);
+      mockTakeBankLoanUseCase.resultToReturn = Right(TurnContinued(borrowed));
+      await cubit.takeBankLoan(30000000);
+      expect(mockTakeBankLoanUseCase.lastAmount, 30000000);
+      expect((cubit.state as GameEnginePlaying).gameState.cash, 777);
+
+      final repaid = baseState.copyWith(cash: 555);
+      mockPayDebtUseCase.resultToReturn = Right(TurnContinued(repaid));
+      await cubit.payDebt('bank_loan_1_0', 1000000);
+      expect(mockPayDebtUseCase.lastLoanId, 'bank_loan_1_0');
+      expect(mockPayDebtUseCase.lastAmount, 1000000);
+      expect((cubit.state as GameEnginePlaying).gameState.cash, 555);
+    });
+
+    test('bank action failure is swallowed silently and state stays unchanged', () async {
+      cubit.startGame(baseState);
+      mockTakeBankLoanUseCase.resultToReturn = Left(Failure('Credit score too low'));
+
+      await cubit.takeBankLoan(999999999);
+
+      expect(cubit.state, isA<GameEnginePlaying>());
+      expect((cubit.state as GameEnginePlaying).gameState.cash, baseState.cash);
     });
 
     test('toggleHealthInsurance delegates to usecase and emits + saves state', () async {

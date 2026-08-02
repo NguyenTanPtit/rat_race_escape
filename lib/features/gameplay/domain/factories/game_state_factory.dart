@@ -31,6 +31,10 @@ class GameStateFactory {
       healthInsurancePremiumMonthly: config.healthInsurancePremiumMonthly,
       inflationAnnualRate: config.inflationAnnualRate,
       salaryGrowthAnnualRate: config.salaryGrowthAnnualRate,
+      savingsAnnualRate: config.savingsAnnualRate,
+      bankLoanAnnualRate: config.bankLoanAnnualRate,
+      bankLoanMinCredit: config.bankLoanMinCredit,
+      bankLoanMaxLtv: config.bankLoanMaxLtv,
       market: {
         for (final c in config.marketClasses) c.id: MarketClassState(config: c),
       },
