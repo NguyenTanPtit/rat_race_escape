@@ -19,8 +19,8 @@ import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/spend_
 import 'package:rat_race_escape/features/gameplay/domain/usecases/market/buy_market_asset_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/market/sell_market_asset_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/toggle_health_insurance_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/manage_savings_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/take_bank_loan_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/bank/manage_savings_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/bank/take_bank_loan_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/pay_debt_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/market_class_config.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/market_class_state.dart';

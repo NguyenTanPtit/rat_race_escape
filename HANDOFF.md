@@ -27,8 +27,9 @@ lib/features/gameplay/
 │   │              process_loans, update_metrics, check_game_status, check_behavioral_insights)
 │   ├── events/   (generate_event, apply_event_option)
 │   ├── market/   (update_market, buy_market_asset, sell_market_asset)
-│   └── actions/  (buy/sell_asset legacy, pay_debt, spend_on_leisure, work_side_job,
-│                  toggle_health_insurance, manage_savings, take_bank_loan)
+│   ├── bank/     (manage_savings [deposit+withdraw], take_bank_loan)
+│   └── actions/  (buy/sell_asset legacy, pay_debt [nợ chung — cả vay nóng/thẻ],
+│                  spend_on_leisure, work_side_job, toggle_health_insurance)
 ├── presentation/cubit/     (game_engine_cubit + game_engine_state)
 ├── presentation/pages/     (main_game, invest, bank, new_game, win, game_over, gallery)
 └── presentation/widgets/   {common, market, events, dialogs, bank}/

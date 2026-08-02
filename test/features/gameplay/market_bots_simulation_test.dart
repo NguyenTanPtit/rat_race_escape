@@ -20,7 +20,7 @@ import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/process
 import 'package:rat_race_escape/features/gameplay/domain/usecases/market/sell_market_asset_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/spend_on_leisure_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/toggle_health_insurance_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/manage_savings_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/bank/manage_savings_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/market/update_market_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/update_metrics_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/work_side_job_usecase.dart';

@@ -4,8 +4,8 @@ import 'package:rat_race_escape/features/gameplay/domain/entities/game_state.dar
 import 'package:rat_race_escape/features/gameplay/domain/entities/loan.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/market_class_config.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/market_class_state.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/manage_savings_usecase.dart';
-import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/take_bank_loan_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/bank/manage_savings_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/bank/take_bank_loan_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/apply_inflation_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/calculate_cashflow_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/check_game_status_usecase.dart';
