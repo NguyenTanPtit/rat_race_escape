@@ -35,6 +35,7 @@ class GameStateFactory {
       bankLoanAnnualRate: config.bankLoanAnnualRate,
       bankLoanMinCredit: config.bankLoanMinCredit,
       bankLoanMaxLtv: config.bankLoanMaxLtv,
+      courses: List.from(config.courses),
       market: {
         for (final c in config.marketClasses) c.id: MarketClassState(config: c),
       },

@@ -54,6 +54,8 @@ import '../../features/gameplay/domain/usecases/engine/check_behavioral_insights
     as _i951;
 import '../../features/gameplay/domain/usecases/engine/check_game_status_usecase.dart'
     as _i782;
+import '../../features/gameplay/domain/usecases/engine/process_course_study_usecase.dart'
+    as _i469;
 import '../../features/gameplay/domain/usecases/engine/process_loans_usecase.dart'
     as _i417;
 import '../../features/gameplay/domain/usecases/engine/process_next_month_usecase.dart'
@@ -70,6 +72,8 @@ import '../../features/gameplay/domain/usecases/market/sell_market_asset_usecase
     as _i359;
 import '../../features/gameplay/domain/usecases/market/update_market_usecase.dart'
     as _i893;
+import '../../features/gameplay/domain/usecases/upgrade/start_course_usecase.dart'
+    as _i581;
 import '../../features/gameplay/presentation/cubit/game_engine_cubit.dart'
     as _i910;
 import 'injection.dart' as _i464;
@@ -94,6 +98,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i782.CheckGameStatusUseCase>(
       () => _i782.CheckGameStatusUseCase(),
+    );
+    gh.lazySingleton<_i469.ProcessCourseStudyUseCase>(
+      () => _i469.ProcessCourseStudyUseCase(),
     );
     gh.lazySingleton<_i417.ProcessLoansUseCase>(
       () => _i417.ProcessLoansUseCase(),
@@ -139,6 +146,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i359.SellMarketAssetUseCase>(
       () => _i359.SellMarketAssetUseCase(gh<_i782.CheckGameStatusUseCase>()),
     );
+    gh.lazySingleton<_i581.StartCourseUseCase>(
+      () => _i581.StartCourseUseCase(gh<_i782.CheckGameStatusUseCase>()),
+    );
     gh.lazySingleton<_i688.GameStateRepository>(
       () => _i1051.HiveGameStateRepository(),
     );
@@ -176,6 +186,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i782.CheckGameStatusUseCase>(),
         gh<_i951.CheckBehavioralInsightsUseCase>(),
         gh<_i250.ApplyInflationUseCase>(),
+        gh<_i469.ProcessCourseStudyUseCase>(),
       ),
     );
     gh.factory<_i910.GameEngineCubit>(
@@ -193,6 +204,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i511.WithdrawSavingsUseCase>(),
         gh<_i1046.TakeBankLoanUseCase>(),
         gh<_i22.PayDebtUseCase>(),
+        gh<_i581.StartCourseUseCase>(),
       ),
     );
     return this;

@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rat_race_escape/features/gameplay/data/repositories/json_event_pool_repository.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/apply_inflation_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/process_course_study_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/data/repositories/json_scenario_config_repository.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_state.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/turn_result.dart';
@@ -29,6 +30,7 @@ import 'package:rat_race_escape/features/gameplay/domain/usecases/market/sell_ma
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/pay_debt_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/sell_asset_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/work_side_job_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/upgrade/start_course_usecase.dart';
 
 const stressToCashWeight = 500000.0;
 
@@ -90,6 +92,7 @@ void main() {
   late PayDebtUseCase payDebtUseCase;
   late SellAssetUseCase sellAssetUseCase;
   late WorkSideJobUseCase workSideJobUseCase;
+  late StartCourseUseCase startCourseUseCase;
 
   void setUpDependencies(int randomSeed) {
     eventPoolRepository = JsonEventPoolRepository();
@@ -115,6 +118,7 @@ void main() {
       checkGameStatusUseCase,
       checkBehavioralInsightsUseCase,
       ApplyInflationUseCase(),
+      ProcessCourseStudyUseCase(),
     );
     
     applyEventOptionUseCase = ApplyEventOptionUseCase(
@@ -129,6 +133,7 @@ void main() {
     payDebtUseCase = PayDebtUseCase(checkGameStatusUseCase);
     sellAssetUseCase = SellAssetUseCase(checkGameStatusUseCase);
     workSideJobUseCase = WorkSideJobUseCase(checkGameStatusUseCase);
+    startCourseUseCase = StartCourseUseCase(checkGameStatusUseCase);
 
     if (!GetIt.instance.isRegistered<SpendOnLeisureUseCase>()) {
       GetIt.instance.registerSingleton<SpendOnLeisureUseCase>(SpendOnLeisureUseCase(checkGameStatusUseCase));
@@ -310,6 +315,38 @@ void main() {
         
         if (isGameOver) break;
 
+        // 1.5 Invest in yourself first (spec 3: salary alone no longer keeps
+        // up with inflation — course_english early is the standard discipline).
+        // While the course is still pending the bot SAVES UP for it (the DCA
+        // floor below is raised by the course price); it buys as soon as the
+        // wallet keeps a 2-month float afterwards — the survival minimum the
+        // market bots established.
+        final englishCourse =
+            state.courses.where((c) => c.id == 'course_english').firstOrNull;
+        final coursePending = englishCourse != null &&
+            state.studyingCourseId == null &&
+            !state.completedCourseIds.contains(englishCourse.id);
+        double courseSavingTarget = 0;
+        if (coursePending) {
+          final courseCost = state.courseCost(englishCourse);
+          if (state.cash - courseCost >= state.totalMonthlyOutflow * 2) {
+            final result = startCourseUseCase(state, englishCourse.id);
+            result.fold((l) => fail('Failed to start course: ${l.message}'), (r) {
+              if (r is TurnLost) {
+                isGameOver = true;
+                state = r.state;
+              } else {
+                state = r.state;
+                debugPrint('[Month $monthsPlayed] StartCourse: ${englishCourse.id}, -$courseCost');
+              }
+            });
+          } else {
+            courseSavingTarget = courseCost;
+          }
+        }
+
+        if (isGameOver) break;
+
         // 2. Buy Asset (DCA)
           // Phase 2: Action Phase -> DCA Bot Action
           // Bot uses the leisure valve if stress > 60 and cash > emergency fund (3 months expenses)
@@ -336,8 +373,9 @@ void main() {
             }
           }
 
-          // Continue to DCA
-          double investAmount = state.cash - (state.totalMonthlyOutflow * 3);
+          // Continue to DCA (floor raised while saving up for the course)
+          double investAmount =
+              state.cash - (state.totalMonthlyOutflow * 3) - courseSavingTarget;
           if (investAmount > 0) {
               final listing = AssetListing(
                 id: 'etf_${state.currentMonth}',

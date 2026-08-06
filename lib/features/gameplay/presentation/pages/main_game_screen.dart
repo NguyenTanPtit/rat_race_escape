@@ -32,6 +32,7 @@ class _MainGameScreenState extends State<MainGameScreen> {
   bool _wasAutoAdvancing = false;
   int? _lastSalarySuspendedMonths; // null until the first state arrives
   double? _lastPendingProceeds;
+  Set<String>? _lastCompletedCourseIds;
 
   void _showWarningBanner(String message) {
     HapticFeedback.mediumImpact();
@@ -117,6 +118,20 @@ class _MainGameScreenState extends State<MainGameScreen> {
             _showGoodNewsBanner('🎉 Bạn đã đi làm trở lại — lương quay về từ tháng này!');
           }
           _lastSalarySuspendedMonths = suspendedNow;
+
+          // Graduation: a course just moved into completedCourseIds.
+          final completedNow = state.gameState.completedCourseIds;
+          if (_lastCompletedCourseIds != null) {
+            for (final id in completedNow.difference(_lastCompletedCourseIds!)) {
+              for (final course in state.gameState.courses) {
+                if (course.id != id) continue;
+                final boost = (course.salaryBoostRate * 100).toStringAsFixed(0);
+                _showGoodNewsBanner(
+                    '🎓 Tốt nghiệp ${course.name} — lương +$boost% vĩnh viễn!');
+              }
+            }
+          }
+          _lastCompletedCourseIds = completedNow;
 
           // Sale proceeds settled into cash.
           final pendingNow = state.gameState.totalPendingProceeds;

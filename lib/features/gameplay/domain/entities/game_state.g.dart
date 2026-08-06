@@ -69,6 +69,18 @@ _GameState _$GameStateFromJson(Map<String, dynamic> json) => _GameState(
   bankLoanAnnualRate: (json['bankLoanAnnualRate'] as num?)?.toDouble() ?? 0.0,
   bankLoanMinCredit: (json['bankLoanMinCredit'] as num?)?.toInt() ?? 700,
   bankLoanMaxLtv: (json['bankLoanMaxLtv'] as num?)?.toDouble() ?? 0.5,
+  courses:
+      (json['courses'] as List<dynamic>?)
+          ?.map((e) => CourseConfig.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
+  completedCourseIds:
+      (json['completedCourseIds'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toSet() ??
+      const {},
+  studyingCourseId: json['studyingCourseId'] as String?,
+  studyingMonthsLeft: (json['studyingMonthsLeft'] as num?)?.toInt() ?? 0,
   assets:
       (json['assets'] as List<dynamic>?)
           ?.map((e) => Asset.fromJson(e as Map<String, dynamic>))
@@ -137,6 +149,10 @@ Map<String, dynamic> _$GameStateToJson(
   'bankLoanAnnualRate': instance.bankLoanAnnualRate,
   'bankLoanMinCredit': instance.bankLoanMinCredit,
   'bankLoanMaxLtv': instance.bankLoanMaxLtv,
+  'courses': instance.courses.map((e) => e.toJson()).toList(),
+  'completedCourseIds': instance.completedCourseIds.toList(),
+  'studyingCourseId': instance.studyingCourseId,
+  'studyingMonthsLeft': instance.studyingMonthsLeft,
   'assets': instance.assets.map((e) => e.toJson()).toList(),
   'loans': instance.loans.map((e) => e.toJson()).toList(),
   'market': instance.market.map((k, e) => MapEntry(k, e.toJson())),

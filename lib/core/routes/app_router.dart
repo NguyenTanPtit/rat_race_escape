@@ -5,6 +5,7 @@ import 'package:rat_race_escape/features/gameplay/presentation/pages/component_g
 import 'package:rat_race_escape/features/gameplay/presentation/pages/new_game_screen.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/pages/bank_screen.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/pages/invest_screen.dart';
+import 'package:rat_race_escape/features/gameplay/presentation/pages/upgrade_screen.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/pages/main_game_screen.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/pages/game_over_screen.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/pages/win_screen.dart';
@@ -33,6 +34,10 @@ class AppRouter {
       GoRoute(
         path: '/bank',
         builder: (context, state) => const BankScreen(),
+      ),
+      GoRoute(
+        path: '/upgrade',
+        builder: (context, state) => const UpgradeScreen(),
       ),
       GoRoute(
         path: '/gameOver',

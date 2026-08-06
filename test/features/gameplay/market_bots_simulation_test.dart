@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rat_race_escape/features/gameplay/data/repositories/json_event_pool_repository.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/apply_inflation_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/process_course_study_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/data/repositories/json_scenario_config_repository.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_event.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_state.dart';
@@ -124,6 +125,7 @@ void main() {
       checkGameStatusUseCase,
       CheckBehavioralInsightsUseCase(),
       ApplyInflationUseCase(),
+      ProcessCourseStudyUseCase(),
     );
     final buyMarket = BuyMarketAssetUseCase(checkGameStatusUseCase);
     final sellMarket = SellMarketAssetUseCase(checkGameStatusUseCase);

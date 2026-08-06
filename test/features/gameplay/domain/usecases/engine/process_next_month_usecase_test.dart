@@ -11,6 +11,7 @@ import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/process
 import 'package:rat_race_escape/features/gameplay/domain/usecases/market/update_market_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/update_metrics_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/check_behavioral_insights_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/process_course_study_usecase.dart';
 
 class MockCalculateCashflowUseCase extends Mock implements CalculateCashflowUseCase {}
 class MockProcessLoansUseCase extends Mock implements ProcessLoansUseCase {}
@@ -23,6 +24,7 @@ class FakeGameState extends Fake implements GameState {}
 
 class MockCheckBehavioralInsightsUseCase extends Mock implements CheckBehavioralInsightsUseCase {}
 class MockApplyInflationUseCase extends Mock implements ApplyInflationUseCase {}
+class MockProcessCourseStudyUseCase extends Mock implements ProcessCourseStudyUseCase {}
 
 void main() {
   late ProcessNextMonthUseCase usecase;
@@ -34,6 +36,7 @@ void main() {
   late MockCheckGameStatusUseCase mockCheckGameStatusUseCase;
   late MockCheckBehavioralInsightsUseCase mockCheckBehavioralInsightsUseCase;
   late MockApplyInflationUseCase mockApplyInflationUseCase;
+  late MockProcessCourseStudyUseCase mockProcessCourseStudyUseCase;
 
   setUpAll(() {
     registerFallbackValue(FakeGameState());
@@ -48,6 +51,7 @@ void main() {
     mockCheckGameStatusUseCase = MockCheckGameStatusUseCase();
     mockCheckBehavioralInsightsUseCase = MockCheckBehavioralInsightsUseCase();
     mockApplyInflationUseCase = MockApplyInflationUseCase();
+    mockProcessCourseStudyUseCase = MockProcessCourseStudyUseCase();
 
     usecase = ProcessNextMonthUseCase(
       mockCalculateCashflowUseCase,
@@ -58,6 +62,7 @@ void main() {
       mockCheckGameStatusUseCase,
       mockCheckBehavioralInsightsUseCase,
       mockApplyInflationUseCase,
+      mockProcessCourseStudyUseCase,
     );
   });
 
@@ -83,6 +88,7 @@ void main() {
     when(() => mockGenerateEventUseCase(any())).thenAnswer((inv) async => inv.positionalArguments[0] as GameState);
     when(() => mockCheckBehavioralInsightsUseCase(any())).thenAnswer((inv) => inv.positionalArguments[0] as GameState);
     when(() => mockApplyInflationUseCase(any())).thenAnswer((inv) => inv.positionalArguments[0] as GameState);
+    when(() => mockProcessCourseStudyUseCase(any())).thenAnswer((inv) => inv.positionalArguments[0] as GameState);
     // Finally, mockCheckGameStatusUseCase returns TurnContinued so we can inspect the state
     when(() => mockCheckGameStatusUseCase(any())).thenAnswer((inv) => TurnResult.continued(inv.positionalArguments[0] as GameState));
 

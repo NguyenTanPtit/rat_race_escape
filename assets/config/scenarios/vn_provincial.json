@@ -15,11 +15,37 @@
   "baseEventChance": 0.2,
   "healthInsurancePremiumMonthly": 100000,
   "inflationAnnualRate": 0.035,
-  "salaryGrowthAnnualRate": 0.035,
+  "salaryGrowthAnnualRate": 0.03,
   "savingsAnnualRate": 0.045,
   "bankLoanAnnualRate": 10.0,
   "bankLoanMinCredit": 700,
   "bankLoanMaxLtv": 0.5,
+  "courses": [
+    {
+      "id": "course_english",
+      "name": "Chứng chỉ tiếng Anh",
+      "baseCost": 12000000,
+      "durationMonths": 6,
+      "stressPerMonth": 3,
+      "salaryBoostRate": 0.08
+    },
+    {
+      "id": "course_pro",
+      "name": "Chứng chỉ nghề nâng cao",
+      "baseCost": 35000000,
+      "durationMonths": 12,
+      "stressPerMonth": 5,
+      "salaryBoostRate": 0.15
+    },
+    {
+      "id": "course_master",
+      "name": "Văn bằng sau đại học",
+      "baseCost": 90000000,
+      "durationMonths": 24,
+      "stressPerMonth": 6,
+      "salaryBoostRate": 0.25
+    }
+  ],
   "marketClasses": [
     {
       "id": "index_fund",

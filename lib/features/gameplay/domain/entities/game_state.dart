@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'asset.dart';
+import 'course_config.dart';
 import 'loan.dart';
 import 'market_class_state.dart';
 import 'pending_proceed.dart';
@@ -73,6 +74,14 @@ abstract class GameState with _$GameState {
     @Default(700) int bankLoanMinCredit,
     @Default(0.5) double bankLoanMaxLtv, // bank debt cap vs portfolio market value
 
+    // Self-upgrade courses (Slice 3b). Course price at purchase time is
+    // baseCost × inflationIndex — studying early is cheaper. One course at a
+    // time, each course only once, salary boost is permanent on graduation.
+    @Default([]) List<CourseConfig> courses, // scenario config; empty = not offered
+    @Default({}) Set<String> completedCourseIds,
+    String? studyingCourseId,
+    @Default(0) int studyingMonthsLeft,
+
     // 6. Inventories
     @Default([]) List<Asset> assets,
     @Default([]) List<Loan> loans,
@@ -124,6 +133,18 @@ abstract class GameState with _$GameState {
     final headroom = cap - totalBankDebt;
     return headroom > 0 ? headroom : 0;
   }
+
+  /// Course currently being studied, if any.
+  CourseConfig? get studyingCourse {
+    if (studyingCourseId == null) return null;
+    for (final c in courses) {
+      if (c.id == studyingCourseId) return c;
+    }
+    return null;
+  }
+
+  /// Price of a course TODAY — single source of truth for engine and UI.
+  double courseCost(CourseConfig course) => course.baseCost * inflationIndex;
 
   double get passiveIncome => assets.fold(0, (sum, a) => sum + a.monthlyPassiveIncome);
 

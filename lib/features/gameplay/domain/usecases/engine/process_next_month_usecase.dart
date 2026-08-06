@@ -11,6 +11,7 @@ import 'package:rat_race_escape/features/gameplay/domain/usecases/market/update_
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/update_metrics_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/check_game_status_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/check_behavioral_insights_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/process_course_study_usecase.dart';
 
 @lazySingleton
 class ProcessNextMonthUseCase {
@@ -22,6 +23,7 @@ class ProcessNextMonthUseCase {
   final CheckGameStatusUseCase _checkGameStatus;
   final CheckBehavioralInsightsUseCase _checkBehavioralInsights;
   final ApplyInflationUseCase _applyInflation;
+  final ProcessCourseStudyUseCase _processCourseStudy;
 
   ProcessNextMonthUseCase(
     this._calculateCashflow,
@@ -32,6 +34,7 @@ class ProcessNextMonthUseCase {
     this._checkGameStatus,
     this._checkBehavioralInsights,
     this._applyInflation,
+    this._processCourseStudy,
   );
 
   /// Executes the core logic for advancing the game to the next month using a Pipeline pattern.
@@ -57,6 +60,9 @@ class ProcessNextMonthUseCase {
     if (state.salarySuspendedMonths > 0) {
       state = state.copyWith(salarySuspendedMonths: state.salarySuspendedMonths - 1);
     }
+    // Course study ticks after cashflow too: N study months = N stress hits,
+    // and the graduation salary boost is first paid the following month.
+    state = _processCourseStudy(state);
     state = _processLoans(state);
     state = _checkBehavioralInsights(state);
     state = _updateMetrics(state);

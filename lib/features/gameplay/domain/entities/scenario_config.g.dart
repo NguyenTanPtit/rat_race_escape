@@ -57,6 +57,11 @@ _ScenarioConfig _$ScenarioConfigFromJson(
   bankLoanAnnualRate: (json['bankLoanAnnualRate'] as num?)?.toDouble() ?? 0.0,
   bankLoanMinCredit: (json['bankLoanMinCredit'] as num?)?.toInt() ?? 700,
   bankLoanMaxLtv: (json['bankLoanMaxLtv'] as num?)?.toDouble() ?? 0.5,
+  courses:
+      (json['courses'] as List<dynamic>?)
+          ?.map((e) => CourseConfig.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
 );
 
 Map<String, dynamic> _$ScenarioConfigToJson(_ScenarioConfig instance) =>
@@ -91,6 +96,7 @@ Map<String, dynamic> _$ScenarioConfigToJson(_ScenarioConfig instance) =>
       'bankLoanAnnualRate': instance.bankLoanAnnualRate,
       'bankLoanMinCredit': instance.bankLoanMinCredit,
       'bankLoanMaxLtv': instance.bankLoanMaxLtv,
+      'courses': instance.courses.map((e) => e.toJson()).toList(),
     };
 
 const _$HousingLevelEnumMap = {

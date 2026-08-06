@@ -52,7 +52,14 @@ class BottomNav extends StatelessWidget {
                 onTap: () => context.push('/bank'),
               ),
             ),
-            const Expanded(child: _NavItem(icon: Icons.upgrade, label: 'Nâng cấp', isLocked: true)),
+            Expanded(
+              child: _NavItem(
+                icon: Icons.upgrade,
+                label: 'Nâng cấp',
+                isLocked: false,
+                onTap: () => context.push('/upgrade'),
+              ),
+            ),
           ],
         ),
       ),

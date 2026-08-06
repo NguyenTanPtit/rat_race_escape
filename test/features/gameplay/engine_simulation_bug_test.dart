@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/game_state.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/apply_inflation_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/process_course_study_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/cubit/game_engine_cubit.dart';
 import 'package:rat_race_escape/features/gameplay/presentation/cubit/game_engine_state.dart';
 import 'package:rat_race_escape/features/gameplay/data/repositories/json_event_pool_repository.dart';
@@ -24,6 +25,7 @@ import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/toggle
 import 'package:rat_race_escape/features/gameplay/domain/usecases/bank/manage_savings_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/bank/take_bank_loan_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/pay_debt_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/upgrade/start_course_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/check_behavioral_insights_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/data/repositories/json_scenario_config_repository.dart';
 
@@ -65,6 +67,7 @@ void main() {
       checkGameStatusUseCase,
       checkBehavioralInsightsUseCase,
       ApplyInflationUseCase(),
+      ProcessCourseStudyUseCase(),
     );
     
     final buyMarketUseCase = BuyMarketAssetUseCase(checkGameStatusUseCase);
@@ -93,6 +96,7 @@ void main() {
       WithdrawSavingsUseCase(checkGameStatusUseCase),
       TakeBankLoanUseCase(checkGameStatusUseCase),
       PayDebtUseCase(checkGameStatusUseCase),
+      StartCourseUseCase(checkGameStatusUseCase),
     );
 
     // Bypassing root bundle for json loads in test environment

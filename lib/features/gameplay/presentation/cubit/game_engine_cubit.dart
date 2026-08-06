@@ -16,6 +16,7 @@ import '../../domain/usecases/bank/manage_savings_usecase.dart';
 import '../../domain/usecases/actions/pay_debt_usecase.dart';
 import '../../domain/usecases/bank/take_bank_loan_usecase.dart';
 import '../../domain/usecases/actions/toggle_health_insurance_usecase.dart';
+import '../../domain/usecases/upgrade/start_course_usecase.dart';
 import '../../domain/repositories/game_state_repository.dart';
 import '../../domain/repositories/scenario_config_repository.dart';
 import '../../domain/repositories/event_pool_repository.dart';
@@ -37,6 +38,7 @@ class GameEngineCubit extends Cubit<GameEngineState> {
   final WithdrawSavingsUseCase _withdrawSavingsUseCase;
   final TakeBankLoanUseCase _takeBankLoanUseCase;
   final PayDebtUseCase _payDebtUseCase;
+  final StartCourseUseCase _startCourseUseCase;
   bool _isProcessing = false;
   
   final List<MonthlyHistoryRecord> _historyBuffer = [];
@@ -57,6 +59,7 @@ class GameEngineCubit extends Cubit<GameEngineState> {
     this._withdrawSavingsUseCase,
     this._takeBankLoanUseCase,
     this._payDebtUseCase,
+    this._startCourseUseCase,
   ) : super(const GameEngineState.initial());
 
   Future<void> startNewGame(Country country, String scenarioId) async {
@@ -450,6 +453,33 @@ class GameEngineCubit extends Cubit<GameEngineState> {
       await result.fold(
         (failure) async {
           debugPrint('[GameEngineCubit] takeBankLoan swallowed: ${failure.message}');
+        },
+        (turnResult) async {
+          await _emitTurnResult(turnResult, isFromNextMonth: false);
+        },
+      );
+    } catch (e) {
+      emit(GameEngineState.error('Lỗi hệ thống: $e'));
+    } finally {
+      _isProcessing = false;
+    }
+  }
+
+  /// Pays for a course and starts studying it (one at a time, each once).
+  Future<void> startCourse(String courseId) async {
+    if (state is! GameEnginePlaying) return;
+    if (_isProcessing) {
+      debugPrint('[GameEngineCubit] startCourse early return: already processing');
+      return;
+    }
+    final currentState = (state as GameEnginePlaying).gameState;
+
+    _isProcessing = true;
+    try {
+      final result = _startCourseUseCase(currentState, courseId);
+      await result.fold(
+        (failure) async {
+          debugPrint('[GameEngineCubit] startCourse swallowed: ${failure.message}');
         },
         (turnResult) async {
           await _emitTurnResult(turnResult, isFromNextMonth: false);

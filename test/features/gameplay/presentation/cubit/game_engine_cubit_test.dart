@@ -22,6 +22,7 @@ import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/toggle
 import 'package:rat_race_escape/features/gameplay/domain/usecases/bank/manage_savings_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/bank/take_bank_loan_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/pay_debt_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/upgrade/start_course_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/market_class_config.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/market_class_state.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/asset.dart';
@@ -207,6 +208,19 @@ class MockPayDebtUseCase implements PayDebtUseCase {
   }
 }
 
+class MockStartCourseUseCase implements StartCourseUseCase {
+  Either<Failure, TurnResult> resultToReturn = Right(const TurnContinued(GameState(
+    country: Country.vietnam, currency: Currency.vnd, scenarioId: 'test',
+    cash: 0, monthlyExpenses: 0, monthlyRent: 0, baseSalary: 0,
+  )));
+  String? lastCourseId;
+  @override
+  Either<Failure, TurnResult> call(GameState state, String courseId) {
+    lastCourseId = courseId;
+    return resultToReturn;
+  }
+}
+
 class MockGameStateRepository implements GameStateRepository {
   bool saveGameCalled = false;
   bool deleteSaveCalled = false;
@@ -309,6 +323,7 @@ void main() {
   late MockWithdrawSavingsUseCase mockWithdrawSavingsUseCase;
   late MockTakeBankLoanUseCase mockTakeBankLoanUseCase;
   late MockPayDebtUseCase mockPayDebtUseCase;
+  late MockStartCourseUseCase mockStartCourseUseCase;
 
   setUp(() {
     mockProcessNextMonthUseCase = MockProcessNextMonthUseCase();
@@ -324,6 +339,7 @@ void main() {
     mockWithdrawSavingsUseCase = MockWithdrawSavingsUseCase();
     mockTakeBankLoanUseCase = MockTakeBankLoanUseCase();
     mockPayDebtUseCase = MockPayDebtUseCase();
+    mockStartCourseUseCase = MockStartCourseUseCase();
     cubit = GameEngineCubit(
       mockProcessNextMonthUseCase,
       mockApplyEventOptionUseCase,
@@ -338,6 +354,7 @@ void main() {
       mockWithdrawSavingsUseCase,
       mockTakeBankLoanUseCase,
       mockPayDebtUseCase,
+      mockStartCourseUseCase,
     );
   });
 
@@ -520,8 +537,9 @@ void main() {
         mockWithdrawSavingsUseCase,
         mockTakeBankLoanUseCase,
         mockPayDebtUseCase,
+        mockStartCourseUseCase,
       );
-      
+
       cubit2.startGame(baseState);
       
       // Call twice without waiting
@@ -554,8 +572,9 @@ void main() {
         mockWithdrawSavingsUseCase,
         mockTakeBankLoanUseCase,
         mockPayDebtUseCase,
+        mockStartCourseUseCase,
       );
-      
+
       cubit2.startGame(baseState.copyWith(currentEventId: 'event_1'));
       
       // Call twice without waiting
@@ -1330,6 +1349,30 @@ void main() {
       expect(mockPayDebtUseCase.lastLoanId, 'bank_loan_1_0');
       expect(mockPayDebtUseCase.lastAmount, 1000000);
       expect((cubit.state as GameEnginePlaying).gameState.cash, 555);
+    });
+
+    test('startCourse delegates to usecase and emits + saves state', () async {
+      cubit.startGame(baseState);
+
+      final studying = baseState.copyWith(
+          studyingCourseId: 'course_english', studyingMonthsLeft: 6);
+      mockStartCourseUseCase.resultToReturn = Right(TurnContinued(studying));
+      await cubit.startCourse('course_english');
+
+      expect(mockStartCourseUseCase.lastCourseId, 'course_english');
+      expect((cubit.state as GameEnginePlaying).gameState.studyingCourseId,
+          'course_english');
+      expect(mockGameStateRepository.savedState?.studyingCourseId, 'course_english');
+    });
+
+    test('startCourse failure is swallowed silently and state stays unchanged', () async {
+      cubit.startGame(baseState);
+      mockStartCourseUseCase.resultToReturn = Left(Failure('Not enough cash'));
+
+      await cubit.startCourse('course_master');
+
+      expect(cubit.state, isA<GameEnginePlaying>());
+      expect((cubit.state as GameEnginePlaying).gameState.studyingCourseId, isNull);
     });
 
     test('bank action failure is swallowed silently and state stays unchanged', () async {

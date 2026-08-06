@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'asset.dart';
+import 'course_config.dart';
 import 'loan.dart';
 import 'game_state.dart';
 import 'market_class_config.dart';
@@ -40,6 +41,7 @@ abstract class ScenarioConfig with _$ScenarioConfig {
     @Default(0.0) double bankLoanAnnualRate, // % per year; 0 = lending not offered
     @Default(700) int bankLoanMinCredit,
     @Default(0.5) double bankLoanMaxLtv,
+    @Default([]) List<CourseConfig> courses, // empty = upgrades not offered
   }) = _ScenarioConfig;
 
   factory ScenarioConfig.fromJson(Map<String, dynamic> json) => _$ScenarioConfigFromJson(json);
