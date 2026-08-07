@@ -1,5 +1,5 @@
 # BÀN GIAO DỰ ÁN: Rat Race Escape
-*Cập nhật: 28/07/2026 — sau khi đóng đợt 3a (Ngân hàng), nghiệm thu tay OK, CHƯA commit.*
+*Cập nhật: 06/08/2026 — 3a đã commit (`295da17`+`3501d99`); đợt 3b (Nâng cấp bản thân) đã CODE XONG cả 3 bước (engine + UI + bots), CHỜ nghiệm thu tay + commit.*
 > Tài liệu cho AI tiếp quản. Ngôn ngữ làm việc: **tiếng Việt**. Đọc kèm: `design_core_loop_v2.md` (thiết kế gốc + các quyết định), spec từng slice, và mục 8 (quy trình thẩm định — QUAN TRỌNG NHẤT).
 
 ## 1. GAME LÀ GÌ
@@ -60,7 +60,8 @@ lib/features/gameplay/
 
 ## 5. KINH TẾ ĐÃ TUNE (vn_provincial.json — sửa phải chạy lại bots)
 
-- Lương 11tr, tăng 3,5%/năm (⚠️ đợt 3b SẼ hạ 3,0% — đã duyệt). Outflow gốc 10,5tr (sinh hoạt 5 + trọ 3,5 + gửi quê 2 — tách dòng). Lạm phát 3,5%/năm.
+- Lương 11tr, tăng **3,0%/năm** (đã hạ từ 3,5% ở đợt 3b — gap −0,5%/năm vs vật giá là sức ép, course là vũ khí; không course thì margin lương-vs-outflow âm từ ~năm 8). Outflow gốc 10,5tr (sinh hoạt 5 + trọ 3,5 + gửi quê 2 — tách dòng). Lạm phát 3,5%/năm.
+- **Courses (3b)**: english 12tr/6th/+3 stress/+8% lương · pro 35tr/12th/+5/+15% · master 90tr/24th/+6/+25%. Giá mua = baseCost × inflationIndex (getter `courseCost` — engine+UI dùng chung; học sớm rẻ hơn). Học 1 khóa 1 lúc, mỗi khóa 1 lần, boost vĩnh viễn nhân vào baseSalary khi tốt nghiệp. Pipeline: StartCourse trả tiền 1 lần; ProcessCourseStudy tick SAU CalculateCashflow (N tháng học = đúng N cú stress, lương mới trả từ tháng SAU tốt nghiệp). UI: UpgradeScreen (route /upgrade, nav mở khóa), snackbar 🎓 crossing completedCourseIds trong main screen (field cục bộ widget).
 - **index_fund**: yield 11%/năm trên mệnh giá (per-unit cố định → mua đáy = yield-on-cost cao — cơ chế thưởng bắt đáy), drift 0, vol 2%, reversion 0.03, crash p=0.008 −8%/tháng 5-10 tháng, boom p=0.016 +3%/tháng 6-12, T+1.
 - **land**: yield 2,5%, drift 0,55%/tháng, vol 4,5%, reversion 0.02, crash p=0.011 −7,5% 6-12, boom p=0.014 +5,5% 6-12, T+2.
 - **gold**: yield 0 ("Không sinh thu nhập — trú ẩn giá trị"), drift 0,35%, vol 2,5%, reversion 0.025, crash NHẸ −2,5% p=0.005 (không sụp khi dịch — điểm sáng trú ẩn), T+0.
@@ -70,16 +71,19 @@ lib/features/gameplay/
 
 ## 6. BOTS & GATES (market_bots_simulation_test.dart — hàng rào thiết kế + chống gian lận)
 
-6 bot, seeds chuẩn [42, 7, 2026], cap 520 tháng; sweep 20 seed là test SKIP (chạy `--run-skipped --plain-name "SEED SWEEP..."` khi tune):
+7 bot, seeds chuẩn [42, 7, 2026], cap 520 tháng; sweep 20 seed là test SKIP (chạy `--run-skipped --plain-name "SEED SWEEP..."` khi tune):
 
-| Bot | Chiến lược | Gate hiện hành (ĐỀU XANH @ 28/07) |
+| Bot | Chiến lược | Gate hiện hành (ĐỀU XANH @ 06/08) |
 |---|---|---|
-| blindDca | BH ngày 1, dự trữ 3 tháng (2 cash + 1 savings), DCA index | Thắng 3/3 + sweep 20/20, không chết |
-| disciplined | như DCA + bắt đáy (index ≤0.85×trend, dự trữ còn 2 tháng) | avg ≤1.0×DCA (0.986), mọi seed ≤1.05 (sweep max 1.000) |
-| noReserve = "Đất-Tất-Tay" | all-in ĐẤT, đệm 1 tháng, không BH | ≥1.08 (thực tế 2.79 — không bao giờ thắng) |
-| fomo | mua ratio ≥1.25 all-in, bán tháo drawdown ≥20% | ≥1.4 (thực tế 2.79) |
+| blindDca = "DCA-chuẩn" | BH ngày 1 + **course_english sớm** (mua khi liquid − học phí ≥ 1 tháng outflow; chưa đủ thì nâng sàn đầu tư thêm đúng học phí để dồn tiền), dự trữ 3 tháng trong savings, DCA index | Thắng 3/3 + sweep **20/20**, không chết |
+| disciplined | như DCA-chuẩn + bắt đáy (index ≤0.85×trend, dự trữ còn 2 tháng) | avg ≤1.0×DCA (0.990; sweep avg 0.988, max 1.000), mọi seed ≤1.05 |
+| **noCourse = "Không-Học"** | y hệt DCA-chuẩn nhưng không bao giờ học | chậm ≥8% HOẶC thua seed (thực tế: 3-seed ratio 1.248; sweep thua 3/20 seed [3, 9, 31337], avg 1.376) |
+| noReserve = "Đất-Tất-Tay" | all-in ĐẤT, đệm 1 tháng, không BH | ≥1.08 (thực tế 3.02 — không bao giờ thắng) |
+| fomo | mua ratio ≥1.25 all-in, bán tháo drawdown ≥20% | ≥1.4 (thực tế 3.02; sweep avg 2.65) |
 | cashHoarder | không bao giờ đầu tư, ôm cash | THUA 3/3 (seed 42: 2,73 tỷ danh nghĩa = 622tr thực) |
 | savingsOnly | tất cả vào tiết kiệm, không đầu tư | THUA 3/3 (trú ẩn ≠ lối thoát) |
+
+⚠️ Ngưỡng mua course **1 tháng đệm** là kết quả chẩn đoán seed 31337: với ngưỡng 2 tháng, seed này không bao giờ tích nổi học phí + đệm → không course → margin âm từ năm 8 → cày side job → burnout tháng 236 (MỌI bot chết). Hạ xuống 1 tháng → 31337 thắng tháng 251, cả sweep 20/20. Bot legacy Smart DCA trong engine_simulation_test cũng học course (ngưỡng 2 tháng cash-only — vẫn xanh, đừng đồng bộ vô cớ).
 
 Bot scorer (calculateOptionScore, có 2 bản sao: engine_simulation_test + market_bots) đã hiểu: cashIfInsured, salarySuspended, marketBuy/Sell penalties, flash-sale bonus. Van sinh tồn chung mọi bot: rút savings → bán vàng→index→đất khi cash+pending<0 → top-up savings trước side job → side job → leisure (cần cash−cost ≥ outflow → float PHẢI 2 tháng, 1 tháng là chết burnout) → trả nợ lãi cao.
 
@@ -88,14 +92,14 @@ Bot scorer (calculateOptionScore, có 2 bản sao: engine_simulation_test + mark
 2. Bán tài sản nhận tiền ngay = danh mục là quỹ khẩn cấp hoàn hảo → cần T+N. Bot đệm mỏng cầm INDEX ≈ DCA là ĐÚNG đời (index thanh khoản thật) — kẻ cần bài học là all-in đất.
 3. Găm tiền chờ giá rẻ THUA mua-sớm; chốt lời index = tự cắt passive → đường thắng chuẩn là thuần index, đất là đồ chơi rủi ro.
 4. Tín hiệu tương đối (trailing ratio) đánh lừa ngay sau boom; mỏ neo tuyệt đối = trendPrice.
-5. Chuỗi test count: 55 → 142 → ... → **241 passed + 1 skip** (log Tue Jul 28 20:11:28).
+5. Chuỗi test count: 55 → 142 → ... → 241 → 254 (3b-1) → 264 (3b-2) → **265 passed + 1 skip** (log Thu Aug 6 23:17:02).
+6. **Course sớm mạnh hơn dự trữ đầy** (3b-3): ưu tiên mua course_english trước khi quỹ dự trữ đạt 3 tháng làm DCA nhanh hơn trên MỌI seed và cứu seed chết cấu trúc — dưới gap lương, đầu tư bản thân là khoản đầu tư lợi suất cao nhất đầu game.
 
 ## 7. TRẠNG THÁI TASK
 
-**ĐÃ ĐÓNG + COMMIT:** 0→6.5 + batch bugfix (lịch sử cũ, xem git log) · 6.2a Market slice 1 + reorganize (`bf6f97d`) · 6.2b Shocks/BH/vàng/T+N/nhiễu/milestone (`10e319e`) · 2.5 Lạm phát (`52b58f7`).
-**ĐÃ CODE, NGHIỆM THU TAY OK, CHƯA COMMIT:** **đợt 3a Ngân hàng** (savings + vay thế chấp + BankScreen + bot savingsOnly + reserve-in-savings). → VIỆC ĐẦU TIÊN: commit 3a.
+**ĐÃ ĐÓNG + COMMIT:** 0→6.5 + batch bugfix (lịch sử cũ, xem git log) · 6.2a Market slice 1 + reorganize (`bf6f97d`) · 6.2b Shocks/BH/vàng/T+N/nhiễu/milestone (`10e319e`) · 2.5 Lạm phát (`52b58f7`) · **3a Ngân hàng** (`295da17` + `3501d99`).
+**ĐÃ CODE, CHƯA NGHIỆM THU TAY, CHƯA COMMIT:** **đợt 3b Nâng cấp bản thân** trọn vẹn 3 bước (02-06/08/2026): 3b-1 engine (CourseConfig + StartCourse + ProcessCourseStudy + hạ lương 3,0%) · 3b-2 UI (UpgradeScreen + nav + snackbar 🎓 + widget test 360dp) · 3b-3 bots (DCA-chuẩn/Kỷ Luật học course, bot Không-Học, gate 4; sweep 20/20). → VIỆC ĐẦU TIÊN: người dùng nghiệm thu tay UpgradeScreen (checklist: đăng ký học → tiền trừ ngay, tua thấy stress + tốt nghiệp + lương nhảy tháng sau, chặn học 2 khóa/thiếu tiền/học lại, học phí tăng sau Tết) rồi commit.
 **CHƯA LÀM (spec đã duyệt — `spec_3_active_paths.md`):**
-- **3b Nâng cấp bản thân**: 3 courses (12tr/6th/+3stress/+8% lương · 35tr/12th/+5/+15% · 90tr/24th/+6/+25%), giá = gốc × inflationIndex, học 1 khóa 1 lúc, mỗi khóa 1 lần, snackbar tốt nghiệp; HẠ salaryGrowthAnnualRate 3,5→3,0% (gap là sức ép, course là vũ khí — lưu ý: gap từng làm DCA-không-course chỉ thắng 17/20, giờ là TÍNH NĂNG của gate "bot Không-Học chậm ≥8% hoặc thua vài seed", còn DCA-chuẩn CÓ course phải 20/20); UpgradeScreen + mở khóa nav "Nâng cấp".
 - **3c Đòn bẩy bots**: bot Kỷ-Luật-Đòn-Bẩy (vay ≤50% LTV khi index ≤0.8×trend, trả khi hồi) gate ≥10% nhanh hơn — ĐO và BÁO CÁO có chạm 20% không; bot Đòn-Bẩy-Liều (vay max mua đất lúc sốt, không BH, đệm 1 tháng) PHẢI CHẾT ≥ nửa số seed (đã duyệt: liều có án tử).
 **BACKLOG:** tab "Tài sản" (nav còn khóa) · 6.3 cooldownMonths (dịch bệnh có thể dính 2 lần gần nhau — hạn chế đã biết) + bản đồ độ khó 20 seed · 6.4 scenario khó 9,5tr (đã chứng minh impossible, cần thiết kế lại) · lạm phát biến động theo năm · kỳ hạn tiết kiệm · thương lượng lương qua event · polish (avatar già, phòng theo tài sản, audio, badge) · dialog stopReason tổng quát (cân nhắc lại).
 
@@ -117,7 +121,6 @@ Lịch sử dự án từng có agent gian lận báo cáo (sửa expected cho k
 
 ## 10. VIỆC MỞ TIẾP THEO (thứ tự)
 
-1. **Commit 3a** (người dùng): `git add -A && git commit -m "feat: slice 3a — bank savings with monthly compounding, collateral-backed mortgage lending, bank screen, savings-based bot reserves"`
-2. **Đợt 3b** theo spec mục 2 + gate 4 (mục 3). Cẩn trọng nhất: hạ lương 3,0% RỒI kiểm DCA-có-course sweep 20/20.
-3. **Đợt 3c** — trả lời câu hỏi treo lâu nhất: đòn bẩy có cho kỹ năng chạm 20% không. Đo xong báo số thật.
-4. Sau Slice 3: người dùng CHƠI TRỌN VÁN nghiệm thu thiết kế tổng (câu hỏi gốc "game có vui không" — lần trước trả lời "nhàm" đã dẫn tới toàn bộ chuỗi slice này).
+1. **Nghiệm thu tay 3b** (người dùng) theo checklist mục 7, rồi **commit 3b** (cả 3 bước một thể).
+2. **Đợt 3c** — trả lời câu hỏi treo lâu nhất: đòn bẩy có cho kỹ năng chạm 20% không. Đo xong báo số thật.
+3. Sau Slice 3: người dùng CHƠI TRỌN VÁN nghiệm thu thiết kế tổng (câu hỏi gốc "game có vui không" — lần trước trả lời "nhàm" đã dẫn tới toàn bộ chuỗi slice này).

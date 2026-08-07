@@ -26,6 +26,7 @@ import 'package:rat_race_escape/features/gameplay/domain/usecases/market/update_
 import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/update_metrics_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/work_side_job_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/pay_debt_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/upgrade/start_course_usecase.dart';
 
 /// Quantitative design-acceptance bots for the market slice (spec_6_2a_market.md §5,
 /// gates revised 22/07/2026 after a 20-seed sweep — see design_core_loop_v2.md §6):
@@ -38,6 +39,10 @@ import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/pay_de
 /// 3. FOMO (buys booms, panic-sells crashes) must average ≥1.4× slower than
 ///    DCA and must NOT die mid-life (deaths are reserved for stacked
 ///    mistakes with leverage, per the design decision "thua hiếm").
+/// 4. (Spec 3, gate 4) Standard discipline now includes studying
+///    course_english early — salary alone grows 3.0%/yr against 3.5%/yr
+///    prices. The noCourse control bot (DCA minus the course) must pay for
+///    that neglect: ≥8% slower than standard DCA or losing seeds outright.
 
 const stressToCashWeight = 500000.0;
 const maxMonths = 520;
@@ -84,7 +89,7 @@ double calculateOptionScore(EventOption option, GameState state) {
   return cashScore - longTermPenalty - (effect.stress * stressToCashWeight);
 }
 
-enum BotKind { blindDca, disciplined, fomo, noReserve, cashHoarder, savingsOnly }
+enum BotKind { blindDca, disciplined, fomo, noReserve, cashHoarder, savingsOnly, noCourse }
 
 class BotResult {
   final BotKind kind;
@@ -137,6 +142,7 @@ void main() {
     final withdrawSavingsUseCase = WithdrawSavingsUseCase(checkGameStatusUseCase);
     final payDebt = PayDebtUseCase(checkGameStatusUseCase);
     final leisure = SpendOnLeisureUseCase(checkGameStatusUseCase);
+    final startCourseUseCase = StartCourseUseCase(checkGameStatusUseCase);
 
     final config = await configRepository.loadScenarioConfig(Country.vietnam, 'vn_provincial');
     GameState state = GameStateFactory.fromConfig(config);
@@ -153,12 +159,18 @@ void main() {
 
     // Disciplined play includes DEFENSIVE investing: buy insurance on day 1.
     // FOMO and No-Reserve skip it ("phí tiền, đời còn dài").
-    if (kind == BotKind.blindDca || kind == BotKind.disciplined) {
+    // BotKind.noCourse is standard-DCA-minus-the-course, so it IS insured.
+    if (kind == BotKind.blindDca || kind == BotKind.disciplined ||
+        kind == BotKind.noCourse) {
       toggleInsurance(state).fold(
         (l) => debugPrint('[MarketBot] insurance skipped: ${l.message}'),
         applyTurn,
       );
     }
+
+    // Spec 3 standard discipline: study course_english early. noCourse is the
+    // control group that proves the course carries the salary-vs-prices gap.
+    final takesCourse = kind == BotKind.blindDca || kind == BotKind.disciplined;
 
     // Helpers return true if the game ended.
     bool buy(String classId, double amount) {
@@ -264,6 +276,34 @@ void main() {
       }
       if (won || lostReason != null) break;
 
+      // --- Invest in yourself first (spec 3) ---
+      // While course_english is pending the bot saves up for it (the invest
+      // floors below rise by the course price) and enrols as soon as a
+      // 2-month float survives the fee — the survival minimum measured in 3a.
+      double courseSavingTarget = 0;
+      if (takesCourse) {
+        final course =
+            state.courses.where((c) => c.id == 'course_english').firstOrNull;
+        if (course != null &&
+            state.studyingCourseId == null &&
+            !state.completedCourseIds.contains(course.id)) {
+          final cost = state.courseCost(course);
+          if (state.cash + state.savingsBalance - cost >= outflow * 1) {
+            if (state.cash < cost &&
+                withdrawSv(min(cost - state.cash + 1, state.savingsBalance))) {
+              break;
+            }
+            if (state.cash >= cost) {
+              final result = startCourseUseCase(state, course.id);
+              result.fold((l) => fail('start course failed: ${l.message}'), applyTurn);
+            }
+          } else {
+            courseSavingTarget = cost;
+          }
+        }
+      }
+      if (won || lostReason != null) break;
+
       // --- Strategy-specific investing ---
       final market = state.market;
       final land = market['land']!;
@@ -271,11 +311,12 @@ void main() {
 
       switch (kind) {
         case BotKind.blindDca:
+        case BotKind.noCourse:
           // Invests the surplus above a 3-month reserve into the index fund,
           // every month, regardless of price. The reserve LIVES IN SAVINGS
           // (Slice 3a) — one month stays as a cash float for daily life.
           final liquid = state.cash + state.savingsBalance;
-          final invest = liquid - outflow * 3;
+          final invest = liquid - outflow * 3 - courseSavingTarget;
           if (invest > 0) {
             if (state.cash < invest &&
                 withdrawSv(min(invest - state.cash, state.savingsBalance))) {
@@ -328,7 +369,7 @@ void main() {
           //    buffer while buying dips IS the disciplined behaviour.)
           final liquidD = state.cash + state.savingsBalance;
           final reserveMonths = index.price <= index.trendPrice * 0.85 ? 2 : 3;
-          final investD = liquidD - outflow * reserveMonths;
+          final investD = liquidD - outflow * reserveMonths - courseSavingTarget;
           if (investD > 0) {
             if (state.cash < investD &&
                 withdrawSv(min(investD - state.cash, state.savingsBalance))) {
@@ -457,6 +498,24 @@ void main() {
           reason: 'Skipping the emergency fund + insurance must cost ≥8% of the run');
     }, timeout: const Timeout(Duration(minutes: 10)));
 
+    test('Bot Không-Học chậm hơn DCA-chuẩn ≥ 8% hoặc thua seed — lương phải được đầu tư', () async {
+      var dcaTotal = 0, ncTotal = 0, ncLosses = 0;
+      for (final seed in seeds) {
+        final dca = await runBot(BotKind.blindDca, seed);
+        final nc = await runBot(BotKind.noCourse, seed);
+        expect(dca.won, isTrue, reason: 'Standard DCA (with course) must win (seed $seed): $dca');
+        dcaTotal += dca.score;
+        ncTotal += nc.score;
+        if (!nc.won) ncLosses++;
+      }
+      final ratio = ncTotal / dcaTotal;
+      debugPrint('[MarketBot] noCourse/dca month ratio = ${ratio.toStringAsFixed(3)} '
+          '(noCourse=$ncTotal, dca=$dcaTotal, noCourse losses=$ncLosses/3)');
+      expect(ratio >= 1.08 || ncLosses >= 1, isTrue,
+          reason: 'Skipping self-investment must cost ≥8% of the run or lose seeds '
+              '(ratio=${ratio.toStringAsFixed(3)}, losses=$ncLosses)');
+    }, timeout: const Timeout(Duration(minutes: 10)));
+
     test('Bot Ôm-Tiền-Mặt THUA cả 3 seed — tiền mặt nằm im là tiền đang chết', () async {
       for (final seed in seeds) {
         final hoarder = await runBot(BotKind.cashHoarder, seed);
@@ -479,37 +538,46 @@ void main() {
 
     test('SEED SWEEP 20 seeds — công cụ tune thủ công', () async {
       final rows = <String>[];
-      var dcaWins = 0, discWins = 0, fomoWins = 0;
-      var dcaTotal = 0, discTotal = 0, fomoTotal = 0;
-      final discRatios = <double>[], fomoRatios = <double>[];
+      var dcaWins = 0, discWins = 0, fomoWins = 0, ncWins = 0;
+      var dcaTotal = 0, discTotal = 0, fomoTotal = 0, ncTotal = 0;
+      final discRatios = <double>[], fomoRatios = <double>[], ncRatios = <double>[];
       final sweepSeeds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 42, 99, 123, 500, 777, 1000, 2024, 2025, 2026, 31337];
       for (final seed in sweepSeeds) {
         final dca = await runBot(BotKind.blindDca, seed);
         final disc = await runBot(BotKind.disciplined, seed);
         final fomo = await runBot(BotKind.fomo, seed);
+        final nc = await runBot(BotKind.noCourse, seed);
         if (dca.won) dcaWins++;
         if (disc.won) discWins++;
         if (fomo.won) fomoWins++;
+        if (nc.won) ncWins++;
         dcaTotal += dca.score;
         discTotal += disc.score;
         fomoTotal += fomo.score;
+        ncTotal += nc.score;
         discRatios.add(disc.score / dca.score);
         fomoRatios.add(fomo.score / dca.score);
+        ncRatios.add(nc.score / dca.score);
         rows.add('seed=$seed dca=${dca.score}${dca.won ? '' : 'X'} '
             'disc=${disc.score}${disc.won ? '' : 'X'} (${(disc.score / dca.score).toStringAsFixed(2)}) '
-            'fomo=${fomo.score}${fomo.won ? '' : 'X'} (${(fomo.score / dca.score).toStringAsFixed(2)})');
+            'fomo=${fomo.score}${fomo.won ? '' : 'X'} (${(fomo.score / dca.score).toStringAsFixed(2)}) '
+            'noCourse=${nc.score}${nc.won ? '' : 'X'} (${(nc.score / dca.score).toStringAsFixed(2)})');
       }
       discRatios.sort();
       fomoRatios.sort();
+      ncRatios.sort();
       debugPrint('===== SEED SWEEP =====');
       rows.forEach(debugPrint);
-      debugPrint('wins: dca=$dcaWins/${sweepSeeds.length} disc=$discWins fomo=$fomoWins');
+      debugPrint('wins: dca=$dcaWins/${sweepSeeds.length} disc=$discWins fomo=$fomoWins noCourse=$ncWins');
       debugPrint('avg ratio disc/dca=${(discTotal / dcaTotal).toStringAsFixed(3)} '
           'median=${discRatios[discRatios.length ~/ 2].toStringAsFixed(3)} '
           'min=${discRatios.first.toStringAsFixed(3)} max=${discRatios.last.toStringAsFixed(3)}');
       debugPrint('avg ratio fomo/dca=${(fomoTotal / dcaTotal).toStringAsFixed(3)} '
           'median=${fomoRatios[fomoRatios.length ~/ 2].toStringAsFixed(3)} '
           'min=${fomoRatios.first.toStringAsFixed(3)} max=${fomoRatios.last.toStringAsFixed(3)}');
+      debugPrint('avg ratio noCourse/dca=${(ncTotal / dcaTotal).toStringAsFixed(3)} '
+          'median=${ncRatios[ncRatios.length ~/ 2].toStringAsFixed(3)} '
+          'min=${ncRatios.first.toStringAsFixed(3)} max=${ncRatios.last.toStringAsFixed(3)}');
     }, skip: 'Công cụ tune thủ công — chạy bằng --run-skipped', timeout: const Timeout(Duration(minutes: 20)));
 
     test('Bot FOMO chậm hơn DCA mù ≥ 15% và không chết giữa đời', () async {
