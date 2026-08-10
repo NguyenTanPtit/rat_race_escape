@@ -157,6 +157,18 @@ abstract class GameState with _$GameState {
   double get totalCashFlow => effectiveSalary + passiveIncome - totalMonthlyOutflow;
 
   double get totalLoanPayment => loans.fold(0, (sum, loan) => sum + loan.minimumMonthlyPayment);
+
+  /// What the loans will actually charge this month — a nearly-paid-off loan
+  /// charges its remaining balance, not the fixed minimum (mirrors
+  /// ProcessLoans, single source of truth for the debt-crush check).
+  double get totalDueLoanPayment => loans.fold(0, (sum, loan) {
+        final withInterest =
+            loan.principalAmount * (1 + loan.interestRatePerYear / 100 / 12);
+        return sum +
+            (withInterest < loan.minimumMonthlyPayment
+                ? withInterest
+                : loan.minimumMonthlyPayment);
+      });
   double get totalLoanInterest => loans.fold(0, (sum, loan) => sum + (loan.principalAmount * loan.interestRatePerYear / 100 / 12));
 
   int get calendarMonth => ((startCalendarMonth - 1 + currentMonth - 1) % 12) + 1;

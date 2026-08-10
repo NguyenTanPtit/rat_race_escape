@@ -27,6 +27,8 @@ import 'package:rat_race_escape/features/gameplay/domain/usecases/engine/update_
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/work_side_job_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/actions/pay_debt_usecase.dart';
 import 'package:rat_race_escape/features/gameplay/domain/usecases/upgrade/start_course_usecase.dart';
+import 'package:rat_race_escape/features/gameplay/domain/entities/loan.dart';
+import 'package:rat_race_escape/features/gameplay/domain/usecases/bank/take_bank_loan_usecase.dart';
 
 /// Quantitative design-acceptance bots for the market slice (spec_6_2a_market.md §5,
 /// gates revised 22/07/2026 after a 20-seed sweep — see design_core_loop_v2.md §6):
@@ -43,10 +45,28 @@ import 'package:rat_race_escape/features/gameplay/domain/usecases/upgrade/start_
 ///    course_english early — salary alone grows 3.0%/yr against 3.5%/yr
 ///    prices. The noCourse control bot (DCA minus the course) must pay for
 ///    that neglect: ≥8% slower than standard DCA or losing seeds outright.
+/// 5. (Spec 3, gate 3; measured on the 20-seed set — owner decision
+///    07/08/2026) leveragedDisciplined — disciplined play plus the approved
+///    leverage cycle (borrow ≤50% LTV only when the index sits at ≤0.8×
+///    trend, repay once it recovers) — must be ≥10% FASTER than DCA with
+///    zero deaths. Re-measurement of the "skill ≥20%" ambition parked since
+///    6.2a. MEASURED ANSWER: 12.0% avg (median 9.1%, best 26%) — leverage
+///    lifts the skill gap from ~1% to ~12%, it does NOT reach 20%.
+/// 6. (Spec 3, gate 5; owner decision 07/08/2026) recklessLeverage — max
+///    borrowing into hot land, no insurance, one-month buffer — must DIE on
+///    at least half the seeds, ANY reason. In this economy the coroner
+///    writes burnout: the persona lives its whole life at stress 76-92
+///    (endless side jobs), so the stress bar is loaded years before the
+///    debt mountain falls. The debt-crush bankruptcy (CheckGameStatus)
+///    exists for human players who hold on instead of liquidating.
 
 const stressToCashWeight = 500000.0;
 const maxMonths = 520;
 const seeds = [42, 7, 2026];
+// The wide measurement set. Leverage gates run on ALL 20 (owner decision
+// 07/08/2026): the borrow window only opens once credit hits 700 (~month
+// 100), so 3 seeds are too small a sample for leverage effects.
+const sweepSeeds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 42, 99, 123, 500, 777, 1000, 2024, 2025, 2026, 31337];
 
 double calculateOptionScore(EventOption option, GameState state) {
   final effect = option.effect;
@@ -89,7 +109,17 @@ double calculateOptionScore(EventOption option, GameState state) {
   return cashScore - longTermPenalty - (effect.stress * stressToCashWeight);
 }
 
-enum BotKind { blindDca, disciplined, fomo, noReserve, cashHoarder, savingsOnly, noCourse }
+enum BotKind {
+  blindDca,
+  disciplined,
+  fomo,
+  noReserve,
+  cashHoarder,
+  savingsOnly,
+  noCourse,
+  leveragedDisciplined,
+  recklessLeverage,
+}
 
 class BotResult {
   final BotKind kind;
@@ -143,6 +173,7 @@ void main() {
     final payDebt = PayDebtUseCase(checkGameStatusUseCase);
     final leisure = SpendOnLeisureUseCase(checkGameStatusUseCase);
     final startCourseUseCase = StartCourseUseCase(checkGameStatusUseCase);
+    final takeBankLoanUseCase = TakeBankLoanUseCase(checkGameStatusUseCase);
 
     final config = await configRepository.loadScenarioConfig(Country.vietnam, 'vn_provincial');
     GameState state = GameStateFactory.fromConfig(config);
@@ -158,10 +189,10 @@ void main() {
     }
 
     // Disciplined play includes DEFENSIVE investing: buy insurance on day 1.
-    // FOMO and No-Reserve skip it ("phí tiền, đời còn dài").
+    // FOMO, No-Reserve and reckless leverage skip it ("phí tiền, đời còn dài").
     // BotKind.noCourse is standard-DCA-minus-the-course, so it IS insured.
     if (kind == BotKind.blindDca || kind == BotKind.disciplined ||
-        kind == BotKind.noCourse) {
+        kind == BotKind.noCourse || kind == BotKind.leveragedDisciplined) {
       toggleInsurance(state).fold(
         (l) => debugPrint('[MarketBot] insurance skipped: ${l.message}'),
         applyTurn,
@@ -170,7 +201,12 @@ void main() {
 
     // Spec 3 standard discipline: study course_english early. noCourse is the
     // control group that proves the course carries the salary-vs-prices gap.
-    final takesCourse = kind == BotKind.blindDca || kind == BotKind.disciplined;
+    final takesCourse = kind == BotKind.blindDca || kind == BotKind.disciplined ||
+        kind == BotKind.leveragedDisciplined;
+    // Leverage strategies steer their own mortgage — the generic debt valve
+    // would repay the position the month after it was opened.
+    final steersOwnMortgage = kind == BotKind.leveragedDisciplined ||
+        kind == BotKind.recklessLeverage;
 
     // Helpers return true if the game ended.
     bool buy(String classId, double amount) {
@@ -191,6 +227,16 @@ void main() {
       if (amount < 1000) return false;
       final result = depositSavingsUseCase(state, amount);
       result.fold((l) => fail('deposit failed: ${l.message}'), applyTurn);
+      return won || lostReason != null;
+    }
+
+    bool takeLoan(double amount) {
+      if (amount < 1000) return false;
+      debugPrint('[MarketBot] ${kind.name} seed=$seed takeLoan '
+          '${(amount / 1e6).toStringAsFixed(1)}tr @month=${state.currentMonth} '
+          'credit=${state.creditScore} debt=${(state.totalBankDebt / 1e6).toStringAsFixed(1)}tr');
+      final result = takeBankLoanUseCase(state, amount);
+      result.fold((l) => fail('take loan failed: ${l.message}'), applyTurn);
       return won || lostReason != null;
     }
 
@@ -261,9 +307,13 @@ void main() {
       }
       if (won || lostReason != null) break;
 
-      // Debt repayment (same rule as the historical smart bot).
+      // Debt repayment (same rule as the historical smart bot). Leverage bots
+      // exempt their own mortgage from this valve; vay nóng etc. still get paid.
       if (state.cash > state.monthlyExpenses * 2 && state.loans.isNotEmpty) {
-        final badLoans = state.loans.where((l) => l.interestRatePerYear > 0).toList()
+        final badLoans = state.loans
+            .where((l) => l.interestRatePerYear > 0)
+            .where((l) => !(steersOwnMortgage && l.type == LoanType.mortgage))
+            .toList()
           ..sort((a, b) => b.interestRatePerYear.compareTo(a.interestRatePerYear));
         if (badLoans.isNotEmpty) {
           final target = badLoans.first;
@@ -309,6 +359,50 @@ void main() {
       final land = market['land']!;
       final index = market['index_fund']!;
 
+      // --- Leverage cycle (spec 3, 3c) ---
+      if (kind == BotKind.leveragedDisciplined) {
+        // Repay once the index has recovered (window closed, debt = drag):
+        // everything above the full 3-month reserve goes into the mortgage.
+        final mortgage = state.loans
+            .where((l) => l.type == LoanType.mortgage)
+            .firstOrNull;
+        if (mortgage != null && index.price >= index.trendPrice * 0.95) {
+          final budget =
+              state.cash + state.savingsBalance - outflow * 3;
+          final repay = min(budget, mortgage.principalAmount);
+          if (repay > 1000) {
+            if (state.cash < repay &&
+                withdrawSv(min(repay - state.cash + 1, state.savingsBalance))) {
+              break;
+            }
+            final amount = min(repay, state.cash);
+            if (amount > 1000) {
+              final result = payDebt(state, mortgage.id, amount);
+              result.fold((l) => fail('repay mortgage failed: ${l.message}'), applyTurn);
+            }
+          }
+        }
+        if (won || lostReason != null) break;
+        // Borrow ≤50% LTV ONLY into a deep discount (index ≤ 0.8× trend) —
+        // the one moment the 10%/yr loan beats the yield-on-cost it buys.
+        if (index.price <= index.trendPrice * 0.8 &&
+            state.creditScore >= state.bankLoanMinCredit &&
+            state.bankLoanHeadroom > 1000000) {
+          if (takeLoan(state.bankLoanHeadroom)) break;
+          // The borrowed cash is deployed by the disciplined branch below
+          // (reserve drops to 2 months while the discount lasts).
+        }
+      }
+      if (kind == BotKind.recklessLeverage &&
+          land.trailingRatio >= 1.25 &&
+          state.creditScore >= state.bankLoanMinCredit &&
+          state.bankLoanHeadroom > 1000000) {
+        // Max leverage INTO the mania — the classic ruin. Never repaid
+        // beyond the forced minimum; the all-in branch below spends it.
+        if (takeLoan(state.bankLoanHeadroom)) break;
+      }
+      if (won || lostReason != null) break;
+
       switch (kind) {
         case BotKind.blindDca:
         case BotKind.noCourse:
@@ -331,8 +425,11 @@ void main() {
           if (parkable > 1000 && deposit(parkable)) break;
 
         case BotKind.noReserve:
+        case BotKind.recklessLeverage:
           // The classic Vietnamese mistake: ALL-IN LAND with a one-month
-          // buffer and no insurance. Land is illiquid (T+2 months) and
+          // buffer and no insurance (recklessLeverage additionally shovels
+          // max bank debt into the mania — see the leverage cycle above).
+          // Land is illiquid (T+2 months) and
           // low-yield, so every shock means months of negative cash, stress,
           // vay nóng events — the emergency-fund lesson with teeth.
           // (A thin-buffer INDEX bot measured ~equal to DCA: index funds are
@@ -342,7 +439,10 @@ void main() {
           if (investNr > 0 && buy('land', investNr)) break;
 
         case BotKind.disciplined:
+        case BotKind.leveragedDisciplined:
           // The skill being rewarded: REBALANCING with emotional discipline.
+          // (leveragedDisciplined shares this exact deployment; its borrow/
+          // repay cycle already ran above, so borrowed cash lands here.)
           // 1. Take profit when a class runs hot vs its trailing average.
           // 2. Hoard the proceeds instead of chasing the boom.
           // 3. Redeploy when prices come back to/below trend (mean reversion
@@ -536,39 +636,92 @@ void main() {
       }
     }, timeout: const Timeout(Duration(minutes: 10)));
 
+    test('Bot Kỷ-Luật-Đòn-Bẩy trên 20 seed: nhanh hơn DCA ≥ 10%, không chết — phép đo tham vọng 20%', () async {
+      var dcaTotal = 0, levTotal = 0;
+      for (final seed in sweepSeeds) {
+        final dca = await runBot(BotKind.blindDca, seed);
+        final lev = await runBot(BotKind.leveragedDisciplined, seed);
+        expect(lev.won, isTrue,
+            reason: 'Disciplined leverage must win, never die (seed $seed): $lev');
+        dcaTotal += dca.score;
+        levTotal += lev.score;
+      }
+      final ratio = levTotal / dcaTotal;
+      // THE ANSWER to the question parked since 6.2a: does leverage let skill
+      // reach the 20% gap? speedup = 1 - ratio; REPORT the real number.
+      debugPrint('[MarketBot] leveraged/dca 20-seed month ratio = ${ratio.toStringAsFixed(3)} '
+          '(lev=$levTotal, dca=$dcaTotal, speedup=${((1 - ratio) * 100).toStringAsFixed(1)}%)');
+      expect(ratio, lessThanOrEqualTo(0.90),
+          reason: 'Disciplined leverage must be ≥10% faster than blind DCA '
+              'across the 20-seed set (ratio=${ratio.toStringAsFixed(3)})');
+    }, timeout: const Timeout(Duration(minutes: 20)));
+
+    test('Bot Đòn-Bẩy-Liều CHẾT ở ≥ nửa số seed — án tử có thật, bất kể giấy khai tử', () async {
+      // Owner decision 07/08/2026: ANY death counts. In this economy the
+      // over-leveraged die of exhaustion (stress pre-loaded by a lifetime of
+      // side jobs) before the bank forecloses — the debt-crush bankruptcy
+      // stays in the engine for players who hold on instead of liquidating.
+      var deaths = 0;
+      final results = <BotResult>[];
+      for (final seed in seeds) {
+        final r = await runBot(BotKind.recklessLeverage, seed);
+        results.add(r);
+        if (r.lostReason != null) deaths++;
+      }
+      debugPrint('[MarketBot] recklessLeverage deaths=$deaths/${seeds.length} '
+          '(${results.map((r) => '${r.seed}:${r.lostReason?.name ?? (r.won ? 'won' : 'alive')}').join(' ')})');
+      expect(deaths, greaterThanOrEqualTo((seeds.length + 1) ~/ 2),
+          reason: 'Max leverage into hot land must be lethal on at least half the seeds');
+    }, timeout: const Timeout(Duration(minutes: 10)));
+
     test('SEED SWEEP 20 seeds — công cụ tune thủ công', () async {
       final rows = <String>[];
-      var dcaWins = 0, discWins = 0, fomoWins = 0, ncWins = 0;
-      var dcaTotal = 0, discTotal = 0, fomoTotal = 0, ncTotal = 0;
-      final discRatios = <double>[], fomoRatios = <double>[], ncRatios = <double>[];
-      final sweepSeeds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 42, 99, 123, 500, 777, 1000, 2024, 2025, 2026, 31337];
+      var dcaWins = 0, discWins = 0, fomoWins = 0, ncWins = 0, levWins = 0;
+      var reckDeaths = 0, reckWins = 0;
+      var dcaTotal = 0, discTotal = 0, fomoTotal = 0, ncTotal = 0, levTotal = 0;
+      final discRatios = <double>[], fomoRatios = <double>[], ncRatios = <double>[],
+          levRatios = <double>[];
       for (final seed in sweepSeeds) {
         final dca = await runBot(BotKind.blindDca, seed);
         final disc = await runBot(BotKind.disciplined, seed);
         final fomo = await runBot(BotKind.fomo, seed);
         final nc = await runBot(BotKind.noCourse, seed);
+        final lev = await runBot(BotKind.leveragedDisciplined, seed);
+        final reck = await runBot(BotKind.recklessLeverage, seed);
         if (dca.won) dcaWins++;
         if (disc.won) discWins++;
         if (fomo.won) fomoWins++;
         if (nc.won) ncWins++;
+        if (lev.won) levWins++;
+        if (reck.won) reckWins++;
+        if (reck.lostReason == GameOverReason.bankruptcy ||
+            reck.lostReason == GameOverReason.debtSpiral) {
+          reckDeaths++;
+        }
         dcaTotal += dca.score;
         discTotal += disc.score;
         fomoTotal += fomo.score;
         ncTotal += nc.score;
+        levTotal += lev.score;
         discRatios.add(disc.score / dca.score);
         fomoRatios.add(fomo.score / dca.score);
         ncRatios.add(nc.score / dca.score);
+        levRatios.add(lev.score / dca.score);
         rows.add('seed=$seed dca=${dca.score}${dca.won ? '' : 'X'} '
             'disc=${disc.score}${disc.won ? '' : 'X'} (${(disc.score / dca.score).toStringAsFixed(2)}) '
             'fomo=${fomo.score}${fomo.won ? '' : 'X'} (${(fomo.score / dca.score).toStringAsFixed(2)}) '
-            'noCourse=${nc.score}${nc.won ? '' : 'X'} (${(nc.score / dca.score).toStringAsFixed(2)})');
+            'noCourse=${nc.score}${nc.won ? '' : 'X'} (${(nc.score / dca.score).toStringAsFixed(2)}) '
+            'lev=${lev.score}${lev.won ? '' : 'X'} (${(lev.score / dca.score).toStringAsFixed(2)}) '
+            'reck=${reck.won ? 'won ${reck.score}' : (reck.lostReason?.name ?? 'alive')}');
       }
       discRatios.sort();
       fomoRatios.sort();
       ncRatios.sort();
+      levRatios.sort();
       debugPrint('===== SEED SWEEP =====');
       rows.forEach(debugPrint);
-      debugPrint('wins: dca=$dcaWins/${sweepSeeds.length} disc=$discWins fomo=$fomoWins noCourse=$ncWins');
+      debugPrint('wins: dca=$dcaWins/${sweepSeeds.length} disc=$discWins fomo=$fomoWins '
+          'noCourse=$ncWins lev=$levWins reck=$reckWins (reck deaths=$reckDeaths)');
       debugPrint('avg ratio disc/dca=${(discTotal / dcaTotal).toStringAsFixed(3)} '
           'median=${discRatios[discRatios.length ~/ 2].toStringAsFixed(3)} '
           'min=${discRatios.first.toStringAsFixed(3)} max=${discRatios.last.toStringAsFixed(3)}');
@@ -578,6 +731,10 @@ void main() {
       debugPrint('avg ratio noCourse/dca=${(ncTotal / dcaTotal).toStringAsFixed(3)} '
           'median=${ncRatios[ncRatios.length ~/ 2].toStringAsFixed(3)} '
           'min=${ncRatios.first.toStringAsFixed(3)} max=${ncRatios.last.toStringAsFixed(3)}');
+      debugPrint('avg ratio lev/dca=${(levTotal / dcaTotal).toStringAsFixed(3)} '
+          'median=${levRatios[levRatios.length ~/ 2].toStringAsFixed(3)} '
+          'min=${levRatios.first.toStringAsFixed(3)} max=${levRatios.last.toStringAsFixed(3)} '
+          'speedup=${((1 - levTotal / dcaTotal) * 100).toStringAsFixed(1)}%');
     }, skip: 'Công cụ tune thủ công — chạy bằng --run-skipped', timeout: const Timeout(Duration(minutes: 20)));
 
     test('Bot FOMO chậm hơn DCA mù ≥ 15% và không chết giữa đời', () async {
