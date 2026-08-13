@@ -205,11 +205,16 @@ class _MainGameScreenState extends State<MainGameScreen> {
                 ),
                 const SizedBox(height: AppSpacing.l),
 
-                // Money Display
+                // Money Display: the headline number is what the label says —
+                // net worth. Spendable cash is the sub-line, because those two
+                // diverge hugely once a portfolio exists.
                 MoneyDisplay(
-                  label: AppLocalizations.of(context)!.netWorth, // Or AppLocalizations.of(context)!.cash
-                  amount: gameState.cash,
+                  label: AppLocalizations.of(context)!.netWorth,
+                  amount: gameState.netWorth,
                   cashflow: gameState.totalCashFlow,
+                  subtitle: 'Tiền mặt: ${MoneyFormat.format(gameState.cash)}'
+                      '${gameState.savingsBalance > 0 ? ' • Tiết kiệm: ${MoneyFormat.format(gameState.savingsBalance)}' : ''}'
+                      '${gameState.totalPendingProceeds > 0 ? ' • Đang về: ${MoneyFormat.format(gameState.totalPendingProceeds)}' : ''}',
                 ),
                 const SizedBox(height: AppSpacing.l),
 
@@ -254,6 +259,13 @@ class _MainGameScreenState extends State<MainGameScreen> {
                         : AppLocalizations.of(context)!.expenseSalary,
                     value: gameState.effectiveSalary,
                   ),
+                  // The number that decides the game: passive income. Without
+                  // it on screen the player cannot see the win condition move.
+                  if (gameState.passiveIncome > 0)
+                    _CashflowItem(
+                      label: 'Thu nhập thụ động',
+                      value: gameState.passiveIncome,
+                    ),
                   _CashflowItem(label: AppLocalizations.of(context)!.expenseLiving, value: -gameState.monthlyExpenses),
                   _CashflowItem(label: AppLocalizations.of(context)!.expenseRent, value: -gameState.monthlyRent),
                   _CashflowItem(label: AppLocalizations.of(context)!.expenseFamily, value: -gameState.familySupportExpense),
@@ -356,9 +368,12 @@ class _MainGameScreenState extends State<MainGameScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('${AppLocalizations.of(context)!.monthlySummaryCash}: ${summary.cashDelta > 0 ? "+" : ""}${summary.cashDelta}'),
-            Text('${AppLocalizations.of(context)!.monthlySummaryStress}: ${summary.stressDelta > 0 ? "+" : ""}${summary.stressDelta}'),
-            Text('${AppLocalizations.of(context)!.monthlySummaryNetWorth}: ${summary.netWorthDelta > 0 ? "+" : ""}${summary.netWorthDelta}'),
+            Text('${AppLocalizations.of(context)!.monthlySummaryCash}: '
+                '${summary.cashDelta > 0 ? "+" : ""}${MoneyFormat.format(summary.cashDelta)}'),
+            Text('${AppLocalizations.of(context)!.monthlySummaryStress}: '
+                '${summary.stressDelta > 0 ? "+" : ""}${summary.stressDelta}'),
+            Text('${AppLocalizations.of(context)!.monthlySummaryNetWorth}: '
+                '${summary.netWorthDelta > 0 ? "+" : ""}${MoneyFormat.format(summary.netWorthDelta)}'),
           ],
         ),
         actions: [
@@ -387,7 +402,8 @@ class _CashflowItem extends StatelessWidget {
         children: [
           Text(label, style: AppTextStyles.bodyMedium),
           Text(
-            '${value > 0 ? "+" : ""}$value', 
+            // MoneyFormat already carries the minus sign; only the plus is ours.
+            '${value > 0 ? "+" : ""}${MoneyFormat.format(value)}',
             style: AppTextStyles.bodyMedium.copyWith(
               color: value > 0 ? AppColors.primaryDark : AppColors.stressHigh,
               fontWeight: FontWeight.bold,

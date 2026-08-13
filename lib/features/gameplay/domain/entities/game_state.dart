@@ -156,6 +156,13 @@ abstract class GameState with _$GameState {
 
   double get totalCashFlow => effectiveSalary + passiveIncome - totalMonthlyOutflow;
 
+  /// Income that can be counted on every month, minus the cost of living —
+  /// what is actually left to service debt. Judged on BASE salary so a
+  /// temporary job-loss suspension does not read as permanent ruin.
+  /// One source for both the engine's debt-crush check and the UI warning.
+  double get structuralSurplus =>
+      baseSalary + passiveIncome - totalMonthlyOutflow;
+
   double get totalLoanPayment => loans.fold(0, (sum, loan) => sum + loan.minimumMonthlyPayment);
 
   /// What the loans will actually charge this month — a nearly-paid-off loan

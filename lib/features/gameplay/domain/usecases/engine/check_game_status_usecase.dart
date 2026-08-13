@@ -37,10 +37,7 @@ class CheckGameStatusUseCase {
     //   the classic price of feeding the spiral.
     if (currentState.cash < -currentState.totalMonthlyOutflow &&
         currentState.totalDueLoanPayment > 0 &&
-        currentState.totalDueLoanPayment >
-            currentState.baseSalary +
-                currentState.passiveIncome -
-                currentState.totalMonthlyOutflow) {
+        currentState.totalDueLoanPayment > currentState.structuralSurplus) {
       return TurnResult.lost(currentState, GameOverReason.bankruptcy);
     }
 

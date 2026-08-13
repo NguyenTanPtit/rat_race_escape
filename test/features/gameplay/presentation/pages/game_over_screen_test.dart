@@ -9,6 +9,8 @@ import 'package:rat_race_escape/l10n/app_localizations.dart';
 import 'package:rat_race_escape/features/gameplay/domain/repositories/insight_card_repository.dart';
 import 'package:rat_race_escape/features/gameplay/domain/entities/insight_card.dart';
 
+import 'main_game_screen_test.dart' show expectNoRawMoney;
+
 class MockInsightCardRepository implements InsightCardRepository {
   List<InsightCard> getAllInsightCards() {
     return [
@@ -106,5 +108,34 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.textContaining('nghỉ hưu'), findsOneWidget);
+  });
+
+  testWidgets('lifetime stats format money and expose real purchasing power',
+      (WidgetTester tester) async {
+    // The hoarder's ending: a nominal fortune worth far less in year-one prices.
+    const richButLate = GameState(
+      country: Country.vietnam,
+      currency: Currency.vnd,
+      scenarioId: 'test',
+      cash: 2730000000,
+      monthlyExpenses: 0,
+      monthlyRent: 0,
+      baseSalary: 0,
+      creditScore: 750,
+      currentMonth: 516,
+      inflationIndex: 4.39,
+    );
+
+    await tester.pumpWidget(buildTestableWidget(const GameOverScreen(
+      reason: GameOverReason.poorAtRetirement,
+      finalState: richButLate,
+      newCards: {},
+    )));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('Tài sản ròng: 2,73 tỷ ₫'), findsOneWidget);
+    expect(find.textContaining('Sức mua theo giá năm đầu: 621,87tr ₫'), findsOneWidget);
+    expect(find.textContaining('Net Worth'), findsNothing, reason: 'game tiếng Việt');
+    expectNoRawMoney(tester);
   });
 }

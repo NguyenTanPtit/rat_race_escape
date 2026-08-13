@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rat_race_escape/core/format/money_format.dart';
 import 'package:rat_race_escape/core/theme/app_colors.dart';
 import 'package:rat_race_escape/core/theme/app_spacing.dart';
 import 'package:rat_race_escape/core/theme/app_text_styles.dart';
@@ -60,7 +61,13 @@ class _WinScreenState extends State<WinScreen> {
                 style: AppTextStyles.h2,
               ),
               const SizedBox(height: AppSpacing.m),
-              Text('Net Worth: ${widget.finalState.netWorth}'),
+              Text('Tài sản ròng: ${MoneyFormat.format(widget.finalState.netWorth)}'),
+              if (widget.finalState.inflationIndex > 1.0)
+                Text(
+                  'Sức mua theo giá năm đầu: '
+                  '${MoneyFormat.format(widget.finalState.netWorth / widget.finalState.inflationIndex)}',
+                  style: AppTextStyles.bodySmall.copyWith(color: AppColors.disabledInk),
+                ),
               Text('Tuổi: ${widget.finalState.age}'),
               Text(AppLocalizations.of(context)!.statMonthsPlayed(monthsPlayed)),
               Text(AppLocalizations.of(context)!.statFinalCredit(widget.finalState.creditScore)),

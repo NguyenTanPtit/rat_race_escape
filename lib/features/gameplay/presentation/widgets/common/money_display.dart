@@ -8,12 +8,14 @@ class MoneyDisplay extends StatelessWidget {
   final String label;
   final double amount;
   final double? cashflow; // Hiển thị chip cashflow nếu có
+  final String? subtitle; // Dòng phụ, ví dụ tiền mặt khả dụng
 
   const MoneyDisplay({
     super.key,
     required this.label,
     required this.amount,
     this.cashflow,
+    this.subtitle,
   });
 
   @override
@@ -43,6 +45,13 @@ class MoneyDisplay extends StatelessWidget {
             ]
           ],
         ),
+        if (subtitle != null) ...[
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            subtitle!,
+            style: AppTextStyles.bodySmall.copyWith(color: AppColors.disabledInk),
+          ),
+        ],
       ],
     );
   }
