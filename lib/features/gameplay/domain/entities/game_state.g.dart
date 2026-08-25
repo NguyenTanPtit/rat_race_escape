@@ -29,6 +29,11 @@ _GameState _$GameStateFromJson(Map<String, dynamic> json) => _GameState(
           .toList() ??
       const [],
   currentEventId: json['currentEventId'] as String?,
+  eventLastFired:
+      (json['eventLastFired'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(k, (e as num).toInt()),
+      ) ??
+      const {},
   flags:
       (json['flags'] as List<dynamic>?)?.map((e) => e as String).toSet() ??
       const {},
@@ -123,6 +128,7 @@ Map<String, dynamic> _$GameStateToJson(
   'housingLevel': _$HousingLevelEnumMap[instance.housingLevel]!,
   'ownedItems': instance.ownedItems,
   'currentEventId': instance.currentEventId,
+  'eventLastFired': instance.eventLastFired,
   'flags': instance.flags.toList(),
   'unlockedInsightCardIds': instance.unlockedInsightCardIds.toList(),
   'familySupportExpense': instance.familySupportExpense,

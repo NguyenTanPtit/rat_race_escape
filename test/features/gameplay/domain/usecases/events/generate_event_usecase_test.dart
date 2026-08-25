@@ -121,5 +121,89 @@ void main() {
       expect(countB, greaterThan(250));
       expect(countB, lessThan(350));
     });
+
+    group('(5a) cooldownMonths', () {
+      test('firing an event stamps eventLastFired with the current month', () async {
+        when(() => mockRepo.loadEventPool(any(), any(), locale: any(named: 'locale'))).thenAnswer((_) async => [
+          const EventDefinition(
+            event: GameEvent(id: 'plain_event', title: 'Plain', description: ''),
+            trigger: EventTrigger(),
+          ),
+        ]);
+
+        final state = await usecase(baseState.copyWith(currentMonth: 7));
+
+        expect(state.currentEventId, 'plain_event');
+        expect(state.eventLastFired['plain_event'], 7);
+      });
+
+      test('event in cooldown cannot fire; fires again once cooldown has passed', () async {
+        when(() => mockRepo.loadEventPool(any(), any(), locale: any(named: 'locale'))).thenAnswer((_) async => [
+          const EventDefinition(
+            event: GameEvent(id: 'cooled_event', title: 'Cooled', description: ''),
+            trigger: EventTrigger(),
+            cooldownMonths: 12,
+          ),
+        ]);
+
+        // Fired at month 10 → blocked through month 21, eligible again at month 22.
+        final fired = await usecase(baseState.copyWith(currentMonth: 10));
+        expect(fired.currentEventId, 'cooled_event');
+        expect(fired.eventLastFired['cooled_event'], 10);
+
+        final duringCooldown = await usecase(
+          baseState.copyWith(currentMonth: 21, eventLastFired: {'cooled_event': 10}),
+        );
+        expect(duringCooldown.currentEventId, isNull);
+
+        final afterCooldown = await usecase(
+          baseState.copyWith(currentMonth: 22, eventLastFired: {'cooled_event': 10}),
+        );
+        expect(afterCooldown.currentEventId, 'cooled_event');
+        expect(afterCooldown.eventLastFired['cooled_event'], 22);
+      });
+
+      test('absoluteChance event also respects cooldown', () async {
+        when(() => mockRepo.loadEventPool(any(), any(), locale: any(named: 'locale'))).thenAnswer((_) async => [
+          const EventDefinition(
+            event: GameEvent(id: 'pandemic', title: 'Pandemic', description: ''),
+            trigger: EventTrigger(),
+            absoluteChance: 1.0,
+            cooldownMonths: 24,
+          ),
+        ]);
+
+        final duringCooldown = await usecase(
+          baseState.copyWith(currentMonth: 30, eventLastFired: {'pandemic': 20}),
+        );
+        expect(duringCooldown.currentEventId, isNull);
+
+        final afterCooldown = await usecase(
+          baseState.copyWith(currentMonth: 44, eventLastFired: {'pandemic': 20}),
+        );
+        expect(afterCooldown.currentEventId, 'pandemic');
+      });
+
+      test('cooldown of one event does not block other events', () async {
+        when(() => mockRepo.loadEventPool(any(), any(), locale: any(named: 'locale'))).thenAnswer((_) async => [
+          const EventDefinition(
+            event: GameEvent(id: 'cooled_event', title: 'Cooled', description: ''),
+            trigger: EventTrigger(),
+            cooldownMonths: 12,
+          ),
+          const EventDefinition(
+            event: GameEvent(id: 'other_event', title: 'Other', description: ''),
+            trigger: EventTrigger(),
+          ),
+        ]);
+
+        final state = await usecase(
+          baseState.copyWith(currentMonth: 5, eventLastFired: {'cooled_event': 1}),
+        );
+
+        expect(state.currentEventId, 'other_event');
+        expect(state.eventLastFired, {'cooled_event': 1, 'other_event': 5});
+      });
+    });
   });
 }

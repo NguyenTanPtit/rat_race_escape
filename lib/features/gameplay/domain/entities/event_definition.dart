@@ -11,6 +11,9 @@ abstract class EventDefinition with _$EventDefinition {
     required EventTrigger trigger,
     double? absoluteChance,
     @Default(1.0) double weight,
+    // Slice 5a: once fired, the event cannot fire again for this many months.
+    // 0 = no cooldown.
+    @Default(0) int cooldownMonths,
   }) = _EventDefinition;
 
   factory EventDefinition.fromJson(Map<String, dynamic> json) => _$EventDefinitionFromJson(json);

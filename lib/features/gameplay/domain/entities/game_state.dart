@@ -42,6 +42,9 @@ abstract class GameState with _$GameState {
 
     // 5. Active Event & Flags
     String? currentEventId,
+    // Slice 5a: month each event id last fired (drives cooldownMonths in
+    // GenerateEvent). Per-run state, so it lives here — not session-only.
+    @Default({}) Map<String, int> eventLastFired,
     @Default({}) Set<String> flags,
     @Default({}) Set<String> unlockedInsightCardIds,
     @Default(0.0) double familySupportExpense,

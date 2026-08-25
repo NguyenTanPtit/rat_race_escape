@@ -74,6 +74,7 @@ class JsonEventPoolRepository implements EventPoolRepository {
             : const EventTrigger(),
         absoluteChance: eventJson['absoluteChance']?.toDouble(),
         weight: eventJson['weight']?.toDouble() ?? 1.0,
+        cooldownMonths: eventJson['cooldownMonths'] as int? ?? 0,
       );
     }).toList();
 

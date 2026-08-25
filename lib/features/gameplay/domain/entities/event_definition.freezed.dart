@@ -15,7 +15,9 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$EventDefinition {
 
- GameEvent get event; EventTrigger get trigger; double? get absoluteChance; double get weight;
+ GameEvent get event; EventTrigger get trigger; double? get absoluteChance; double get weight;// Slice 5a: once fired, the event cannot fire again for this many months.
+// 0 = no cooldown.
+ int get cooldownMonths;
 /// Create a copy of EventDefinition
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +30,16 @@ $EventDefinitionCopyWith<EventDefinition> get copyWith => _$EventDefinitionCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventDefinition&&(identical(other.event, event) || other.event == event)&&(identical(other.trigger, trigger) || other.trigger == trigger)&&(identical(other.absoluteChance, absoluteChance) || other.absoluteChance == absoluteChance)&&(identical(other.weight, weight) || other.weight == weight));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventDefinition&&(identical(other.event, event) || other.event == event)&&(identical(other.trigger, trigger) || other.trigger == trigger)&&(identical(other.absoluteChance, absoluteChance) || other.absoluteChance == absoluteChance)&&(identical(other.weight, weight) || other.weight == weight)&&(identical(other.cooldownMonths, cooldownMonths) || other.cooldownMonths == cooldownMonths));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,event,trigger,absoluteChance,weight);
+int get hashCode => Object.hash(runtimeType,event,trigger,absoluteChance,weight,cooldownMonths);
 
 @override
 String toString() {
-  return 'EventDefinition(event: $event, trigger: $trigger, absoluteChance: $absoluteChance, weight: $weight)';
+  return 'EventDefinition(event: $event, trigger: $trigger, absoluteChance: $absoluteChance, weight: $weight, cooldownMonths: $cooldownMonths)';
 }
 
 
@@ -48,7 +50,7 @@ abstract mixin class $EventDefinitionCopyWith<$Res>  {
   factory $EventDefinitionCopyWith(EventDefinition value, $Res Function(EventDefinition) _then) = _$EventDefinitionCopyWithImpl;
 @useResult
 $Res call({
- GameEvent event, EventTrigger trigger, double? absoluteChance, double weight
+ GameEvent event, EventTrigger trigger, double? absoluteChance, double weight, int cooldownMonths
 });
 
 
@@ -65,13 +67,14 @@ class _$EventDefinitionCopyWithImpl<$Res>
 
 /// Create a copy of EventDefinition
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? event = null,Object? trigger = null,Object? absoluteChance = freezed,Object? weight = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? event = null,Object? trigger = null,Object? absoluteChance = freezed,Object? weight = null,Object? cooldownMonths = null,}) {
   return _then(_self.copyWith(
 event: null == event ? _self.event : event // ignore: cast_nullable_to_non_nullable
 as GameEvent,trigger: null == trigger ? _self.trigger : trigger // ignore: cast_nullable_to_non_nullable
 as EventTrigger,absoluteChance: freezed == absoluteChance ? _self.absoluteChance : absoluteChance // ignore: cast_nullable_to_non_nullable
 as double?,weight: null == weight ? _self.weight : weight // ignore: cast_nullable_to_non_nullable
-as double,
+as double,cooldownMonths: null == cooldownMonths ? _self.cooldownMonths : cooldownMonths // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 /// Create a copy of EventDefinition
@@ -174,10 +177,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( GameEvent event,  EventTrigger trigger,  double? absoluteChance,  double weight)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( GameEvent event,  EventTrigger trigger,  double? absoluteChance,  double weight,  int cooldownMonths)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _EventDefinition() when $default != null:
-return $default(_that.event,_that.trigger,_that.absoluteChance,_that.weight);case _:
+return $default(_that.event,_that.trigger,_that.absoluteChance,_that.weight,_that.cooldownMonths);case _:
   return orElse();
 
 }
@@ -195,10 +198,10 @@ return $default(_that.event,_that.trigger,_that.absoluteChance,_that.weight);cas
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( GameEvent event,  EventTrigger trigger,  double? absoluteChance,  double weight)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( GameEvent event,  EventTrigger trigger,  double? absoluteChance,  double weight,  int cooldownMonths)  $default,) {final _that = this;
 switch (_that) {
 case _EventDefinition():
-return $default(_that.event,_that.trigger,_that.absoluteChance,_that.weight);case _:
+return $default(_that.event,_that.trigger,_that.absoluteChance,_that.weight,_that.cooldownMonths);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -215,10 +218,10 @@ return $default(_that.event,_that.trigger,_that.absoluteChance,_that.weight);cas
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( GameEvent event,  EventTrigger trigger,  double? absoluteChance,  double weight)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( GameEvent event,  EventTrigger trigger,  double? absoluteChance,  double weight,  int cooldownMonths)?  $default,) {final _that = this;
 switch (_that) {
 case _EventDefinition() when $default != null:
-return $default(_that.event,_that.trigger,_that.absoluteChance,_that.weight);case _:
+return $default(_that.event,_that.trigger,_that.absoluteChance,_that.weight,_that.cooldownMonths);case _:
   return null;
 
 }
@@ -230,13 +233,16 @@ return $default(_that.event,_that.trigger,_that.absoluteChance,_that.weight);cas
 @JsonSerializable()
 
 class _EventDefinition implements EventDefinition {
-  const _EventDefinition({required this.event, required this.trigger, this.absoluteChance, this.weight = 1.0});
+  const _EventDefinition({required this.event, required this.trigger, this.absoluteChance, this.weight = 1.0, this.cooldownMonths = 0});
   factory _EventDefinition.fromJson(Map<String, dynamic> json) => _$EventDefinitionFromJson(json);
 
 @override final  GameEvent event;
 @override final  EventTrigger trigger;
 @override final  double? absoluteChance;
 @override@JsonKey() final  double weight;
+// Slice 5a: once fired, the event cannot fire again for this many months.
+// 0 = no cooldown.
+@override@JsonKey() final  int cooldownMonths;
 
 /// Create a copy of EventDefinition
 /// with the given fields replaced by the non-null parameter values.
@@ -251,16 +257,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventDefinition&&(identical(other.event, event) || other.event == event)&&(identical(other.trigger, trigger) || other.trigger == trigger)&&(identical(other.absoluteChance, absoluteChance) || other.absoluteChance == absoluteChance)&&(identical(other.weight, weight) || other.weight == weight));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventDefinition&&(identical(other.event, event) || other.event == event)&&(identical(other.trigger, trigger) || other.trigger == trigger)&&(identical(other.absoluteChance, absoluteChance) || other.absoluteChance == absoluteChance)&&(identical(other.weight, weight) || other.weight == weight)&&(identical(other.cooldownMonths, cooldownMonths) || other.cooldownMonths == cooldownMonths));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,event,trigger,absoluteChance,weight);
+int get hashCode => Object.hash(runtimeType,event,trigger,absoluteChance,weight,cooldownMonths);
 
 @override
 String toString() {
-  return 'EventDefinition(event: $event, trigger: $trigger, absoluteChance: $absoluteChance, weight: $weight)';
+  return 'EventDefinition(event: $event, trigger: $trigger, absoluteChance: $absoluteChance, weight: $weight, cooldownMonths: $cooldownMonths)';
 }
 
 
@@ -271,7 +277,7 @@ abstract mixin class _$EventDefinitionCopyWith<$Res> implements $EventDefinition
   factory _$EventDefinitionCopyWith(_EventDefinition value, $Res Function(_EventDefinition) _then) = __$EventDefinitionCopyWithImpl;
 @override @useResult
 $Res call({
- GameEvent event, EventTrigger trigger, double? absoluteChance, double weight
+ GameEvent event, EventTrigger trigger, double? absoluteChance, double weight, int cooldownMonths
 });
 
 
@@ -288,13 +294,14 @@ class __$EventDefinitionCopyWithImpl<$Res>
 
 /// Create a copy of EventDefinition
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? event = null,Object? trigger = null,Object? absoluteChance = freezed,Object? weight = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? event = null,Object? trigger = null,Object? absoluteChance = freezed,Object? weight = null,Object? cooldownMonths = null,}) {
   return _then(_EventDefinition(
 event: null == event ? _self.event : event // ignore: cast_nullable_to_non_nullable
 as GameEvent,trigger: null == trigger ? _self.trigger : trigger // ignore: cast_nullable_to_non_nullable
 as EventTrigger,absoluteChance: freezed == absoluteChance ? _self.absoluteChance : absoluteChance // ignore: cast_nullable_to_non_nullable
 as double?,weight: null == weight ? _self.weight : weight // ignore: cast_nullable_to_non_nullable
-as double,
+as double,cooldownMonths: null == cooldownMonths ? _self.cooldownMonths : cooldownMonths // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 

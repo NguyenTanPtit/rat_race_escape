@@ -12,6 +12,7 @@ _EventDefinition _$EventDefinitionFromJson(Map<String, dynamic> json) =>
       trigger: EventTrigger.fromJson(json['trigger'] as Map<String, dynamic>),
       absoluteChance: (json['absoluteChance'] as num?)?.toDouble(),
       weight: (json['weight'] as num?)?.toDouble() ?? 1.0,
+      cooldownMonths: (json['cooldownMonths'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$EventDefinitionToJson(_EventDefinition instance) =>
@@ -20,6 +21,7 @@ Map<String, dynamic> _$EventDefinitionToJson(_EventDefinition instance) =>
       'trigger': instance.trigger.toJson(),
       'absoluteChance': instance.absoluteChance,
       'weight': instance.weight,
+      'cooldownMonths': instance.cooldownMonths,
     };
 
 _MarketCondition _$MarketConditionFromJson(Map<String, dynamic> json) =>

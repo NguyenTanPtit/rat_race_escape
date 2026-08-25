@@ -18,14 +18,19 @@ class GenerateEventUseCase {
     );
 
     // 1. Filter events whose triggers are satisfied by the current state.
-    final eligibleEvents = events.where((e) => _isTriggerSatisfied(e.trigger, currentState)).toList();
+    // Cooldown (5a) is part of eligibility: an event still cooling down never
+    // reaches the RNG, so with no cooldowns configured the draw order is
+    // byte-identical to pre-5a.
+    final eligibleEvents = events
+        .where((e) => _isTriggerSatisfied(e.trigger, currentState) && _isOffCooldown(e, currentState))
+        .toList();
 
     // 2. Evaluate absoluteChance events FIRST in order.
     for (final event in eligibleEvents) {
       if (event.absoluteChance != null) {
         final chance = event.absoluteChance!;
         if (_random.nextDouble() <= chance) {
-          return currentState.copyWith(currentEventId: event.event.id);
+          return _fire(currentState, event.event.id);
         }
       }
     }
@@ -45,16 +50,30 @@ class GenerateEventUseCase {
       for (final event in pool) {
         roll -= event.weight;
         if (roll <= 0) {
-          return currentState.copyWith(currentEventId: event.event.id);
+          return _fire(currentState, event.event.id);
         }
       }
-      
+
       // Fallback in case of floating point precision issues
-      return currentState.copyWith(currentEventId: pool.last.event.id);
+      return _fire(currentState, pool.last.event.id);
     }
 
     // No event triggered
     return currentState.copyWith(currentEventId: null);
+  }
+
+  /// Fire [eventId]: set it active and stamp the month it fired (cooldown anchor).
+  GameState _fire(GameState state, String eventId) => state.copyWith(
+        currentEventId: eventId,
+        eventLastFired: {...state.eventLastFired, eventId: state.currentMonth},
+      );
+
+  /// Eligible again once cooldownMonths full months have passed since it fired.
+  bool _isOffCooldown(EventDefinition def, GameState state) {
+    if (def.cooldownMonths <= 0) return true;
+    final lastFired = state.eventLastFired[def.event.id];
+    if (lastFired == null) return true;
+    return state.currentMonth - lastFired >= def.cooldownMonths;
   }
 
   bool _isTriggerSatisfied(EventTrigger trigger, GameState state) {

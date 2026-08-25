@@ -89,5 +89,39 @@ void main() {
       expect(newState.loans.length, 1);
       expect(newState.loans.first.interestRatePerYear, 18.0);
     });
+
+    test('eventLastFired survives json round-trip (5a cooldown state)', () {
+      final state = GameState(
+        scenarioId: 'test_scenario',
+        country: Country.vietnam,
+        currency: Currency.vnd,
+        cash: 5000,
+        monthlyExpenses: 1500,
+        monthlyRent: 1000,
+        baseSalary: 3000,
+        eventLastFired: {'e_pandemic': 37, 'e_job_loss': 52},
+      );
+
+      final newState = GameState.fromJson(state.toJson());
+
+      expect(newState.eventLastFired, {'e_pandemic': 37, 'e_job_loss': 52});
+    });
+
+    test('legacy save without eventLastFired key loads with empty map', () {
+      final state = GameState(
+        scenarioId: 'test_scenario',
+        country: Country.vietnam,
+        currency: Currency.vnd,
+        cash: 5000,
+        monthlyExpenses: 1500,
+        monthlyRent: 1000,
+        baseSalary: 3000,
+      );
+
+      final json = state.toJson()..remove('eventLastFired');
+      final newState = GameState.fromJson(json);
+
+      expect(newState.eventLastFired, isEmpty);
+    });
   });
 }
