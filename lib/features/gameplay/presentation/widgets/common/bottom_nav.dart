@@ -34,7 +34,14 @@ class BottomNav extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Expanded(child: _NavItem(icon: Icons.account_balance_wallet, label: 'Tài sản', isLocked: true)),
+            Expanded(
+              child: _NavItem(
+                icon: Icons.account_balance_wallet,
+                label: 'Tài sản',
+                isLocked: false,
+                onTap: () => context.push('/assets'),
+              ),
+            ),
             Expanded(
               child: _NavItem(
                 icon: Icons.trending_up,

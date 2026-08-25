@@ -163,6 +163,36 @@ abstract class GameState with _$GameState {
   double get structuralSurplus =>
       baseSalary + passiveIncome - totalMonthlyOutflow;
 
+  /// How far along the road out of the rat race: passive income as a
+  /// fraction of monthly costs. 1.0 = the win condition.
+  double get passiveProgress =>
+      totalMonthlyOutflow <= 0 ? 0.0 : passiveIncome / totalMonthlyOutflow;
+
+  /// How many months the liquid buffer (cash + savings) covers.
+  double get emergencyFundMonths =>
+      totalMonthlyOutflow <= 0 ? 0.0 : (cash + savingsBalance) / totalMonthlyOutflow;
+
+  /// Net worth measured in year-one prices — what the fortune actually buys.
+  double get realNetWorth =>
+      inflationIndex <= 0 ? netWorth : netWorth / inflationIndex;
+
+  /// Average price paid per unit of a market holding (its cost basis);
+  /// null for legacy assets that have no market units.
+  double? averageCostPerUnit(Asset asset) =>
+      (asset.marketClassId == null || asset.units <= 0)
+          ? null
+          : asset.baseValue / asset.units;
+
+  /// Unrealized gain of a market holding vs its cost basis (0.25 = +25%);
+  /// null when there is no market price or cost basis to compare.
+  double? unrealizedGainRate(Asset asset) {
+    final avgCost = averageCostPerUnit(asset);
+    final classState =
+        asset.marketClassId == null ? null : market[asset.marketClassId];
+    if (avgCost == null || avgCost <= 0 || classState == null) return null;
+    return (classState.price - avgCost) / avgCost;
+  }
+
   double get totalLoanPayment => loans.fold(0, (sum, loan) => sum + loan.minimumMonthlyPayment);
 
   /// What the loans will actually charge this month — a nearly-paid-off loan

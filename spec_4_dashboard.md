@@ -60,7 +60,7 @@ Chủ dự án chơi trọn ván song song; mọi góp ý gom vào đây trướ
 - Dòng số: "Thu nhập thụ động **4,2tr** / Chi phí tháng **18,4tr** — **23%**".
 - Dòng thiếu hụt: "Còn thiếu **14,2tr**/tháng để thắng."
 - Câu chốt luật chơi: *"Khi cột này đầy, bạn thoát vòng chuột đua."*
-- ⚠️ Cảnh báo động: chi phí tăng mỗi Tết, nên % có thể TỤT dù passive tăng — nếu % tháng này thấp hơn lần Tết trước, nói thẳng: *"Vật giá đang chạy nhanh hơn thu nhập thụ động của bạn."* (Chỉ so mốc Tết gần nhất; **không** thêm field vào GameState — tính từ `inflationIndex` và passive hiện tại.)
+- ~~⚠️ Cảnh báo động: % tụt so với Tết trước~~ **[BỎ khi code 4b — 10/08/2026]**: soi lại engine thì ApplyInflation nhân passive của MỌI tài sản đang giữ ×1,035 cùng nhịp chi phí (cơ chế giữ lợi suất thực bất biến từ 2.5), nên tỷ lệ passive/outflow KHÔNG tự tụt vì lạm phát — cảnh báo như viết ban đầu là vô căn cứ toán học. Sức ép lạm phát thật nằm ở LƯƠNG (3,0% < 3,5%) và đã có mặt ở card Lương màn Nâng cấp + cảnh báo tiền-mặt-chết ở Khối 4.
 
 ### Khối 2: 💰 Tài sản ròng
 Bảng cộng dồn, mỗi dòng có số tiền:
